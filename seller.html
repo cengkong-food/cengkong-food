@@ -153,10 +153,36 @@ input:checked + .slider:before {
   box-shadow: 0 -5px 15px rgba(0,0,0,0.02);
 }
 
+/* MODIFIKASI: Menyejajarkan Judul dan Tombol Overview */
+.form-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
 .form-title {
   font-size: 24px;
   font-weight: 800;
-  margin-bottom: 20px;
+}
+
+/* DESAIN BARU: Tombol Overview Mini Kapsul */
+.overview-btn {
+  background: #f1f5f9;
+  color: #475569;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.overview-btn:hover {
+  background: #ff0037;
+  color: white;
+  border-color: #ff0037;
 }
 
 .form-flex {
@@ -246,6 +272,7 @@ input:checked + .slider:before {
 }
 
 /* 7. VARIAN */
+/* 7. VARIAN (Sudah Diperbaiki untuk Layar HP) */
 .variant-top {
   display: flex;
   justify-content: space-between;
@@ -268,21 +295,38 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%; /* Memastikan list varian mengunci penuh lebar card */
 }
 
 .variant-item {
   display: flex;
   gap: 10px;
+  width: 100%; /* Memastikan item tidak meluber keluar */
 }
 
-.variant-item input {
-  flex: 1;
+/* MODIFIKASI UTAMA: Mengatur proporsi input agar seimbang */
+.variant-item input[type="text"] {
+  flex: 2;          /* Kotak Nama Varian dapat porsi ruang lebih luas (sekitar 60-70%) */
+  min-width: 0;     /* Trik CSS wajib flexbox agar input bisa mengecil di layar HP */
   height: 46px;
   border: none;
   background: #f3f3f3;
   border-radius: 14px;
   padding: 0 14px;
   outline: none;
+  font-family: inherit;
+}
+
+.variant-item input[type="number"] {
+  flex: 1;          /* Kotak Harga Varian lebih kecil karena hanya diisi angka (sekitar 30-40%) */
+  min-width: 0;     /* Trik CSS wajib flexbox agar input tidak meluber */
+  height: 46px;
+  border: none;
+  background: #f3f3f3;
+  border-radius: 14px;
+  padding: 0 14px;
+  outline: none;
+  font-family: inherit;
 }
 
 .save-btn {
@@ -446,7 +490,6 @@ input:checked + .slider:before {
   background: #ff0037;
   color: white;
 }
-
 </style>
 </head>
 
@@ -476,7 +519,11 @@ input:checked + .slider:before {
   </div>
 
   <div class="form-card">
-    <div class="form-title">Tambah Menu</div>
+    <div class="form-header-row">
+      <div class="form-title">Tambah Menu</div>
+      <a href="index.html" class="overview-btn">Overview</a>
+    </div>
+
     <div class="form-flex">
       <label class="upload-box">
         <img id="previewImage">
@@ -533,7 +580,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, getDoc, setDoc, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// SUDAH DIPERBAIKI: Menghapus deklarasi ganda config yang error sebelumnya
 const firebaseConfig = {
   apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
   authDomain: "food-delivery-97a5f.firebaseapp.com",
@@ -715,12 +761,10 @@ window.saveMenu = async function() {
   }
 }
 
-
-/* 6. MEMUAT DAFTAR MENU FILTERING (VERSI AMAN TANPA ERROR INDEX) */
+/* 6. MEMUAT DAFTAR MENU FILTERING */
 function loadSellerMenus(sellerId) {
   const menuList = document.getElementById("menuList");
   
-  // Modifikasi Query: Cukup filter berdasarkan sellerId saja agar terhindar dari kewajiban membuat Index Gabungan
   const q = query(
     collection(db, "menus"),
     where("sellerId", "==", sellerId)
@@ -734,20 +778,17 @@ function loadSellerMenus(sellerId) {
       return;
     }
 
-    // Ambil semua dokumen lalu konversi menjadi array agar bisa diurutkan secara manual
     const menusArray = [];
     snapshot.forEach((menuDoc) => {
       menusArray.push({ id: menuDoc.id, ...menuDoc.data() });
     });
 
-    // Urutkan data berdasarkan tanggal 'createdAt' terbaru di sisi browser (Client Side)
     menusArray.sort((a, b) => {
       const dateA = a.createdAt ? a.createdAt.toDate() : new Date(0);
       const dateB = b.createdAt ? b.createdAt.toDate() : new Date(0);
-      return dateB - dateA; // Mengurutkan dari yang paling baru ke lama
+      return dateB - dateA;
     });
 
-    // Render data menu yang sudah terurut ke dalam elemen HTML
     menusArray.forEach((data) => {
       menuList.innerHTML += `
         <div class="menu-card" data-id="${data.id}">
