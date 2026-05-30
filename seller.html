@@ -714,33 +714,49 @@ window.saveMenu = async function() {
   }
 }
 
-/* 6. MEMUAT DAFTAR MENU FILTERING */
+
+/* 6. MEMUAT DAFTAR MENU FILTERING (VERSI AMAN TANPA ERROR INDEX) */
 function loadSellerMenus(sellerId) {
   const menuList = document.getElementById("menuList");
+  
+  // Modifikasi Query: Cukup filter berdasarkan sellerId saja agar terhindar dari kewajiban membuat Index Gabungan
   const q = query(
     collection(db, "menus"),
-    where("sellerId", "==", sellerId),
-    orderBy("createdAt", "desc")
+    where("sellerId", "==", sellerId)
   );
 
   onSnapshot(q, (snapshot) => {
     menuList.innerHTML = "";
+    
     if (snapshot.empty) {
       menuList.innerHTML = `<p style="text-align:center; color:#888; font-size:14px;">Belum ada menu yang Anda jual.</p>`;
       return;
     }
 
+    // Ambil semua dokumen lalu konversi menjadi array agar bisa diurutkan secara manual
+    const menusArray = [];
     snapshot.forEach((menuDoc) => {
-      const data = menuDoc.data();
+      menusArray.push({ id: menuDoc.id, ...menuDoc.data() });
+    });
+
+    // Urutkan data berdasarkan tanggal 'createdAt' terbaru di sisi browser (Client Side)
+    menusArray.sort((a, b) => {
+      const dateA = a.createdAt ? a.createdAt.toDate() : new Date(0);
+      const dateB = b.createdAt ? b.createdAt.toDate() : new Date(0);
+      return dateB - dateA; // Mengurutkan dari yang paling baru ke lama
+    });
+
+    // Render data menu yang sudah terurut ke dalam elemen HTML
+    menusArray.forEach((data) => {
       menuList.innerHTML += `
-        <div class="menu-card" data-id="${menuDoc.id}">
+        <div class="menu-card" data-id="${data.id}">
           <img src="${data.image || 'logo.png'}" onerror="this.src='logo.png'">
           <div class="menu-info">
             <h3>${data.title}</h3>
-            <div class="price">Rp ${data.price.toLocaleString('id-ID')}</div>
+            <div class="price">Rp ${(data.price || 0).toLocaleString('id-ID')}</div>
             <div class="menu-action">
-              <button class="edit-btn" onclick="editMenu('${menuDoc.id}', '${data.title}', '${data.price}')">Edit</button>
-              <button class="delete-btn" onclick="deleteMenu('${menuDoc.id}')">Hapus</button>
+              <button class="edit-btn" onclick="editMenu('${data.id}', '${data.title}', '${data.price}')">Edit</button>
+              <button class="delete-btn" onclick="deleteMenu('${data.id}')">Hapus</button>
             </div>
           </div>
         </div>`;
