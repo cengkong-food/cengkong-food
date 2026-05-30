@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cengkong Food - Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    
+    /* Background dasar PC dibuat abu-abu seperti screenshot */
+    body { 
+      background-color: #e2e8f0; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* KUNCI UKURAN HP DI TENGAH PC */
+    .phone-container {
+      width: 100%;
+      max-width: 430px; /* Standar lebar layar HP modern */
+      height: 100vh;
+      background-color: #f8fafc; /* Warna background dalam aplikasi */
+      display: flex; 
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+
+    /* Header Merah Melengkung Khas Cengkong Food */
+    .header-mobile { 
+      background: linear-gradient(135deg, #e11d48, #be123c); 
+      color: white; 
+      padding: 25px 20px 30px 20px; 
+      text-align: center; 
+      border-bottom-left-radius: 28px; 
+      border-bottom-right-radius: 28px; 
+      box-shadow: 0 4px 12px rgba(190, 18, 60, 0.15); 
+      z-index: 10;
+    }
+    .header-mobile h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+    .header-mobile p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+
+    /* Area Konten Utama (Bisa Di-scroll di dalam frame HP) */
+    .main-content { 
+      flex: 1; 
+      overflow-y: auto; 
+      padding: 24px 18px 90px 18px; 
+      -webkit-overflow-scrolling: touch; 
+    }
+
+    /* Sembunyikan halaman yang tidak aktif */
+    .mobile-page { display: none; }
+    .mobile-page.active { display: block; animation: slideUp 0.3s ease-out; }
+
+    h2 { font-size: 17px; font-weight: 700; color: #be123c; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .date-badge { font-size: 11px; color: #64748b; background: #e2e8f0; padding: 3px 8px; border-radius: 20px; font-weight: 600; display: inline-block; margin-bottom: 18px; }
+
+    /* Gaya Card List Minimalis ala Aplikasi HP */
+    .list-container { display: flex; flex-direction: column; gap: 12px; }
+    
+    .data-card { 
+      background: white; 
+      padding: 14px; 
+      border-radius: 16px; 
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      border: 1px solid #f1f5f9;
+    }
+    .card-info h4 { font-size: 14px; font-weight: 600; color: #1e293b; }
+    .card-info p { font-size: 11px; color: #64748b; margin-top: 2px; }
+   .card-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+    .card-price { font-size: 14px; font-weight: 700; color: #e11d48; }
+
+    /* Badges Status */
+    .badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block; }
+    .badge-buka { background-color: #dcfce7; color: #15803d; }
+    .badge-tutup { background-color: #fee2e2; color: #b91c1c; }
+    .badge-status { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; text-transform: capitalize; }
+
+    /* Kartu Dashboard Total Penjualan */
+    .report-card { 
+      background: linear-gradient(135deg, #ffffff, #fff5f5); 
+      border: 2px solid #ffe4e6; 
+      padding: 30px 20px; 
+      border-radius: 24px; 
+      text-align: center; 
+      box-shadow: 0 4px 10px rgba(225, 29, 72, 0.05);
+      margin-top: 10px;
+    }
+    .report-card i { font-size: 40px; color: #e11d48; margin-bottom: 12px; }
+    .report-card h3 { font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .report-card .total-money { font-size: 32px; color: #be123c; font-weight: 700; margin: 8px 0; }
+    .report-card p { font-size: 12px; color: #475569; }
+
+    /* Menu Navigasi Bawah nempel di dasar container HP */
+    .bottom-nav { 
+      position: absolute; 
+      bottom: 0; 
+      left: 0; 
+      right: 0; 
+      background: rgba(255, 255, 255, 0.95); 
+      backdrop-filter: blur(10px);
+      height: 68px; 
+      display: flex; 
+      justify-content: space-around; 
+      align-items: center; 
+      border-top: 1px solid #e2e8f0; 
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.03);
+      z-index: 100;
+    }
+    .nav-item { 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      background: none; 
+      border: none; 
+      color: #94a3b8; 
+      cursor: pointer; 
+      font-size: 11px; 
+      font-weight: 600; 
+      transition: 0.2s;
+      gap: 4px;
+      flex: 1;
+    }
+    .nav-item i { font-size: 18px; }
+    .nav-item.active { color: #e11d48; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+.btn-hapus{
+  margin-top:8px;
+  background: linear-gradient(135deg,#ef4444,#dc2626);
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:7px 12px;
+  font-size:11px;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  transition:all .2s ease;
+  box-shadow:0 3px 8px rgba(239,68,68,.25);
+}
+
+.btn-hapus:hover{
+  transform:translateY(-2px);
+  box-shadow:0 5px 12px rgba(239,68,68,.35);
+}
+
+.btn-hapus:active{
+  transform:scale(.96);
+}
+.seller-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.btn-delete-icon{
+  width:32px;
+  height:32px;
+  border:none;
+  background:transparent;
+  border-radius:50%;
+  color:#e11d48;
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  transition:.2s;
+}
+
+.btn-delete-icon:hover{
+  background:rgba(225,29,72,.08);
+  color:#be123c;
+}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FRAME HP UTAMA -->
+  <div class="phone-container">
+
+    <!-- Top Header -->
+    <div class="header-mobile">
+      <h1>Cengkong Food</h1>
+      <p>Dashboard Utama Administrator</p>
+    </div>
+
+    <!-- Area Isi Konten (Scrollable di dalam frame HP) -->
+    <div class="main-content">
+
+      <!-- MENU 1: SELLER TERDAFTAR -->
+      <div id="page-sellers" class="mobile-page active">
+        <h2><i class="fa-solid fa-store"></i> Seller Terdaftar</h2>
+        <span class="date-badge">Real-time Kemitraan</span>
+        
+        <div class="list-container" id="seller-list">
+          <div style="text-align:center; color:#94a3b8; font-size:12px; padding:20px;">Mengambil data mitra...</div>
+        </div>
+      </div>
+
+      <!-- MENU 2: ORDERAN HARI INI -->
+      <div id="page-orders" class="mobile-page">
+        <h2><i class="fa-solid fa-bag-shopping"></i> Orderan Hari Ini</h2>
+        <span class="date-badge" id="order-date-label">Tanggal: --</span>
+        
+        <div class="list-container" id="order-list">
+          <div style="text-align:center; color:#94a3b8; font-size:12px; padding:20px;">Mengambil pesanan masuk...</div>
+        </div>
+      </div>
+
+      <!-- MENU 3: TOTAL PENJUALAN (OMSET) -->
+      <div id="page-reports" class="mobile-page">
+        <h2><i class="fa-solid fa-chart-line"></i> Total Penjualan</h2>
+        <span class="date-badge" id="report-date-label">Tanggal: --</span>
+        
+        <div class="report-card">
+          <i class="fa-solid fa-wallet"></i>
+          <h3>Pendapatan Kotor Hari Ini</h3>
+          <div class="total-money" id="live-omset">Rp 0</div>
+          <p>Akumulasi dari <b id="live-count" style="color:#e11d48;">0</b> pesanan masuk.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Menu Navigasi Bawah Sticky di Frame HP -->
+    <div class="bottom-nav">
+      <button class="nav-item active" onclick="switchMobileTab(this, 'page-sellers')">
+        <i class="fa-solid fa-store"></i>
+        <span>Seller</span>
+      </button>
+      <button class="nav-item" onclick="switchMobileTab(this, 'page-orders')">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span>Orderan</span>
+      </button>
+      <button class="nav-item" onclick="switchMobileTab(this, 'page-reports')">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Penjualan</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- JAVASCRIPT CONNECT FIREBASE -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+            getFirestore,
+            collection,
+            onSnapshot,
+            query,
+            where,
+            deleteDoc,
+            doc
+            } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+   const firebaseConfig = {
+  apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
+  authDomain: "food-delivery-97a5f.firebaseapp.com",
+  databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "food-delivery-97a5f",
+  storageBucket: "food-delivery-97a5f.firebasestorage.app",
+  messagingSenderId: "1071083538977",
+  appId: "1:1071083538977:web:51e617513f6fb639cf3160"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const hariIni = new Date().toISOString().split('T')[0];
+    document.getElementById('order-date-label').innerText = "Hari Ini: " + hariIni;
+    document.getElementById('report-date-label').innerText = "Hari Ini: " + hariIni;
+
+    
+// --- SNAPSHOT SELLER (DIPERBAIKI) ---
+// --- SNAPSHOT SELLER (DIPERBAIKI) ---
+onSnapshot(collection(db, "sellers"), (snapshot) => {
+  const sellerList = document.getElementById('seller-list');
+  sellerList.innerHTML = ""; // Bersihkan tampilan agar tidak menumpuk
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    
+    // MENGGUNAKAN 'shopName' SESUAI DATABASE KAMU
+    const namaToko = data.shopName || "Lapak Tanpa Nama";
+    const statusOpen = data.isOpen === true;
+    
+    const statusBadge = statusOpen 
+      ? '<span class="badge badge-buka">BUKA</span>' 
+      : '<span class="badge badge-tutup">TUTUP</span>';
+
+    sellerList.innerHTML += `
+  <div class="data-card">
+    <div class="card-info">
+      <h4>${namaToko}</h4>
+      <p>
+        <i class="fa-regular fa-envelope"></i>
+        ${data.email || 'Tanpa Email'}
+      </p>
+    </div>
+
+  <div class="card-right seller-actions">
+  ${statusBadge}
+
+  <button
+    class="btn-delete-icon"
+    title="Hapus Seller"
+    onclick="hapusSeller('${doc.id}','${namaToko}')">
+    <i class="fa-solid fa-trash"></i>
+  </button>
+</div>
+  </div>
+`;
+  });
+});
+
+// --- SNAPSHOT ORDERS (TANPA FILTER TANGGAL - PASTI MUNCUL) ---
+const ordersRef = collection(db, "orders");
+
+onSnapshot(ordersRef, (snapshot) => {
+    const orderList = document.getElementById('order-list');
+    const liveOmset = document.getElementById('live-omset');
+    const liveCount = document.getElementById('live-count');
+    
+    orderList.innerHTML = "";
+    let totalOmset = 0;
+    let totalTransaksi = 0;
+
+    snapshot.forEach((doc) => {
+        const order = doc.data();
+        
+        // Data langsung diproses tanpa cek tanggal
+        const bill = Number(order.totalBill) || 0;
+        totalOmset += bill;
+        totalTransaksi++;
+
+        orderList.innerHTML += `
+        <div class="data-card">
+          <div class="card-info">
+            <h4>${order.itemsName || 'Paket Makanan'}</h4>
+            <p>ID: ${doc.id.substring(0,8).toUpperCase()} | Tanggal: ${order.orderDate || 'N/A'}</p>
+          </div>
+          <div class="card-right">
+            <div class="card-price">Rp ${bill.toLocaleString('id-ID')}</div>
+            <div class="badge badge-status">${order.status || 'Pending'}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    if (totalTransaksi === 0) {
+        orderList.innerHTML = `<div style="text-align:center; padding:20px;">Belum ada pesanan masuk.</div>`;
+    }
+
+    liveOmset.innerText = "Rp " + totalOmset.toLocaleString('id-ID');
+    liveCount.innerText = totalTransaksi;
+});
+window.hapusSeller = async function(id, nama) {
+  const yakin = confirm(
+    `Yakin ingin menghapus seller "${nama}" ?`
+  );
+
+  if (!yakin) return;
+
+  try {
+    await deleteDoc(doc(db, "sellers", id));
+    alert("Seller berhasil dihapus");
+  } catch (error) {
+    console.error(error);
+    alert("Gagal menghapus seller");
+  }
+}
+    // --- NAVIGATION TABS LOGIC ---
+    window.switchMobileTab = function(buttonElement, pageId) {
+      const pages = document.getElementsByClassName("mobile-page");
+      for (let i = 0; i < pages.length; i++) {
+        pages[i].classList.remove("active");
+      }
+      const navItems = document.getElementsByClassName("nav-item");
+      for (let i = 0; i < navItems.length; i++) {
+        navItems[i].classList.remove("active");
+      }
+      document.getElementById(pageId).classList.add("active");
+      buttonElement.classList.add("active");
+    }
+  </script>
+</body>
+</html>

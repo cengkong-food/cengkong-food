@@ -1,0 +1,1570 @@
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:#dcdcdc;
+  font-family:'Poppins',sans-serif;
+  overflow-x:hidden;
+}
+
+/* =========================================================
+   MOBILE WRAPPER
+========================================================= */
+
+.mobile-wrapper{
+  width:100%;
+  max-width:430px;
+
+  min-height:100vh;
+
+  margin:0 auto;
+
+  background:white;
+
+  overflow:hidden;
+
+  position:relative;
+
+  box-shadow:0 0 30px rgba(0,0,0,0.12);
+
+  padding-top:88px;
+  padding-bottom:95px;
+}
+
+/* =========================================================
+   NAVBAR TOP FINAL
+========================================================= */
+
+.navbar{
+  position:fixed;
+
+  top:0;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  width:100%;
+  max-width:430px;
+
+  height:78px;
+
+  background:white;
+
+  display:flex;
+  align-items:center;
+
+  gap:10px;
+
+  padding:0 12px;
+
+  z-index:9999;
+
+  border-bottom:1px solid #f1f1f1;
+}
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.navbar-left{
+  display:flex;
+  align-items:center;
+
+  flex-shrink:0;
+}
+
+.brand-logo{
+  width:74px;
+  height:auto;
+
+  object-fit:contain;
+
+  display:block;
+}
+
+/* =========================================================
+   SEARCH BAR
+========================================================= */
+
+.search-modern{
+  flex:1;
+
+  height:48px;
+
+  background:#f7f7f7;
+
+  border-radius:18px;
+
+  display:flex;
+  align-items:center;
+
+  gap:10px;
+
+  padding:0 14px;
+
+  border:1px solid #f0f0f0;
+
+  overflow:hidden;
+}
+
+.search-modern i{
+  font-size:18px;
+  color:#999;
+
+  flex-shrink:0;
+}
+
+.search-modern input{
+  flex:1;
+
+  border:none;
+  outline:none;
+
+  background:transparent;
+
+  font-size:15px;
+
+  font-family:'Poppins',sans-serif;
+
+  width:100%;
+}
+
+/* HILANGKAN TOMBOL SEARCH MERAH */
+
+.filter-btn{
+  display:none;
+}
+
+/* =========================================================
+   RIGHT MENU
+========================================================= */
+
+.navbar-right{
+  display:flex;
+  align-items:center;
+
+  gap:8px;
+
+  flex-shrink:0;
+}
+
+/* =========================================================
+   NOTIF
+========================================================= */
+
+.notif-btn{
+  width:38px;
+  height:38px;
+
+  border-radius:50%;
+
+  background:#f7f7f7;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+  flex-shrink:0;
+}
+
+.notif-btn i{
+  font-size:20px;
+  color:#444;
+}
+
+/* HILANGKAN BADGE */
+
+.notif-badge{
+  display:none;
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.profile-mini{
+  width:42px;
+  height:42px;
+
+  border-radius:50%;
+
+  background:#ff3131;
+
+  color:white;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:18px;
+  font-weight:700;
+
+  flex-shrink:0;
+
+  cursor:pointer;
+}
+/* =========================================================
+   SCROLL SHADOW
+========================================================= */
+
+.navbar.scrolled{
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+  width:92%;
+
+  margin:18px auto;
+
+  min-height:360px;
+
+  border-radius:35px;
+
+  overflow:hidden;
+
+  position:relative;
+
+  background:
+  linear-gradient(
+    90deg,
+    rgba(255,30,30,0.90),
+    rgba(120,0,0,0.95)
+  ),
+
+  url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1600');
+
+  background-size:cover;
+  background-position:center;
+
+  display:flex;
+  align-items:center;
+
+  padding:40px;
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+
+  max-width:650px;
+
+  color:white;
+}
+
+.hero-content h1{
+  line-height:1.1;
+
+  margin-bottom:20px;
+
+  color:white;
+
+  font-size:24px;
+  font-weight:700;
+}
+
+.hero-content h1 span{
+  color:#ffd54f;
+
+  font-size:40px;
+  font-weight:800;
+}
+
+.hero-content p{
+  font-size:22px;
+
+  line-height:1.7;
+
+  margin-bottom:40px;
+}
+
+.hero-features{
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:15px;
+}
+
+.feature-box{
+  background:rgba(255,255,255,0.15);
+
+  padding:18px 25px;
+
+  border-radius:18px;
+
+  backdrop-filter:blur(10px);
+
+  font-weight:600;
+}
+
+/* =========================================================
+   CARD CONTAINER
+========================================================= */
+
+.card-container{
+  display:flex;
+  flex-direction:column;
+
+  padding-bottom:140px;
+}
+
+/* =========================================================
+   FOOD CARD
+========================================================= */
+
+.food-card-mobile{
+  display:flex;
+
+  align-items:flex-start;
+
+  gap:14px;
+
+  padding:16px;
+
+  background:white;
+
+  border-bottom:1px solid #ececec;
+}
+
+.food-mobile-img{
+  width:120px;
+  height:145px;
+
+  object-fit:cover;
+
+  border-radius:18px;
+
+  flex-shrink:0;
+}
+
+.food-mobile-info{
+  flex:1;
+}
+
+.food-mobile-info h3{
+  font-size:20px;
+
+  line-height:1.3;
+
+  margin-bottom:6px;
+
+  font-weight:700;
+}
+
+.food-desc{
+  color:#666;
+
+  font-size:14px;
+
+  margin-bottom:10px;
+}
+
+.food-meta{
+  display:flex;
+  align-items:center;
+
+  gap:8px;
+
+  font-size:14px;
+
+  color:#444;
+
+  margin-bottom:14px;
+}
+
+.food-order-btn{
+  width:110px;
+  height:42px;
+
+  border:none;
+
+  border-radius:14px;
+
+  background:#ff4d4f;
+
+  color:white;
+
+  font-size:15px;
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:0.2s;
+}
+
+.food-order-btn:hover{
+  transform:translateY(-2px);
+}
+
+/* =========================================================
+   FLOATING CART
+========================================================= */
+
+.floating-cart{
+  position:fixed;
+
+  right:25px;
+  bottom:100px;
+
+  width:72px;
+  height:72px;
+
+  border-radius:50%;
+
+  background:#ff2d2d;
+
+  color:white;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  font-size:30px;
+
+  cursor:pointer;
+
+  z-index:4000;
+
+  box-shadow:0 15px 30px rgba(0,0,0,0.25);
+}
+
+.cart-badge{
+  position:absolute;
+
+  top:-5px;
+  right:-5px;
+
+  width:28px;
+  height:28px;
+
+  border-radius:50%;
+
+  background:white;
+
+  color:#ff2d2d;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  font-weight:700;
+}
+
+/* =========================================================
+   STICKY CART
+========================================================= */
+
+.sticky-cart{
+  position:fixed;
+
+  left:50%;
+  transform:translateX(-50%);
+
+  bottom:90px;
+
+  width:90%;
+  max-width:850px;
+
+  background:white;
+
+  border-radius:25px;
+
+  padding:18px 25px;
+
+  box-shadow:0 15px 40px rgba(0,0,0,0.15);
+
+  display:none;
+
+  justify-content:space-between;
+  align-items:center;
+
+  z-index:3500;
+}
+
+.sticky-left{
+  display:flex;
+  align-items:center;
+
+  gap:15px;
+}
+
+.sticky-cart button{
+  border:none;
+
+  background:#ff2d2d;
+
+  color:white;
+
+  padding:15px 25px;
+
+  border-radius:14px;
+
+  cursor:pointer;
+
+  font-weight:600;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+
+  background:rgba(0,0,0,0.5);
+
+  display:none;
+
+  justify-content:center;
+  align-items:center;
+
+  padding:20px;
+
+  z-index:6000;
+}
+
+.modal-content{
+  background:white;
+
+  width:100%;
+  max-width:650px;
+
+  border-radius:30px;
+
+  padding:25px;
+
+  position:relative;
+
+  max-height:90vh;
+
+  overflow:auto;
+}
+
+.close{
+  position:absolute;
+
+  top:20px;
+  right:25px;
+
+  font-size:32px;
+
+  cursor:pointer;
+}
+
+.modal-image{
+  width:100%;
+  height:250px;
+
+  object-fit:cover;
+
+  border-radius:20px;
+
+  margin-bottom:20px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.add-cart-btn{
+  width:100%;
+
+  margin-top:25px;
+
+  padding:16px;
+
+  border:none;
+
+  border-radius:18px;
+
+  background:linear-gradient(
+    135deg,
+    #ff3131,
+    #ff5757
+  );
+
+  color:white;
+
+  font-size:18px;
+  font-weight:700;
+
+  cursor:pointer;
+}
+
+.wa-btn{
+  width:100%;
+
+  margin-top:20px;
+
+  border:none;
+
+  background:#25D366;
+
+  color:white;
+
+  padding:18px;
+
+  border-radius:16px;
+
+  cursor:pointer;
+
+  font-size:18px;
+  font-weight:600;
+}
+
+.cancel-btn{
+  width:100%;
+
+  margin-top:12px;
+
+  border:none;
+
+  background:#ef4444;
+
+  color:white;
+
+  padding:16px;
+
+  border-radius:16px;
+
+  cursor:pointer;
+
+  font-size:16px;
+  font-weight:600;
+}
+
+/* =========================================================
+   BOTTOM NAVBAR
+========================================================= */
+
+.bottom-navbar{
+  position:fixed;
+
+  bottom:0;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  width:100%;
+  max-width:430px;
+
+  height:78px;
+
+  background:white;
+
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+
+  border-top:1px solid #ececec;
+
+  z-index:9999;
+}
+
+.bottom-item{
+  border:none;
+  background:none;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  gap:4px;
+
+  cursor:pointer;
+
+  color:#666;
+
+  font-size:12px;
+
+  font-family:'Poppins',sans-serif;
+
+  transition:0.2s;
+}
+
+.bottom-item i{
+  font-size:25px;
+}
+
+.bottom-item.active{
+  color:#ff3131;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast{
+  position:fixed;
+
+  left:50%;
+  transform:translateX(-50%);
+
+  bottom:120px;
+
+  background:#111;
+
+  color:white;
+
+  padding:18px 28px;
+
+  border-radius:14px;
+
+  display:none;
+
+  z-index:5000;
+}
+
+/* =========================================================
+   MAP
+========================================================= */
+
+#deliveryMap{
+  width:100%;
+  height:260px;
+
+  border-radius:20px;
+
+  overflow:hidden;
+
+  margin-top:20px;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:768px){
+
+  .hero{
+    min-height:300px;
+    padding:35px;
+  }
+
+  .hero-content h1{
+    font-size:20px;
+  }
+
+  .hero-content p{
+    font-size:18px;
+  }
+
+  .sticky-cart{
+    flex-direction:column;
+    gap:15px;
+  }
+
+}
+/* =========================================================
+   FIX POPUP VARIAN & KERANJANG
+========================================================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+
+  background:rgba(0,0,0,0.5);
+
+  display:none;
+
+  justify-content:center;
+  align-items:center;
+
+  padding:20px;
+
+  z-index:6000;
+}
+
+.modal-content{
+  background:white;
+
+  width:100%;
+  max-width:650px;
+
+  border-radius:30px;
+
+  padding:25px;
+
+  position:relative;
+
+  max-height:90vh;
+
+  overflow:auto;
+}
+
+/* CLOSE */
+
+.close{
+  position:absolute;
+
+  top:20px;
+  right:25px;
+
+  font-size:32px;
+
+  cursor:pointer;
+}
+
+/* IMAGE */
+
+.modal-image{
+  width:100%;
+  height:250px;
+
+  object-fit:cover;
+
+  border-radius:20px;
+
+  margin-bottom:20px;
+}
+
+/* VARIANT ITEM */
+
+.variant-item,
+.cart-item{
+  display:flex;
+
+  justify-content:space-between;
+  align-items:center;
+
+  padding:18px 0;
+
+  border-bottom:1px solid #eee;
+}
+
+/* QTY */
+
+.qty-control{
+  display:flex;
+  align-items:center;
+
+  gap:12px;
+}
+
+.qty-control button{
+  width:38px;
+  height:38px;
+
+  border:none;
+
+  border-radius:10px;
+
+  background:#ff2d2d;
+
+  color:white;
+
+  font-size:20px;
+
+  cursor:pointer;
+}
+
+/* CART MODERN */
+
+.cart-modern-item{
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  gap:15px;
+
+  padding:18px 0;
+
+  border-bottom:1px solid #eee;
+}
+
+.cart-modern-img{
+  width:80px;
+  height:80px;
+
+  object-fit:cover;
+
+  border-radius:16px;
+}
+
+.cart-modern-info{
+  flex:1;
+}
+
+.cart-modern-info h4{
+  font-size:18px;
+  margin-bottom:5px;
+}
+
+.cart-modern-info p{
+  color:#666;
+}
+
+.cart-modern-action{
+  display:flex;
+  flex-direction:column;
+
+  align-items:flex-end;
+
+  gap:10px;
+}
+
+.cart-modern-action h5{
+  color:#ff2d2d;
+  font-size:16px;
+}
+
+/* BUTTON */
+
+.add-cart-btn{
+  width:100%;
+
+  margin-top:25px;
+
+  padding:16px;
+
+  border:none;
+
+  border-radius:18px;
+
+  background:linear-gradient(
+    135deg,
+    #ff3131,
+    #ff5757
+  );
+
+  color:white;
+
+  font-size:18px;
+  font-weight:700;
+
+  cursor:pointer;
+}
+
+.wa-btn{
+  width:100%;
+
+  margin-top:20px;
+
+  border:none;
+
+  background:#25D366;
+
+  color:white;
+
+  padding:18px;
+
+  border-radius:16px;
+
+  cursor:pointer;
+
+  font-size:18px;
+  font-weight:600;
+}
+
+.cancel-btn{
+  width:100%;
+
+  margin-top:12px;
+
+  border:none;
+
+  background:#ef4444;
+
+  color:white;
+
+  padding:16px;
+
+  border-radius:16px;
+
+  cursor:pointer;
+
+  font-size:16px;
+  font-weight:600;
+}
+/* =========================================================
+   FIX VARIANT IMAGE
+========================================================= */
+
+.variant-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  gap:14px;
+
+  padding:18px 0;
+
+  border-bottom:1px solid #eee;
+}
+
+/* kiri */
+
+.variant-left{
+  display:flex;
+  align-items:center;
+
+  gap:12px;
+
+  flex:1;
+}
+
+/* gambar */
+
+.variant-img{
+  width:58px;
+  height:58px;
+
+  border-radius:14px;
+
+  object-fit:cover;
+
+  flex-shrink:0;
+}
+
+/* text */
+
+.variant-info h4{
+  font-size:15px;
+  margin-bottom:4px;
+}
+
+.variant-info p{
+  font-size:14px;
+  color:#666;
+}
+
+/* =========================================================
+   BALIKKAN TOMBOL LOKASI SEPERTI SEMULA
+========================================================= */
+
+.location-btn{
+  width:100%;
+
+  padding:16px;
+
+  border:none;
+
+  border-radius:14px;
+
+  background:#2563eb;
+
+  color:white;
+
+  font-size:16px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  margin-top:20px;
+}
+/* =========================================================
+   PROFILE INITIAL
+========================================================= */
+
+.profile-mini{
+  width:42px;
+  height:42px;
+
+  border-radius:50%;
+
+  background:#ff3131;
+
+  color:white;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:16px;
+  font-weight:700;
+
+  font-family:'Poppins',sans-serif;
+
+  flex-shrink:0;
+
+  cursor:pointer;
+
+  text-transform:uppercase;
+}
+.profile-box{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+}
+
+#profileName{
+  font-size:10px;
+  font-weight:600;
+  color:#444;
+  max-width:50px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+/* =========================
+   LOGIN MODERN ICON
+========================= */
+
+.login-modern{
+
+  width:44px;
+  height:44px;
+
+  border-radius:50%;
+
+  background:linear-gradient(
+    135deg,
+    #ff3131,
+    #ff5a5a
+  );
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  text-decoration:none;
+
+  color:white;
+
+  box-shadow:
+  0 8px 20px rgba(255,49,49,0.25);
+
+  transition:0.25s;
+}
+
+.login-modern:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:
+  0 12px 24px rgba(255,49,49,0.35);
+
+}
+
+.login-modern i{
+
+  font-size:18px;
+
+}
+/* =========================
+   LOGIN BUTTON
+========================= */
+.login-modern{
+
+  background:linear-gradient(
+    135deg,
+    #ff3131,
+    #ff5a5a
+  );
+
+  color:white;
+
+  border:none;
+
+  padding:7px 14px;
+
+  height:36px;
+
+  border-radius:12px;
+
+  font-size:12px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  box-shadow:
+  0 6px 16px rgba(255,49,49,0.25);
+
+  transition:0.25s;
+
+}
+
+.login-modern:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:
+  0 10px 20px rgba(255,49,49,0.35);
+
+}
+
+.login-modern:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:
+  0 12px 24px rgba(255,49,49,0.35);
+
+}
+/* --- TANDA STATUS BUKA / TUTUP DI KARTU MAKANAN USER --- */
+.badge-status {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  color: white;
+  border-radius: 8px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.buka { 
+  background-color: #2ecc71; 
+}
+.tutup { 
+  background-color: #e74c3c; 
+}
+/* =========================================================
+   FIX RESPONSIVE HP
+========================================================= */
+
+html,
+body{
+  width:100%;
+  overflow-x:hidden;
+}
+
+/* WRAPPER */
+.mobile-wrapper{
+  width:100%;
+  max-width:430px;
+  margin:0 auto;
+  overflow-x:hidden;
+}
+
+/* SEMUA ELEMENT JANGAN MELEBAR */
+*{
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+/* =========================================================
+   FORM TAMBAH MENU
+========================================================= */
+
+/* container form */
+.tambah-menu{
+  width:100%;
+  padding:20px;
+}
+
+/* row upload + input */
+.form-row{
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+
+  width:100%;
+}
+
+/* upload gambar */
+.upload-box{
+  width:120px;
+  min-width:120px;
+  height:170px;
+
+  border:2px dashed #ff3152;
+  border-radius:24px;
+
+  background:#fff4f6;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+
+  text-align:center;
+}
+
+/* area kanan */
+.form-input{
+  flex:1;
+  width:100%;
+}
+
+/* input */
+.form-input input{
+  width:100%;
+  height:56px;
+
+  border:none;
+  outline:none;
+
+  background:#f5f5f5;
+
+  border-radius:18px;
+
+  padding:0 18px;
+
+  font-size:16px;
+
+  margin-bottom:14px;
+}
+
+/* harga */
+.harga-row{
+  display:flex;
+  gap:10px;
+
+  width:100%;
+}
+
+.harga-row input{
+  flex:1;
+}
+
+/* label RP */
+.rp-box{
+  width:80px;
+  height:56px;
+
+  background:#f5f5f5;
+
+  border-radius:18px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:18px;
+  font-weight:700;
+}
+
+/* =========================================================
+   VARIANT
+========================================================= */
+
+.variant-row{
+  display:flex;
+  gap:10px;
+
+  width:100%;
+  margin-top:14px;
+}
+
+.variant-row input{
+  flex:1;
+  min-width:0;
+
+  height:54px;
+
+  border:none;
+  outline:none;
+
+  background:#f5f5f5;
+
+  border-radius:16px;
+
+  padding:0 14px;
+}
+
+/* tombol tambah */
+.add-variant-btn{
+  width:56px;
+  height:56px;
+
+  border:none;
+
+  border-radius:18px;
+
+  background:#ff3152;
+
+  color:white;
+
+  font-size:30px;
+
+  flex-shrink:0;
+}
+
+/* =========================================================
+   BUTTON SIMPAN
+========================================================= */
+
+.save-menu-btn{
+  width:100%;
+
+  height:60px;
+
+  border:none;
+
+  border-radius:22px;
+
+  background:#ff0050;
+
+  color:white;
+
+  font-size:22px;
+  font-weight:700;
+
+  margin-top:22px;
+}
+
+/* =========================================================
+   CARD MENU
+========================================================= */
+
+.menu-card{
+  width:100%;
+
+  display:flex;
+  gap:14px;
+
+  padding:14px;
+
+  background:white;
+
+  border-radius:24px;
+}
+
+.menu-card img{
+  width:110px;
+  height:90px;
+
+  object-fit:cover;
+
+  border-radius:18px;
+}
+
+.menu-card-info{
+  flex:1;
+  min-width:0;
+}
+
+/* =========================================================
+   HERO MOBILE
+========================================================= */
+
+.hero{
+  width:92%;
+  margin:16px auto;
+
+  padding:24px;
+}
+
+/* =========================================================
+   RESPONSIVE HP KECIL
+========================================================= */
+
+@media(max-width:390px){
+
+  .form-row{
+    flex-direction:column;
+  }
+
+  .upload-box{
+    width:100%;
+    height:180px;
+  }
+
+  .rp-box{
+    width:70px;
+  }
+
+}
+/* =========================================
+   FIX KHUSUS HP ANDROID
+========================================= */
+
+html,
+body{
+  width:100%;
+  overflow-x:hidden;
+}
+
+/* semua elemen */
+*{
+  box-sizing:border-box;
+}
+
+/* wrapper */
+.mobile-wrapper{
+  width:100%;
+  max-width:430px;
+  margin:0 auto;
+  overflow-x:hidden;
+}
+
+/* container form */
+.form-row{
+  display:flex;
+  align-items:flex-start;
+
+  gap:12px;
+
+  width:100%;
+}
+
+/* upload gambar */
+.upload-box{
+  width:110px;
+  min-width:110px;
+}
+
+/* area kanan */
+.form-input{
+  flex:1;
+  min-width:0;
+}
+
+/* input */
+.form-input input{
+  width:100%;
+  min-width:0;
+}
+
+/* variant row */
+.variant-row{
+  display:flex;
+  gap:10px;
+
+  width:100%;
+}
+
+/* input variant */
+.variant-row input{
+  flex:1;
+  min-width:0;
+}
+
+/* tombol plus */
+.add-variant-btn{
+  width:56px;
+  min-width:56px;
+
+  flex-shrink:0;
+}
+
+/* tombol simpan */
+.save-menu-btn{
+  width:100%;
+}
+
+/* KHUSUS HP KECIL */
+@media(max-width:390px){
+
+  .form-row{
+    flex-direction:column;
+  }
+
+  .upload-box{
+    width:100%;
+  }
+
+}

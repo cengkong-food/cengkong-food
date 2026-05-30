@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seller Dashboard - Cengkong Food</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* 1. RESET BASE & PERATAAN CENTER UTAMA */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #ececec;
+  display: flex;
+  justify-content: center; /* Membuat kontainer .mobile berada persis di tengah layar browser */
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+/* 2. KONTAINER SIMULASI HP */
+.mobile {
+  width: 100%;
+  max-width: 430px; /* Batas lebar maksimal seukuran layar HP */
+  min-height: 100vh;
+  background: #f5f5f5;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 3. ELEMEN ATAS / HEADER */
+.topbar {
+  background: #ff0037;
+  color: white;
+  padding: 25px 18px 120px;
+}
+
+.shop-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shop-left {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.shop-logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: white;
+  padding: 8px;
+  object-fit: cover;
+}
+
+.shop-text h1 {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+/* 4. SAKLAR STATUS TOKO */
+.status-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.status-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 8px;
+  border-radius: 20px;
+  color: white;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .3s;
+  border-radius: 22px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2ecc71;
+}
+
+input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+/* 5. TOMBOL KELUAR */
+.logout-btn {
+  border: none;
+  background: white;
+  color: #ff0037;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.logout-btn:active {
+  transform: scale(0.95);
+}
+
+/* 6. FORM TAMBAH MENU */
+.form-card {
+  background: white;
+  margin-top: -70px;
+  border-radius: 30px 30px 0 0;
+  padding: 20px;
+  box-shadow: 0 -5px 15px rgba(0,0,0,0.02);
+}
+
+.form-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.form-flex {
+  display: flex;
+  gap: 15px;
+}
+
+.upload-box {
+  width: 130px;
+  height: 170px;
+  border: 2px dashed #ff0037;
+  border-radius: 24px;
+  background: #fff2f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.upload-box i {
+  font-size: 32px;
+  color: #ff0037;
+}
+
+.upload-box span {
+  margin-top: 8px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+#previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 2;
+}
+
+.form-right {
+  flex: 1;
+}
+
+.input-box {
+  width: 100%;
+  height: 50px;
+  border: 2px solid #eee;
+  border-radius: 16px;
+  padding: 0 16px;
+  margin-bottom: 14px;
+  font-size: 15px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.input-box:focus {
+  border-color: #ff0037;
+}
+
+.price-row {
+  display: flex;
+}
+
+.price-row input {
+  flex: 1;
+  border-radius: 16px 0 0 16px;
+  margin-bottom: 0;
+}
+
+.rp {
+  width: 60px;
+  height: 50px;
+  background: #fafafa;
+  border: 2px solid #eee;
+  border-left: none;
+  border-radius: 0 16px 16px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+}
+
+/* 7. VARIAN */
+.variant-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0 14px;
+}
+
+.add-variant-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  background: #ff0037;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.variant-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.variant-item {
+  display: flex;
+  gap: 10px;
+}
+
+.variant-item input {
+  flex: 1;
+  height: 46px;
+  border: none;
+  background: #f3f3f3;
+  border-radius: 14px;
+  padding: 0 14px;
+  outline: none;
+}
+
+.save-btn {
+  width: 100%;
+  height: 54px;
+  border: none;
+  border-radius: 16px;
+  background: #ff0037;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.save-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* 8. DAFTAR MENU SAYA */
+.content {
+  padding: 20px;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.menu-card {
+  background: white;
+  border-radius: 20px;
+  padding: 12px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.menu-card img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 18px;
+}
+
+.menu-info {
+  flex: 1;
+}
+
+.menu-info h3 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.price {
+  color: #ff0037;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.menu-action {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.edit-btn,
+.delete-btn {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.edit-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.delete-btn {
+  background: #ff0037;
+  color: white;
+}
+
+/* 9. MODAL EDIT POPUP */
+.edit-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.edit-content {
+  width: 90%;
+  max-width: 380px;
+  background: white;
+  border-radius: 24px;
+  padding: 20px;
+}
+
+.edit-content h2 {
+  margin-bottom: 18px;
+  font-size: 20px;
+}
+
+.edit-input {
+  width: 100%;
+  height: 48px;
+  border: 2px solid #eee;
+  border-radius: 14px;
+  padding: 0 14px;
+  margin-bottom: 12px;
+  outline: none;
+}
+
+.edit-variant-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.edit-variant-row input {
+  flex: 1;
+  height: 44px;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  padding: 0 12px;
+}
+
+.edit-action {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.cancel-btn,
+.save-edit-btn {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #eee;
+}
+
+.save-edit-btn {
+  background: #ff0037;
+  color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="mobile">
+  <div class="topbar">
+    <div class="shop-info">
+      <div class="shop-left">
+        <img src="logo.png" class="shop-logo">
+        <div class="shop-text">
+          <div style="font-size: 10px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">
+            Lapak Pedagang
+          </div>
+          <h1>Memuat Toko...</h1>
+          <div class="status-container">
+            <span class="status-label" id="statusLabel">TUTUP</span>
+            <label class="switch">
+              <input type="checkbox" id="shopStatusToggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Keluar</button>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-title">Tambah Menu</div>
+    <div class="form-flex">
+      <label class="upload-box">
+        <img id="previewImage">
+        <i>⬆</i>
+        <span>Upload<br>Gambar</span>
+        <input type="file" id="menuImage" accept="image/*" hidden>
+      </label>
+
+      <div class="form-right">
+        <input type="text" id="menuName" class="input-box" placeholder="Nama Menu">
+        <div class="price-row">
+          <input type="number" id="menuPrice" class="input-box" placeholder="Harga">
+          <div class="rp">Rp</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="variant-top">
+      <h3>Variant</h3>
+      <button class="add-variant-btn" onclick="addVariant()">+</button>
+    </div>
+
+    <div class="variant-list" id="variantContainer">
+      <div class="variant-item">
+        <input type="text" placeholder="Nama Variant">
+        <input type="number" placeholder="Harga">
+      </div>
+    </div>
+
+    <button class="save-btn" id="saveBtn" onclick="saveMenu()">Simpan Menu</button>
+  </div>
+
+  <div class="content">
+    <h2 style="margin-bottom:16px;">Menu Saya</h2>
+    <div id="menuList" class="menu-list"></div>
+  </div>
+</div>
+
+<div id="editModal" class="edit-modal">
+  <div class="edit-content">
+    <h2>Edit Menu</h2>
+    <input type="text" id="editMenuName" class="edit-input" placeholder="Nama Menu">
+    <input type="number" id="editMenuPrice" class="edit-input" placeholder="Harga Menu">
+    <div id="editVariantContainer"></div>
+    <div class="edit-action">
+      <button onclick="closeEditModal()" class="cancel-btn">Batal</button>
+      <button onclick="saveEditMenu()" class="save-edit-btn">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, getDoc, setDoc, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// SUDAH DIPERBAIKI: Menghapus deklarasi ganda config yang error sebelumnya
+const firebaseConfig = {
+  apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
+  authDomain: "food-delivery-97a5f.firebaseapp.com",
+  databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "food-delivery-97a5f",
+  storageBucket: "food-delivery-97a5f.firebasestorage.app",
+  messagingSenderId: "1071083538977",
+  appId: "1:1071083538977:web:51e617513f6fb639cf3160"
+};
+
+const CLOUDINARY_CLOUD_NAME = "drx5myfyj"; 
+const CLOUDINARY_UPLOAD_PRESET = "cengkong-food"; 
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* 1. PROTEKSI GERBANG LOGIN */
+const savedRole = localStorage.getItem("userRole");
+if (!savedRole || savedRole !== "seller") {
+  window.location.href = "seller-login.html";
+}
+
+let statusUnsubscribe = null;
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const shopText = document.querySelector(".shop-text h1");
+    if (shopText) {
+      shopText.innerText = user.displayName || "Warung Mitra";
+    }
+
+    const sellerDocRef = doc(db, "sellers", user.uid);
+    
+    statusUnsubscribe = onSnapshot(sellerDocRef, (docSnap) => {
+      const toggle = document.getElementById("shopStatusToggle");
+      const label = document.getElementById("statusLabel");
+      
+      if (docSnap.exists() && docSnap.data().isOpen === true) {
+        toggle.checked = true;
+        label.innerText = "BUKA";
+        label.style.background = "#2ecc71";
+      } else {
+        toggle.checked = false;
+        label.innerText = "TUTUP";
+        label.style.background = "rgba(0,0,0,0.3)";
+      }
+    });
+
+    loadSellerMenus(user.uid);
+
+  } else {
+    if(statusUnsubscribe) statusUnsubscribe();
+    setTimeout(() => {
+      if (!auth.currentUser) {
+        localStorage.removeItem("userRole");
+        window.location.href = "seller-login.html";
+      }
+    }, 2000);
+  }
+});
+
+/* EVENT TOGGLE SAKLAR STATUS */
+document.getElementById("shopStatusToggle").onchange = async function(e) {
+  const user = auth.currentUser;
+  if (!user) return;
+  
+  const sellerDocRef = doc(db, "sellers", user.uid);
+  try {
+    await updateDoc(sellerDocRef, { isOpen: e.target.checked });
+  } catch (error) {
+    await setDoc(sellerDocRef, {
+      uid: user.uid,
+      shopName: user.displayName || "Warung Mitra",
+      isOpen: e.target.checked
+    }, { merge: true });
+  }
+};
+
+/* 2. LOGOUT */
+document.getElementById("logoutBtn").onclick = async function() {
+  const yakin = confirm("Apakah Anda yakin ingin keluar?");
+  if (!yakin) return;
+  if(statusUnsubscribe) statusUnsubscribe();
+  try {
+    await signOut(auth);
+    localStorage.removeItem("userRole");
+    window.location.href = "seller-login.html";
+  } catch (error) {
+    console.error("Gagal Logout: ", error);
+  }
+}
+
+/* 3. PREVIEW GAMBAR */
+const menuImage = document.getElementById("menuImage");
+menuImage.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const preview = document.getElementById("previewImage");
+    preview.src = event.target.result;
+    preview.style.display = "block";
+    document.querySelector(".upload-box i").style.display = "none";
+    document.querySelector(".upload-box span").style.display = "none";
+  }
+  reader.readAsDataURL(file);
+});
+
+/* 4. VARIAN */
+window.addVariant = function() {
+  const div = document.createElement("div");
+  div.className = "variant-item";
+  div.innerHTML = `<input type="text" placeholder="Nama Variant"><input type="number" placeholder="Harga">`;
+  document.getElementById("variantContainer").appendChild(div);
+}
+
+/* 5. SIMPAN MENU */
+window.saveMenu = async function() {
+  const saveBtn = document.getElementById("saveBtn");
+  try {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const title = document.getElementById("menuName").value.trim();
+    const price = document.getElementById("menuPrice").value;
+    const imageFile = document.getElementById("menuImage").files[0];
+
+    if (title === "" || price === "" || !imageFile) {
+      alert("Mohon lengkapi semua data beserta gambarnya!");
+      return;
+    }
+
+    saveBtn.innerText = "Mengunggah Gambar...";
+    saveBtn.disabled = true;
+
+    const variants = [];
+    document.querySelectorAll(".variant-item").forEach((item) => {
+      const inputs = item.querySelectorAll("input");
+      if (inputs[0].value.trim() && inputs[1].value) {
+        variants.push({ name: inputs[0].value.trim(), price: Number(inputs[1].value) });
+      }
+    });
+
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+    const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+      method: "POST",
+      body: formData
+    });
+    const cloudinaryData = await cloudinaryResponse.json();
+    const imageUrl = cloudinaryData.secure_url;
+
+    saveBtn.innerText = "Menyimpan Menu...";
+    await addDoc(collection(db, "menus"), {
+      sellerId: user.uid,
+      title: title,
+      price: Number(price),
+      image: imageUrl, 
+      variants: variants,
+      createdAt: new Date()
+    });
+
+    alert("Menu makanan berhasil ditambahkan!");
+    document.getElementById("menuName").value = "";
+    document.getElementById("menuPrice").value = "";
+    document.getElementById("menuImage").value = "";
+    document.getElementById("previewImage").style.display = "none";
+    document.querySelector(".upload-box i").style.display = "block";
+    document.querySelector(".upload-box span").style.display = "block";
+    document.getElementById("variantContainer").innerHTML = `<div class="variant-item"><input type="text" placeholder="Nama Variant"><input type="number" placeholder="Harga"></div>`;
+  } catch (error) {
+    alert("Gagal: " + error.message);
+  } finally {
+    saveBtn.innerText = "Simpan Menu";
+    saveBtn.disabled = false;
+  }
+}
+
+/* 6. MEMUAT DAFTAR MENU FILTERING */
+function loadSellerMenus(sellerId) {
+  const menuList = document.getElementById("menuList");
+  const q = query(
+    collection(db, "menus"),
+    where("sellerId", "==", sellerId),
+    orderBy("createdAt", "desc")
+  );
+
+  onSnapshot(q, (snapshot) => {
+    menuList.innerHTML = "";
+    if (snapshot.empty) {
+      menuList.innerHTML = `<p style="text-align:center; color:#888; font-size:14px;">Belum ada menu yang Anda jual.</p>`;
+      return;
+    }
+
+    snapshot.forEach((menuDoc) => {
+      const data = menuDoc.data();
+      menuList.innerHTML += `
+        <div class="menu-card" data-id="${menuDoc.id}">
+          <img src="${data.image || 'logo.png'}" onerror="this.src='logo.png'">
+          <div class="menu-info">
+            <h3>${data.title}</h3>
+            <div class="price">Rp ${data.price.toLocaleString('id-ID')}</div>
+            <div class="menu-action">
+              <button class="edit-btn" onclick="editMenu('${menuDoc.id}', '${data.title}', '${data.price}')">Edit</button>
+              <button class="delete-btn" onclick="deleteMenu('${menuDoc.id}')">Hapus</button>
+            </div>
+          </div>
+        </div>`;
+    });
+  });
+}
+
+/* HAPUS MENU */
+window.deleteMenu = async function(menuId) {
+  const yakin = confirm("Yakin ingin menghapus menu ini?");
+  if (!yakin) return;
+  try {
+    await deleteDoc(doc(db, "menus", menuId));
+    alert("Menu berhasil dihapus!");
+  } catch (error) {
+    console.error(error);
+    alert("Gagal menghapus menu");
+  }
+}
+
+window.closeEditModal = function() {
+  document.getElementById("editModal").style.display = "none";
+}
+
+window.saveEditMenu = async function() {
+  try {
+    const title = document.getElementById("editMenuName").value;
+    const price = document.getElementById("editMenuPrice").value;
+    const variantRows = document.querySelectorAll(".edit-variant-row");
+    const variants = [];
+
+    variantRows.forEach((row) => {
+      const name = row.querySelector(".variant-name").value;
+      const variantPrice = row.querySelector(".variant-price").value;
+      if (name && variantPrice) {
+        variants.push({ name: name, price: Number(variantPrice) });
+      }
+    });
+
+    await updateDoc(doc(db, "menus", currentEditMenuId), {
+      title: title,
+      price: Number(price),
+      variants: variants
+    });
+
+    closeEditModal();
+    alert("Menu berhasil diperbarui!");
+  } catch (error) {
+    console.error(error);
+    alert("Gagal menyimpan perubahan");
+  }
+}
+
+/* EDIT MENU */
+let currentEditMenuId = null;
+window.editMenu = async function(menuId) {
+  try {
+    currentEditMenuId = menuId;
+    const menuRef = doc(db, "menus", menuId);
+    const menuSnap = await getDoc(menuRef);
+
+    if (!menuSnap.exists()) {
+      alert("Menu tidak ditemukan");
+      return;
+    }
+
+    const data = menuSnap.data();
+    document.getElementById("editMenuName").value = data.title;
+    document.getElementById("editMenuPrice").value = data.price;
+
+    const container = document.getElementById("editVariantContainer");
+    container.innerHTML = "";
+
+    const variantsData = data.variants && data.variants.length ? data.variants : [{ name: "", price: "" }];
+    variantsData.forEach((variant) => {
+      container.innerHTML += `
+        <div class="edit-variant-row">
+          <input type="text" class="variant-name" value="${variant.name}" placeholder="Nama Variant">
+          <input type="number" class="variant-price" value="${variant.price}" placeholder="Harga">
+        </div>`;
+    });
+    document.getElementById("editModal").style.display = "flex";
+  } catch (error) {
+    console.error(error);
+    alert("Gagal membuka edit menu");
+  }
+}
+</script>
+</body>
+</html>

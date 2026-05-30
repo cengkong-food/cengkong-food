@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Penjual - Cengkong Food</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #ececec;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .mobile-container {
+      width: 430px;
+      min-height: 100vh;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 30px 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .header-area {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .logo-container {
+      width: 90px;
+      height: 90px;
+      background: white;
+      border-radius: 50%;
+      padding: 10px;
+      margin: 0 auto 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .logo-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .header-area h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #ff0037;
+    }
+
+    .header-area p {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-box {
+      width: 100%;
+      height: 54px;
+      border: 2px solid #eee;
+      border-radius: 16px;
+      padding: 0 16px;
+      font-size: 14px;
+      outline: none;
+      background: white;
+      transition: all 0.3s ease;
+    }
+
+    .input-box:focus {
+      border-color: #ff0037;
+      box-shadow: 0 0 0 4px rgba(255, 0, 55, 0.1);
+    }
+
+    .btn-register {
+      width: 100%;
+      height: 56px;
+      border: none;
+      border-radius: 16px;
+      background: #ff0037;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 15px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(255, 0, 55, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .btn-register:shadow:active {
+      transform: scale(0.98);
+    }
+
+    .footer-text {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .footer-text a {
+      color: #ff0037;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-text a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mobile-container">
+  
+  <div class="header-area">
+    <div class="logo-container">
+      <img src="logo.png" alt="Cengkong Food Logo">
+    </div>
+    <h1>Daftar Mitra Penjual</h1>
+    <p>Buka tokomu di Cengkong Food sekarang</p>
+  </div>
+
+  <form id="registerForm" onsubmit="handleRegister(event)">
+    
+    <div class="form-group">
+      <label for="shopName">Nama Toko / Warung</label>
+      <div class="input-wrapper">
+        <input type="text" id="shopName" class="input-box" placeholder="Contoh: Warung Bu Siti" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email Bisnis</label>
+      <div class="input-wrapper">
+        <input type="email" id="email" class="input-box" placeholder="Contoh: busiti@gmail.com" required>
+      </div>
+    </div>
+    <!-- TAMBAHAN NOMOR WHATSAPP -->
+<div class="form-group">
+  <label for="whatsapp">Nomor WhatsApp</label>
+  <div class="input-wrapper">
+    <input 
+      type="tel" 
+      id="whatsapp" 
+      class="input-box" 
+      placeholder="Contoh: 081234567890" 
+      required
+    >
+  </div>
+</div>
+
+    <div class="form-group">
+      <label for="password">Kata Sandi</label>
+      <div class="input-wrapper">
+        <input type="password" id="password" class="input-box" placeholder="Minimal 6 karakter" minlength="6" required>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-register" id="btnSubmit">Mulai Berjualan</button>
+
+  </form>
+
+  <div class="footer-text">
+    Sudah punya akun toko? <a href="seller-login.html">Masuk di sini</a>
+  </div>
+
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  /* CONFIG SINKRON KE CENGKONG-FOOD */
+ const firebaseConfig = {
+  apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
+  authDomain: "food-delivery-97a5f.firebaseapp.com",
+  databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "food-delivery-97a5f",
+  storageBucket: "food-delivery-97a5f.firebasestorage.app",
+  messagingSenderId: "1071083538977",
+  appId: "1:1071083538977:web:51e617513f6fb639cf3160"
+};
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Fungsi pendaftaran agar bisa diakses dari HTML formal form submission
+  window.handleRegister = async function(event) {
+    event.preventDefault(); // Mencegah reload halaman bawaan form
+
+    const shopName = document.getElementById("shopName").value;
+    const email = document.getElementById("email").value;
+    const whatsapp = document.getElementById("whatsapp").value;
+    const password = document.getElementById("password").value;
+    const btnSubmit = document.getElementById("btnSubmit");
+
+    // Mengubah tampilan tombol saat proses simpan sedang berjalan
+    btnSubmit.innerText = "Membuat Akun Toko...";
+    btnSubmit.disabled = true;
+
+    try {
+      // 1. Membuat user baru di Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // 2. Memperbarui nama tampilan akun (Display Name) menggunakan nama Toko
+      await updateProfile(user, {
+        displayName: shopName
+      });
+
+      // 3. Menyimpan profile data identitas toko ke Firestore database 'sellers'
+      await setDoc(doc(db, "sellers", user.uid), {
+        uid: user.uid,
+        shopName: shopName,
+        email: email,
+        whatsapp: whatsapp,
+        role: "seller",
+        createdAt: new Date()
+      });
+
+      alert("Pendaftaran Berhasil! Selamat datang di Cengkong Food.");
+      
+      // Simpan status role di local storage komputer untuk pengecekan halaman
+      localStorage.setItem("userRole", "seller");
+      
+      // Alihkan penjual langsung ke halaman dashboard-nya
+      window.location.href = "seller.html";
+
+    } catch (error) {
+      console.error(error);
+      
+      // Terjemahan pesan error umum agar mudah dipahami penjual
+      if (error.code === "auth/email-already-in-use") {
+        alert("Email ini sudah pernah terdaftar sebagai mitra penjual.");
+      } else if (error.code === "auth/weak-password") {
+        alert("Kata sandi terlalu lemah. Silakan buat password yang lebih kuat.");
+      } else {
+        alert("Gagal melakukan pendaftaran: " + error.message);
+      }
+
+      // Kembalikan status tombol jika gagal
+      btnSubmit.innerText = "Mulai Berjualan";
+      btnSubmit.disabled = false;
+    }
+  }
+</script>
+
+</body>
+</html>

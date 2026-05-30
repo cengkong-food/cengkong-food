@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+  <title>Akun Saya</title>
+
+  <!-- FONT -->
+  <link rel="preconnect"
+  href="https://fonts.googleapis.com">
+
+  <link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+  rel="stylesheet">
+
+  <!-- FONT AWESOME -->
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+  <!-- BOXICONS -->
+  <link
+  rel="stylesheet"
+  href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Poppins',sans-serif;
+    }
+
+    body{
+      background:#dfdfdf;
+      display:flex;
+      justify-content:center;
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    .mobile{
+      width:100%;
+      max-width:430px;
+      min-height:100vh;
+      background:#f7f7f7;
+      position:relative;
+      overflow:hidden;
+      padding-bottom:120px;
+      box-shadow:0 0 30px rgba(0,0,0,0.12);
+    }
+
+    /* HEADER */
+
+    .profile-header{
+      width:100%;
+      height:74px;
+      background:white;
+      display:flex;
+      align-items:center;
+      gap:15px;
+      padding:0 18px;
+      border-bottom:1px solid #f1f1f1;
+      position:sticky;
+      top:0;
+      z-index:999;
+    }
+
+    .back-btn{
+      width:42px;
+      height:42px;
+      border:none;
+      border-radius:50%;
+      background:#f5f5f5;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+
+    .back-btn i{
+      font-size:24px;
+      color:#222;
+    }
+
+    .profile-header h2{
+      font-size:20px;
+      font-weight:700;
+      color:#111;
+    }
+
+    /* PROFILE CARD */
+
+    .profile-card{
+      margin:20px 18px;
+      background:white;
+      border-radius:24px;
+      padding:18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border:1px solid #ececec;
+    }
+
+    .profile-left{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .profile-img{
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      background:#ff3131;
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:24px;
+      font-weight:700;
+    }
+
+    .profile-name{
+      font-size:16px;
+      font-weight:700;
+      color:#111;
+    }
+
+    .profile-phone{
+      margin-top:3px;
+      font-size:13px;
+      color:#888;
+    }
+
+    .edit-btn{
+      border:none;
+      background:#f5f5f5;
+      padding:10px 14px;
+      border-radius:14px;
+      font-size:12px;
+      font-weight:600;
+      cursor:pointer;
+      color:#555;
+    }
+
+    /* MENU */
+
+    .menu-card{
+      margin:0 18px 18px;
+      background:white;
+      border-radius:24px;
+      overflow:hidden;
+      border:1px solid #ececec;
+    }
+
+    .menu-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:18px 20px;
+      border-bottom:1px solid #f3f3f3;
+      cursor:pointer;
+      transition:0.2s;
+    }
+
+    .menu-item:last-child{
+      border-bottom:none;
+    }
+
+    .menu-item:hover{
+      background:#fafafa;
+    }
+
+    .menu-left{
+      display:flex;
+      align-items:center;
+      gap:15px;
+    }
+
+    .menu-icon{
+      width:22px;
+      text-align:center;
+      font-size:18px;
+      color:#666;
+    }
+
+    .menu-text{
+      font-size:14px;
+      font-weight:500;
+      color:#333;
+    }
+
+    .menu-arrow{
+      color:#bbb;
+      font-size:14px;
+    }
+
+    /* LOGOUT */
+
+    .logout-card{
+      margin:0 18px;
+      background:white;
+      border-radius:22px;
+      overflow:hidden;
+      border:1px solid #ececec;
+    }
+
+    .logout-btn{
+      width:100%;
+      border:none;
+      background:white;
+      padding:18px 20px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      cursor:pointer;
+    }
+
+    .logout-left{
+      display:flex;
+      align-items:center;
+      gap:15px;
+    }
+
+    .logout-icon{
+      color:#ff3b30;
+      font-size:18px;
+    }
+
+    .logout-text{
+      color:#ff3b30;
+      font-size:14px;
+      font-weight:600;
+    }
+
+    /* BOTTOM NAV */
+
+    .bottom-nav{
+      position:fixed;
+      bottom:0;
+      left:50%;
+      transform:translateX(-50%);
+      width:100%;
+      max-width:430px;
+      height:78px;
+      background:white;
+      border-top:1px solid #ececec;
+      display:flex;
+      justify-content:space-around;
+      align-items:center;
+      z-index:9999;
+    }
+
+    .nav-item{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:4px;
+      text-decoration:none;
+      color:#777;
+      font-size:12px;
+      font-weight:500;
+    }
+
+    .nav-item i{
+      font-size:23px;
+    }
+
+    .nav-item.active{
+      color:#ff3131;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="mobile">
+
+    <!-- HEADER -->
+    <div class="profile-header">
+
+      <button
+      class="back-btn"
+      onclick="window.location.href='index.html'">
+
+        <i class='bx bx-arrow-back'></i>
+
+      </button>
+
+      <h2>Akun Saya</h2>
+
+    </div>
+
+    <!-- PROFILE -->
+    <div class="profile-card">
+
+      <div class="profile-left">
+
+        <!-- FOTO / HURUF -->
+        <div
+        class="profile-img"
+        id="profileInitial">
+          G
+        </div>
+
+        <!-- DATA USER -->
+        <div>
+
+          <div
+          class="profile-name"
+          id="profileName">
+            Guest
+          </div>
+
+          <div
+          class="profile-phone"
+          id="profileEmail">
+            Belum login
+          </div>
+
+        </div>
+
+      </div>
+
+      <button class="edit-btn">
+        Ubah Profil
+      </button>
+
+    </div>
+
+    <!-- MENU -->
+    <div class="menu-card">
+
+      <div class="menu-item">
+
+        <div class="menu-left">
+          <div class="menu-icon">
+            <i class="fa-regular fa-clipboard"></i>
+          </div>
+
+          <div class="menu-text">
+            Pesanan Saya
+          </div>
+        </div>
+
+        <div class="menu-arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+
+      </div>
+
+      <div class="menu-item">
+
+        <div class="menu-left">
+          <div class="menu-icon">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+
+          <div class="menu-text">
+            Alamat Saya
+          </div>
+        </div>
+
+        <div class="menu-arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+
+      </div>
+
+      <div class="menu-item">
+
+        <div class="menu-left">
+          <div class="menu-icon">
+            <i class="fa-regular fa-credit-card"></i>
+          </div>
+
+          <div class="menu-text">
+            Pembayaran
+          </div>
+        </div>
+
+        <div class="menu-arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+
+      </div>
+
+      <div class="menu-item">
+
+        <div class="menu-left">
+          <div class="menu-icon">
+            <i class="fa-regular fa-circle-question"></i>
+          </div>
+
+          <div class="menu-text">
+            Bantuan
+          </div>
+        </div>
+
+        <div class="menu-arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- LOGOUT -->
+    <div class="logout-card">
+
+      <button
+      class="logout-btn"
+      onclick="logout()">
+
+        <div class="logout-left">
+
+          <div class="logout-icon">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </div>
+
+          <div class="logout-text">
+            Keluar
+          </div>
+
+        </div>
+
+        <div class="menu-arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- FIREBASE SCRIPT -->
+  <script type="module">
+
+    import {
+      initializeApp
+    }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    /* FIREBASE CONFIG */
+      const firebaseConfig = {
+  apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
+  authDomain: "food-delivery-97a5f.firebaseapp.com",
+  databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "food-delivery-97a5f",
+  storageBucket: "food-delivery-97a5f.firebasestorage.app",
+  messagingSenderId: "1071083538977",
+  appId: "1:1071083538977:web:51e617513f6fb639cf3160"
+};
+
+    /* INIT */
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    /* ELEMENT */
+    const profileInitial =
+    document.getElementById("profileInitial");
+
+    const profileName =
+    document.getElementById("profileName");
+
+    const profileEmail =
+    document.getElementById("profileEmail");
+
+    /* USER LOGIN */
+    onAuthStateChanged(auth, (user) => {
+
+      if(user){
+
+        let name = "User";
+
+        if(user.displayName){
+
+          name = user.displayName;
+
+        }
+        else if(user.email){
+
+          name =
+          user.email.split("@")[0];
+
+        }
+
+        const initial =
+        name.charAt(0).toUpperCase();
+
+        profileInitial.innerHTML =
+        initial;
+
+        profileName.innerHTML =
+        name;
+
+        profileEmail.innerHTML =
+        user.email;
+
+      }
+
+      else{
+
+        profileInitial.innerHTML =
+        "G";
+
+        profileName.innerHTML =
+        "Guest";
+
+        profileEmail.innerHTML =
+        "Belum login";
+
+      }
+
+    });
+
+    /* LOGOUT */
+    window.logout = function(){
+
+      const konfirmasi = confirm(
+        "Yakin ingin keluar dari akun?"
+      );
+
+      if(konfirmasi){
+
+        signOut(auth)
+
+        .then(()=>{
+
+          localStorage.removeItem(
+            "cengkongUser"
+          );
+
+          alert("Logout berhasil");
+
+          window.location.href =
+          "index.html";
+
+        })
+
+        .catch((error)=>{
+
+          console.log(error);
+
+          alert("Logout gagal");
+
+        });
+
+      }
+
+    }
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login Google • Cengkong Food</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#ff3131,#8b0000);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.login-box{
+  width:100%;
+  max-width:420px;
+  background:white;
+  border-radius:35px;
+  padding:40px 35px;
+  text-align:center;
+  box-shadow:0 20px 50px rgba(0,0,0,.18);
+}
+
+.logo{
+  width:120px;
+  margin-bottom:20px;
+}
+
+h1{
+  font-size:34px;
+  margin-bottom:10px;
+}
+
+p{
+  color:#666;
+  line-height:1.7;
+  margin-bottom:35px;
+}
+
+.google-btn{
+  width:100%;
+  height:65px;
+  border:none;
+  border-radius:20px;
+  background:white;
+  border:2px solid #eee;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+  font-size:18px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.google-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.google-btn img{
+  width:28px;
+}
+
+.info-box{
+  margin-top:30px;
+  background:#fff5f5;
+  padding:18px;
+  border-radius:18px;
+  color:#444;
+  font-size:14px;
+  line-height:1.7;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="login-box">
+
+  <img src="logo.png" class="logo">
+
+  <h1>Cengkong Food</h1>
+
+  <p>
+    Login cepat menggunakan akun Google
+    untuk mulai pesan makanan favoritmu
+  </p>
+
+  <button
+    class="google-btn"
+    id="googleLoginBtn">
+
+    <img src="https://cdn-icons-png.flaticon.com/512/300/300221.png">
+
+    Masuk dengan Google
+
+  </button>
+
+  <div class="info-box">
+    🚀 Login lebih cepat<br>
+    🔒 Aman menggunakan akun Google<br>
+    🍔 Bisa langsung pesan makanan
+  </div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup // Diubah dari signInWithRedirect menjadi signInWithPopup
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
+  authDomain: "food-delivery-97a5f.firebaseapp.com",
+  databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "food-delivery-97a5f",
+  storageBucket: "food-delivery-97a5f.firebasestorage.app",
+  messagingSenderId: "1071083538977",
+  appId: "1:1071083538977:web:51e617513f6fb639cf3160"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+/* LOGIN BUTTON MENGGUNAKAN POPUP */
+document.getElementById("googleLoginBtn").addEventListener("click", async () => {
+  try {
+    // Membuka pop-up login Google
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    // 1. Simpan data ke LocalStorage
+    localStorage.setItem(
+      "cengkongUser",
+      JSON.stringify({
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+        photo: user.photoURL
+      })
+    );
+
+    // 2. Simpan atau update data ke Firestore Database
+    await setDoc(
+      doc(db, "users", user.uid),
+      {
+        uid: user.uid,
+        name: user.displayName || "",
+        email: user.email || "",
+        photo: user.photoURL || "",
+        createdAt: new Date()
+      },
+      { merge: true }
+    );
+
+    alert("Login berhasil 🔥");
+    
+    // 3. Pindahkan ke halaman utama
+    window.location.href = "index.html";
+
+  } catch (error) {
+    console.error("Error Detail:", error);
+    alert(error.code + "\n" + error.message);
+  }
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cengkong Food - Pesan Makanan</title>
+  
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- LEAFLET & BOXICONS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+</head>
+
+<body>
+
+  <div class="mobile-wrapper">
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="navbar-left">
+        <img src="logo.png" class="brand-logo" alt="Logo">
+      </div>
+      <div class="search-modern">
+        <i class='bx bx-search search-icon'></i>
+        <input type="text" id="searchInput" placeholder="Cari makanan...">
+      </div>
+      <div class="navbar-right">
+        <div class="notif-btn"><i class='bx bx-bell'></i></div>
+        <a class='login-modern' href='register.html' id='loginBtn'>Masuk</a>
+        <div class="profile-box" id="userBox" style="display:none;">
+          <div id="profileInitial" class="profile-mini">G</div>
+          <span id="profileName">User</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1>Mau DO Makanan?<br><span>Cengkong Food aja!</span></h1>
+        <p>Aplikasi mandiri Paguyuban Pedagang Cengkong</p>
+        <div class="hero-features">
+          <div class="feature-box">Mulai DO Dari Jam 17:00 WIB s/d 00.00 WIB</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESTAURANT LIST (Koneksi Database) -->
+    <section class="restaurants">
+      <h2 style="padding: 0 20px; margin-bottom: 10px; font-size: 18px;">Toko Tersedia</h2>
+      <div class="card-container" id="menuContainer">
+        <!-- Seller akan muncul di sini via script.js -->
+      </div>
+    </section>
+
+    <!-- FLOATING CART -->
+    <div class="floating-cart" onclick="openCart()">
+      🛒 <div class="cart-badge" id="cartCount">0</div>
+    </div>
+
+    <!-- STICKY CART -->
+    <div class="sticky-cart" id="stickyCart">
+      <div class="sticky-left">
+        🛒
+        <div>
+          <h4 id="stickyCount">0 item</h4>
+          <p>Total Pesanan</p>
+        </div>
+      </div>
+      <h3>Rp <span id="stickyTotal">0</span></h3>
+      <button onclick="openCart()">Lihat Keranjang →</button>
+    </div>
+
+    <!-- MODALS (MENU & CART) -->
+    <div class="modal" id="menuModal">
+      <div class="modal-content">
+        <span class="close" onclick="closeMenuModal()">&times;</span>
+        <img id="menuImage" class="modal-image">
+        <h2 id="menuTitle"></h2>
+        <div id="variantList"></div>
+        <button class="add-cart-btn" onclick="confirmOrder()">🛒 Tambahkan ke Keranjang</button>
+      </div>
+    </div>
+
+    <div class="modal" id="cartModal">
+      <div class="modal-content">
+        <span class="close" onclick="closeCart()">&times;</span>
+        <h2>Keranjang Pesanan</h2>
+        <div id="cartItems"></div>
+        <button class="location-btn" onclick="getUserLocation()">📍 Gunakan Lokasi Saya</button>
+        <div id="deliveryInfo">
+          <p>Jarak : <span id="distanceText">-</span></p>
+          <p>Ongkir : Rp <span id="shippingText">0</span></p>
+        </div>
+        <div id="deliveryMap"></div>
+        <div class="cart-footer">
+          <h3>Subtotal : Rp <span id="cartTotal">0</span></h3>
+          <h3>Ongkir : Rp <span id="finalShipping">0</span></h3>
+          <h2>Total Bayar : Rp <span id="grandTotal">0</span></h2>
+          <button class="wa-btn" onclick="checkoutWhatsApp()">Pesan via WhatsApp</button>
+          <button class="cancel-btn" onclick="cancelOrder()">Batalkan Pesanan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">✅ Berhasil ditambahkan</div>
+  </div> <!-- End Mobile Wrapper -->
+
+  <!-- BOTTOM NAVBAR -->
+  <div class="bottom-navbar">
+    <button class="bottom-item active">
+      <i class='bx bxs-home'></i>
+      <p>Home</p>
+    </button>
+    <button class="bottom-item">
+      <i class='bx bx-search'></i>
+      <p>Cari</p>
+    </button>
+    <button class="bottom-item" onclick="openCart()">
+      <i class='bx bx-cart'></i>
+      <p>Keranjang</p>
+    </button>
+    <button class="bottom-item" onclick="checkProfileAccess()">
+      <i class='bx bx-user'></i>
+      <p>Akun</p>
+    </button>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script type="module" src="script.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    function checkProfileAccess(){
+      const user = localStorage.getItem("cengkongUser");
+      if(user){
+        window.location.href = "profile.html";
+      } else {
+        alert("Silakan masuk / daftar terlebih dahulu");
+        window.location.href = "login.html";
+      }
+    }
+  </script>
+</body>
+</html>

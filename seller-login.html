@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Seller - Cengkong Food</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* =========================
+   RESET
+========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #ececec;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* =========================
+   CARD
+========================= */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 30px;
+  padding: 35px 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.logo {
+  width: 90px;
+  display: block;
+  margin: 0 auto 20px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #ff0037;
+}
+
+.desc {
+  text-align: center;
+  color: #777;
+  margin-bottom: 28px;
+  font-size: 14px;
+}
+
+/* =========================
+   INPUT
+========================= */
+.input-box {
+  width: 100%;
+  height: 56px;
+  border: 2px solid #eee;
+  border-radius: 18px;
+  padding: 0 18px;
+  outline: none;
+  font-size: 16px;
+  margin-bottom: 16px;
+  font-family: 'Poppins', sans-serif;
+  transition: 0.3s ease;
+}
+
+.input-box:focus {
+  border-color: #ff0037;
+}
+.password-wrapper{
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.password-wrapper .input-box{
+  margin-bottom: 0;
+  padding-right: 70px;
+}
+
+.toggle-password{
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  font-weight: 600;
+  color: #ff0037;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-password:hover{
+  opacity: .8;
+}
+/* =========================
+   BUTTON
+========================= */
+.main-btn {
+  width: 100%;
+  height: 56px;
+  border: none;
+  border-radius: 18px;
+  background: #ff0037;
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 0, 55, 0.2);
+}
+
+.main-btn:disabled {
+  background: #ccc;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.google-btn {
+  width: 100%;
+  height: 56px;
+  border: none;
+  border-radius: 18px;
+  background: white;
+  border: 2px solid #eee;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s ease;
+}
+
+.google-btn:active {
+  transform: scale(0.98);
+}
+
+/* =========================
+   REGISTER LINK
+========================= */
+.register-link {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 14px;
+  color: #666;
+}
+
+.register-link a {
+  color: #ff0037;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+</style>
+</head>
+
+<body>
+
+<div class="auth-card">
+  <img src="logo.png" class="logo" alt="Logo Cengkong Food">
+  <h1>Login Seller</h1>
+  <p class="desc">Masuk ke dashboard mitra penjual</p>
+
+  <input type="email" id="email" class="input-box" placeholder="Email Bisnis">
+
+<div class="password-wrapper">
+  <input type="password" id="password" class="input-box" placeholder="Kata Sandi">
+
+  <span id="togglePassword" class="toggle-password">
+    Show
+  </span>
+</div>
+
+  <button class="main-btn" id="loginBtn">Masuk</button>
+
+
+
+  <div class="register-link">
+    Belum punya akun mitra? <a href="seller-register.html">Daftar di sini</a>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* KODE SINKRONISASI DATABASE - CENGKONG FOOD */
+const firebaseConfig = {
+  apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
+  authDomain: "food-delivery-97a5f.firebaseapp.com",
+  databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "food-delivery-97a5f",
+  storageBucket: "food-delivery-97a5f.firebasestorage.app",
+  messagingSenderId: "1071083538977",
+  appId: "1:1071083538977:web:51e617513f6fb639cf3160"
+};
+
+/* INITIALIZATION */
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
+
+/* 1. AKSI LOGIN EMAIL & PASSWORD */
+document.getElementById("loginBtn").onclick = async function() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const loginBtn = document.getElementById("loginBtn");
+
+  if (email === "" || password === "") {
+    alert("Mohon lengkapi email dan password Anda.");
+    return;
+  }
+
+  // Ubah status tombol jadi loading
+  loginBtn.innerText = "Memvalidasi...";
+  loginBtn.disabled = true;
+
+  try {
+    // Proses Autentikasi Firebase
+    await signInWithEmailAndPassword(auth, email, password);
+    
+    // LOGIN BERHASIL -> Set sidik jari userRole agar lolos gerbang seller.html
+    localStorage.setItem("userRole", "seller");
+    
+    alert("Login Berhasil! Selamat datang kembali.");
+    window.location.href = "seller.html";
+  } catch (error) {
+    console.error(error);
+    // Terjemahan error agar mudah dipahami seller
+    if (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found" || error.code === "auth/wrong-password") {
+      alert("Email atau kata sandi salah. Silakan periksa kembali.");
+    } else {
+      alert("Gagal Masuk: " + error.message);
+    }
+    
+    // Kembalikan tombol jika gagal
+    loginBtn.innerText = "Masuk";
+    loginBtn.disabled = false;
+  }
+}
+
+/* 2. AKSI LOGIN MENGGUNAKAN GOOGLE */
+const passwordInput = document.getElementById("password");
+const togglePassword = document.getElementById("togglePassword");
+
+togglePassword.addEventListener("click", () => {
+
+  if(passwordInput.type === "password"){
+    passwordInput.type = "text";
+    togglePassword.textContent = "Hide";
+  } else {
+    passwordInput.type = "password";
+    togglePassword.textContent = "Show";
+  }
+
+});
+
+</script>
+
+</body>
+</html>
