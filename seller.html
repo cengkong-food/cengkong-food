@@ -446,42 +446,7 @@ input:checked + .slider:before {
   background: #ff0037;
   color: white;
 }
-/* Container khusus baris varian agar rapi ke samping */
-.variant-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 12px;
-  width: 100%;
-}
 
-/* Kolom Nama Varian mengambil sisa ruang yang luas */
-.variant-row input[type="text"] {
-  flex: 2; /* Lebih lebar */
-  min-width: 0; /* Mencegah input meluap */
-}
-
-/* Kolom Harga Varian dibuat lebih ringkas */
-.variant-row input[type="number"], 
-.variant-row .input-harga-varian {
-  flex: 1.2; /* Pas untuk nominal harga */
-  min-width: 0;
-}
-
-/* Jika ada tombol hapus per baris varian */
-.btn-hapus-varian {
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  width: 36px;
-  height: 36px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
 </style>
 </head>
 
