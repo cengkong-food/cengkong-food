@@ -446,6 +446,42 @@ input:checked + .slider:before {
   background: #ff0037;
   color: white;
 }
+/* Container khusus baris varian agar rapi ke samping */
+.variant-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+/* Kolom Nama Varian mengambil sisa ruang yang luas */
+.variant-row input[type="text"] {
+  flex: 2; /* Lebih lebar */
+  min-width: 0; /* Mencegah input meluap */
+}
+
+/* Kolom Harga Varian dibuat lebih ringkas */
+.variant-row input[type="number"], 
+.variant-row .input-harga-varian {
+  flex: 1.2; /* Pas untuk nominal harga */
+  min-width: 0;
+}
+
+/* Jika ada tombol hapus per baris varian */
+.btn-hapus-varian {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 </style>
 </head>
 
@@ -485,10 +521,12 @@ input:checked + .slider:before {
       </label>
 
       <div class="form-right">
+        <div class="variant-row">
         <input type="text" id="menuName" class="input-box" placeholder="Nama Menu">
         <div class="price-row">
           <input type="number" id="menuPrice" class="input-box" placeholder="Harga">
           <div class="rp">Rp</div>
+        </div>
         </div>
       </div>
     </div>
@@ -644,10 +682,17 @@ menuImage.addEventListener("change", (e) => {
 
 /* 4. VARIAN */
 window.addVariant = function() {
-  const div = document.createElement("div");
-  div.className = "variant-item";
-  div.innerHTML = `<input type="text" placeholder="Nama Variant"><input type="number" placeholder="Harga">`;
-  document.getElementById("variantContainer").appendChild(div);
+  // Contoh potongan kode di dalam fungsi tambah varian kamu
+const div = document.createElement('div');
+div.className = 'variant-row'; // Menggunakan class variant-row yang baru
+div.innerHTML = `
+  <input type="text" placeholder="Nama Variant" required>
+  <input type="number" placeholder="Harga" required>
+  <button type="button" class="btn-hapus-varian" onclick="hapusBarisVarian(this)">
+    <i class="fa-solid fa-trash"></i>
+  </button>
+`;
+containerVarian.appendChild(div);
 }
 
 /* 5. SIMPAN MENU */
