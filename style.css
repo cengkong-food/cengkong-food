@@ -1568,3 +1568,16 @@ body{
   }
 
 }
+/* Styling teks nama lapak di bawah nama menu */
+.lapak-info {
+  font-size: 11px;         /* Ukuran teks proposional untuk mobile */
+  color: #64748b;          /* Warna abu-abu elegan */
+  margin: 3px 0 1px 0;     /* Jarak renggang yang pas atas dan bawah */
+  display: block;
+  line-height: 1.2;
+}
+
+.lapak-info strong {
+  color: #ff0037;          /* Diberi warna merah khas Cengkong Food agar terlihat menarik */
+  font-weight: 600;
+}

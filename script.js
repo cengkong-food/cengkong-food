@@ -61,6 +61,9 @@ function isLoggedIn(){
 /* =========================
    LOAD MENU FIREBASE (VERSI KEBAL & AMAN)
 ========================= */
+/* =========================
+   LOAD MENU FIREBASE (SUDAH DITAMBAH NAMA LAPAK)
+========================= */
 const menuContainer = document.getElementById("menuContainer");
 
 onSnapshot(collection(db, "menus"), async (snapshot) => {
@@ -74,18 +77,27 @@ onSnapshot(collection(db, "menus"), async (snapshot) => {
     menuData[id] = data; 
 
     let labelStatus = `<span class="badge-status tutup">TUTUP</span>`;
+    let namaLapak = "Lapak Pedagang"; // Nama default jika data tidak ditemukan
 
     try {
       if (data && data.sellerId) {
         const sellerRef = doc(db, "sellers", data.sellerId);
         const sellerSnap = await getDoc(sellerRef);
         
-        if (sellerSnap.exists() && sellerSnap.data()?.isOpen === true) {
-          labelStatus = `<span class="badge-status buka">BUKA</span>`;
+        if (sellerSnap.exists()) {
+          const sellerData = sellerSnap.data();
+          
+          // Mengambil nama lapak dari database sellers
+          // Sesuai screenshot lapakmu, field-nya kemungkinan adalah 'shopName' atau 'name'
+          namaLapak = sellerData.shopName || sellerData.name || "Lapak Pedagang";
+
+          if (sellerData.isOpen === true) {
+            labelStatus = `<span class="badge-status buka">BUKA</span>`;
+          }
         }
       }
     } catch (err) {
-      console.log("Gagal memuat status toko untuk menu:", data.title, err);
+      console.log("Gagal memuat data toko untuk menu:", data.title, err);
     }
 
     const hargaMenu = data.price ? data.price.toLocaleString('id-ID') : "0";
@@ -96,6 +108,9 @@ onSnapshot(collection(db, "menus"), async (snapshot) => {
         <div class="food-mobile-info">
           ${labelStatus}
           <h3>${data.title}</h3>
+          
+          <p class="lapak-info">Lapak: <strong>${namaLapak}</strong></p>
+          
           <p class="food-desc">Cepat saji</p>
           <div class="food-meta">
             ⭐ 4.8 <span>•</span> Rp ${hargaMenu}
@@ -111,7 +126,6 @@ onSnapshot(collection(db, "menus"), async (snapshot) => {
   const allMenuHtmls = await Promise.all(menuPromises);
   menuContainer.innerHTML = allMenuHtmls.join("");
 });
-
 /* =========================
    OPEN MENU MODAL
 ========================= */
@@ -176,15 +190,16 @@ window.changeQty = function(index, change){
     if(cart[itemIndex].qty <= 0){
       cart.splice(itemIndex, 1);
     }
-  } else if(change > 0){
-    cart.push({
-      name: variant.name,
-      price: variant.price,
-      qty: 1,
-      image: currentMenu.image
-    });
-  }
-
+  /* BAGIAN DALAM WINDOW.CHANGEQTY KAMU */
+} else if(change > 0){
+  cart.push({
+    name: variant.name,
+    price: variant.price,
+    qty: 1,
+    image: currentMenu.image,
+    menuTitle: currentMenu.title // Menitipkan nama menu utama ke dalam item keranjang
+  });
+}
   updateCart();
 
   const currentItem = cart.find(item => item.name === variant.name);
@@ -372,10 +387,13 @@ function initMap(lat, lng){
   updateCart();
 }
 
-/* =========================
-   WHATSAPP (DIREPARASI KURUNGNYA)
-========================= */
 
+/* =========================
+   WHATSAPP (FORMAT GROUPING: LAPAK & MULTI MENU)
+========================= */
+/* =========================
+   WHATSAPP (FORMAT GROUPING - SUDAH FIX SYNTAX)
+========================= */
 window.checkoutWhatsApp = function(){
   if(cart.length === 0){
     alert("Keranjang kosong");
@@ -383,25 +401,53 @@ window.checkoutWhatsApp = function(){
   }
 
   let subtotal = 0;
-  let text = "Halo Admin Cengkong Food%0A%0ASaya ingin memesan:%0A";
+  
+  // 1. Ambil daftar nama lapak (unik) dari semua item di keranjang
+  const daftarLapak = [...new Set(cart.map(item => item.sellerName || "Lapak Pedagang"))];
+  const stringLapak = daftarLapak.join(", "); // Gabungkan jika ada lebih dari 1 lapak
+  
+  // Kalimat pembuka utama
+  let text = `Halo Admin Cengkong Food%0A%0ASaya ingin memesan :`;
 
+  // 2. KELOMPOKKAN ITEM BERDASARKAN NAMA MENU UTAMA
+  const menuGroups = {};
+  
   cart.forEach(item => {
     subtotal += item.price * item.qty;
-    text += `- ${item.name} x${item.qty} = Rp ${(item.price * item.qty).toLocaleString('id-ID')}%0A`;
+    const namaMenu = item.menuTitle || "Menu Utama";
+    
+    // Jika grup menu belum ada, buat array kosong baru
+    if (!menuGroups[namaMenu]) {
+      menuGroups[namaMenu] = [];
+    }
+    // Masukkan varian ke dalam grup menu yang sesuai
+    menuGroups[namaMenu].push(item);
   });
 
-  const grandTotal = subtotal + shippingCost;
-  text += `%0ASubtotal : Rp ${subtotal.toLocaleString('id-ID')}`;
-  text += `%0AOngkir : Rp ${shippingCost.toLocaleString('id-ID')}`;
-  text += `%0ATotal Bayar : Rp ${grandTotal.toLocaleString('id-ID')}`;
-
-  if(userLat && userLng){
-    text += `%0A%0A📍 Lokasi Customer : http://googleusercontent.com/maps.google.com/?q=${userLat},${userLng}`;
+  // 3. SUSUN TEKS BERDASARKAN GRUP (Sudah diperbaiki dari 'dalam' menjadi 'in')
+  for (const namaMenu in menuGroups) {
+    text += `%0A*=== ${namaMenu} ===*%0A`; // Judul Menu Utama
+    
+    menuGroups[namaMenu].forEach(item => {
+      text += `• ${item.name} x${item.qty} = Rp ${(item.price * item.qty).toLocaleString('id-ID')}%0A`; // Rincian varian
+    });
   }
 
-  window.open(`https://wa.me/6285773300051?text=${text}`, "_blank");
-}; // <-- Kurung penutup aman sekarang
+  // 4. SUSUN BAGIAN TOTALAN DAN ONGKIR
+  const grandTotal = subtotal + shippingCost;
+  text += `%0A---------------------------------------`;
+  text += `%0ASubtotal : Rp ${subtotal.toLocaleString('id-ID')}`;
+  text += `%0AOngkir : Rp ${shippingCost.toLocaleString('id-ID')}`;
+  text += `%0A*Total Bayar : Rp ${grandTotal.toLocaleString('id-ID')}*`;
 
+  // 5. LINK GOOGLE MAPS UNTUK ADMIN
+  if(userLat && userLng){
+    text += `%0A%0A📍 *Lokasi Customer* : http://maps.google.com/?q=${userLat},${userLng}`;
+  }
+
+  // Buka WhatsApp
+  window.open(`https://wa.me/6285773300051?text=${text}`, "_blank");
+};
 /* =========================
    TOAST
 ========================= */

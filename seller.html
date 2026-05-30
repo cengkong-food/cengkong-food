@@ -419,77 +419,151 @@ input:checked + .slider:before {
 }
 
 /* 9. MODAL EDIT POPUP */
+/* 9. MODAL EDIT POPUP (Optimasi Tampilan HP & Gambar) */
 .edit-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0,0,0,0.5);
   display: none;
   justify-content: center;
   align-items: center;
   z-index: 999;
+  padding: 16px;
 }
 
 .edit-content {
-  width: 90%;
-  max-width: 380px;
+  width: 100%;
+  max-width: 390px;
   background: white;
-  border-radius: 24px;
+  border-radius: 28px;
   padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
 .edit-content h2 {
-  margin-bottom: 18px;
-  font-size: 20px;
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Row atas: Gambar di kiri, Input Utama di kanan */
+.edit-main-row {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.edit-img-preview {
+  width: 85px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 16px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+.edit-main-inputs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .edit-input {
   width: 100%;
-  height: 48px;
-  border: 2px solid #eee;
-  border-radius: 14px;
-  padding: 0 14px;
-  margin-bottom: 12px;
+  height: 38px; /* Dibuat sedikit ringkas agar hemat ruang */
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 14px;
   outline: none;
+  font-family: inherit;
+  transition: 0.2s;
+}
+
+.edit-input:focus {
+  border-color: #ff0037;
+}
+
+/* Bagian Varian di dalam Modal */
+.edit-variant-section {
+  margin-top: 14px;
+}
+
+.edit-variant-section h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #475569;
+}
+
+#editVariantContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 200px; /* Batasi tinggi jika varian sangat banyak agar bisa di-scroll */
+  overflow-y: auto;
+  padding-right: 2px;
 }
 
 .edit-variant-row {
   display: flex;
   gap: 10px;
-  margin-bottom: 10px;
+  width: 100%;
 }
 
+/* Kolom nama varian & harga dibuat sama rata (50% : 50%) dan sejajar vertikal */
 .edit-variant-row input {
-  flex: 1;
-  height: 44px;
-  border: 2px solid #eee;
-  border-radius: 12px;
+  flex: 1; 
+  min-width: 0; /* Mencegah input meluber keluar screen HP */
+  height: 38px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
   padding: 0 12px;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  background: #f8fafc;
 }
 
+.edit-variant-row input:focus {
+  border-color: #ff0037;
+  background: #fff;
+}
+
+/* Tombol Aksi Batal / Simpan */
 .edit-action {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
 .cancel-btn,
 .save-edit-btn {
   border: none;
-  padding: 10px 16px;
+  padding: 10px 20px;
   border-radius: 12px;
   font-weight: 700;
+  font-size: 14px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .cancel-btn {
-  background: #eee;
+  background: #f1f5f9;
+  color: #475569;
 }
+
+.cancel-btn:active { background: #e2e8f0; }
 
 .save-edit-btn {
   background: #ff0037;
   color: white;
 }
+
+.save-edit-btn:active { transform: scale(0.97); }
 </style>
 </head>
 
@@ -565,9 +639,20 @@ input:checked + .slider:before {
 <div id="editModal" class="edit-modal">
   <div class="edit-content">
     <h2>Edit Menu</h2>
-    <input type="text" id="editMenuName" class="edit-input" placeholder="Nama Menu">
-    <input type="number" id="editMenuPrice" class="edit-input" placeholder="Harga Menu">
-    <div id="editVariantContainer"></div>
+    
+    <div class="edit-main-row">
+      <img id="editMenuImgPreview" class="edit-img-preview" src="logo.png" alt="Pratinjau Menu">
+      <div class="edit-main-inputs">
+        <input type="text" id="editMenuName" class="edit-input" placeholder="Nama Menu">
+        <input type="number" id="editMenuPrice" class="edit-input" placeholder="Harga Menu">
+      </div>
+    </div>
+
+    <div class="edit-variant-section">
+      <h3>Variant</h3>
+      <div id="editVariantContainer"></div>
+    </div>
+
     <div class="edit-action">
       <button onclick="closeEditModal()" class="cancel-btn">Batal</button>
       <button onclick="saveEditMenu()" class="save-edit-btn">Simpan</button>
@@ -853,6 +938,7 @@ window.saveEditMenu = async function() {
 }
 
 /* EDIT MENU */
+/* EDIT MENU (Sudah disesuaikan untuk memuat Gambar) */
 let currentEditMenuId = null;
 window.editMenu = async function(menuId) {
   try {
@@ -866,8 +952,14 @@ window.editMenu = async function(menuId) {
     }
 
     const data = menuSnap.data();
+    
+    // Tampilkan data ke input utama
     document.getElementById("editMenuName").value = data.title;
     document.getElementById("editMenuPrice").value = data.price;
+    
+    // Tampilkan gambar lama ke pratinjau modal gambar
+    const imgPreview = document.getElementById("editMenuImgPreview");
+    imgPreview.src = data.image || 'logo.png';
 
     const container = document.getElementById("editVariantContainer");
     container.innerHTML = "";
