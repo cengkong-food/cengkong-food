@@ -68,6 +68,21 @@ body {
   line-height: 1.2;
 }
 
+/* MODIFIKASI BARU: Gaya tautan nama lapak agar bisa diklik */
+.shop-name-link {
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.6);
+  padding-bottom: 2px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.shop-name-link:hover {
+  opacity: 0.9;
+}
+
 /* 4. SAKLAR STATUS TOKO */
 .status-container {
   display: flex;
@@ -153,7 +168,6 @@ input:checked + .slider:before {
   box-shadow: 0 -5px 15px rgba(0,0,0,0.02);
 }
 
-/* MODIFIKASI: Menyejajarkan Judul dan Tombol Overview */
 .form-header-row {
   display: flex;
   justify-content: space-between;
@@ -166,7 +180,6 @@ input:checked + .slider:before {
   font-weight: 800;
 }
 
-/* DESAIN BARU: Tombol Overview Mini Kapsul */
 .overview-btn {
   background: #f1f5f9;
   color: #475569;
@@ -272,7 +285,6 @@ input:checked + .slider:before {
 }
 
 /* 7. VARIAN */
-/* 7. VARIAN (Sudah Diperbaiki untuk Layar HP) */
 .variant-top {
   display: flex;
   justify-content: space-between;
@@ -295,19 +307,18 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 100%; /* Memastikan list varian mengunci penuh lebar card */
+  width: 100%;
 }
 
 .variant-item {
   display: flex;
   gap: 10px;
-  width: 100%; /* Memastikan item tidak meluber keluar */
+  width: 100%;
 }
 
-/* MODIFIKASI UTAMA: Mengatur proporsi input agar seimbang */
 .variant-item input[type="text"] {
-  flex: 2;          /* Kotak Nama Varian dapat porsi ruang lebih luas (sekitar 60-70%) */
-  min-width: 0;     /* Trik CSS wajib flexbox agar input bisa mengecil di layar HP */
+  flex: 2;          
+  min-width: 0;     
   height: 46px;
   border: none;
   background: #f3f3f3;
@@ -318,8 +329,8 @@ input:checked + .slider:before {
 }
 
 .variant-item input[type="number"] {
-  flex: 1;          /* Kotak Harga Varian lebih kecil karena hanya diisi angka (sekitar 30-40%) */
-  min-width: 0;     /* Trik CSS wajib flexbox agar input tidak meluber */
+  flex: 1;          
+  min-width: 0;     
   height: 46px;
   border: none;
   background: #f3f3f3;
@@ -418,8 +429,7 @@ input:checked + .slider:before {
   color: white;
 }
 
-/* 9. MODAL EDIT POPUP */
-/* 9. MODAL EDIT POPUP (Optimasi Tampilan HP & Gambar) */
+/* 9. MODAL EDIT POPUP MENU */
 .edit-modal {
   position: fixed;
   inset: 0;
@@ -447,7 +457,6 @@ input:checked + .slider:before {
   color: #1e293b;
 }
 
-/* Row atas: Gambar di kiri, Input Utama di kanan */
 .edit-main-row {
   display: flex;
   gap: 14px;
@@ -472,7 +481,7 @@ input:checked + .slider:before {
 
 .edit-input {
   width: 100%;
-  height: 38px; /* Dibuat sedikit ringkas agar hemat ruang */
+  height: 38px;
   border: 1.5px solid #e2e8f0;
   border-radius: 10px;
   padding: 0 12px;
@@ -486,7 +495,6 @@ input:checked + .slider:before {
   border-color: #ff0037;
 }
 
-/* Bagian Varian di dalam Modal */
 .edit-variant-section {
   margin-top: 14px;
 }
@@ -502,7 +510,7 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 200px; /* Batasi tinggi jika varian sangat banyak agar bisa di-scroll */
+  max-height: 200px;
   overflow-y: auto;
   padding-right: 2px;
 }
@@ -513,10 +521,9 @@ input:checked + .slider:before {
   width: 100%;
 }
 
-/* Kolom nama varian & harga dibuat sama rata (50% : 50%) dan sejajar vertikal */
 .edit-variant-row input {
   flex: 1; 
-  min-width: 0; /* Mencegah input meluber keluar screen HP */
+  min-width: 0;
   height: 38px;
   border: 1.5px solid #e2e8f0;
   border-radius: 10px;
@@ -532,7 +539,6 @@ input:checked + .slider:before {
   background: #fff;
 }
 
-/* Tombol Aksi Batal / Simpan */
 .edit-action {
   display: flex;
   justify-content: flex-end;
@@ -564,6 +570,41 @@ input:checked + .slider:before {
 }
 
 .save-edit-btn:active { transform: scale(0.97); }
+
+/* ADDON DESAIN BARU: MODAL POPUP EDIT NAMA LAPAK */
+.shop-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.shop-modal-card {
+  width: 100%;
+  max-width: 380px;
+  background: white;
+  border-radius: 26px;
+  padding: 24px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.shop-modal-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+.shop-modal-card p {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
 </style>
 </head>
 
@@ -578,7 +619,11 @@ input:checked + .slider:before {
           <div style="font-size: 10px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">
             Lapak Pedagang
           </div>
-          <h1>Memuat Toko...</h1>
+          
+          <h1>
+            <a href="#" id="shopNameLink" class="shop-name-link" onclick="openEditShopModal(event)">Memuat Toko...</a>
+          </h1>
+          
           <div class="status-container">
             <span class="status-label" id="statusLabel">TUTUP</span>
             <label class="switch">
@@ -636,6 +681,18 @@ input:checked + .slider:before {
   </div>
 </div>
 
+<div id="shopNameModal" class="shop-modal">
+  <div class="shop-modal-card">
+    <h3>Ubah Nama Lapak</h3>
+    <p>Nama lapak ini akan langsung berubah di dalam database serta aplikasi utama pelanggan.</p>
+    <input type="text" id="newShopNameInput" class="input-box" placeholder="Contoh: Martabak Unyil" style="margin-bottom: 0;">
+    <div class="edit-action">
+      <button onclick="closeEditShopModal()" class="cancel-btn">Batal</button>
+      <button id="btnSaveShopName" class="save-edit-btn">Simpan</button>
+    </div>
+  </div>
+</div>
+
 <div id="editModal" class="edit-modal">
   <div class="edit-content">
     <h2>Edit Menu</h2>
@@ -662,7 +719,7 @@ input:checked + .slider:before {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, getDoc, setDoc, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -689,24 +746,42 @@ if (!savedRole || savedRole !== "seller") {
 }
 
 let statusUnsubscribe = null;
+const shopNameLink = document.getElementById("shopNameLink");
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    const shopText = document.querySelector(".shop-text h1");
-    if (shopText) {
-      shopText.innerText = user.displayName || "Warung Mitra";
-    }
-
+    // Tarik data profil toko dari Firestore agar realtime & sinkron
     const sellerDocRef = doc(db, "sellers", user.uid);
     
+    // Ambil data awal sekali untuk nama toko
+    const docSnap = await getDoc(sellerDocRef);
+    if (docSnap.exists() && docSnap.data().shopName) {
+      shopNameLink.innerText = docSnap.data().shopName;
+    } else {
+      shopNameLink.innerText = user.displayName || "Warung Mitra";
+    }
+
     statusUnsubscribe = onSnapshot(sellerDocRef, (docSnap) => {
       const toggle = document.getElementById("shopStatusToggle");
       const label = document.getElementById("statusLabel");
       
-      if (docSnap.exists() && docSnap.data().isOpen === true) {
-        toggle.checked = true;
-        label.innerText = "BUKA";
-        label.style.background = "#2ecc71";
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        
+        // Memastikan nama lapak ikut terupdate di UI secara realtime jika ada perubahan
+        if(data.shopName) {
+          shopNameLink.innerText = data.shopName;
+        }
+
+        if (data.isOpen === true) {
+          toggle.checked = true;
+          label.innerText = "BUKA";
+          label.style.background = "#2ecc71";
+        } else {
+          toggle.checked = false;
+          label.innerText = "TUTUP";
+          label.style.background = "rgba(0,0,0,0.3)";
+        }
       } else {
         toggle.checked = false;
         label.innerText = "TUTUP";
@@ -726,6 +801,77 @@ onAuthStateChanged(auth, async (user) => {
     }, 2000);
   }
 });
+
+/* ==========================================
+   LOGIKA EDIT NAMA LAPAK BARU (SINKRONISASI DATABASE)
+=========================================== */
+const shopNameModal = document.getElementById("shopNameModal");
+const newShopNameInput = document.getElementById("newShopNameInput");
+const btnSaveShopName = document.getElementById("btnSaveShopName");
+
+window.openEditShopModal = function(event) {
+  event.preventDefault(); // Menghentikan reload halaman default link href '#'
+  newShopNameInput.value = shopNameLink.innerText;
+  shopNameModal.style.display = "flex";
+}
+
+window.closeEditShopModal = function() {
+  shopNameModal.style.display = "none";
+}
+
+btnSaveShopName.onclick = async function() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const namaBaru = newShopNameInput.value.trim();
+  if (namaBaru === "") {
+    alert("Nama lapak tidak boleh dikosongkan!");
+    return;
+  }
+
+  btnSaveShopName.innerText = "Menyimpan...";
+  btnSaveShopName.disabled = true;
+
+  try {
+    const sellerDocRef = doc(db, "sellers", user.uid);
+    
+    // 1. Update field nama lapak di dokumen Firestore sellers
+    await updateDoc(sellerDocRef, { 
+      shopName: namaBaru 
+    });
+
+    // 2. Update display name bawaan Firebase Auth agar sinkron
+    await updateProfile(user, {
+      displayName: namaBaru
+    });
+
+    // 3. Perbarui teks link di UI langsung
+    shopNameLink.innerText = namaBaru;
+
+    alert("Nama lapak Anda berhasil diubah!");
+    closeEditShopModal();
+  } catch (error) {
+    console.error("Gagal mengubah nama lapak:", error);
+    // Jika dokumen belum ada sama sekali, jalankan skema fallback setDoc merge
+    try {
+      const sellerDocRef = doc(db, "sellers", user.uid);
+      await setDoc(sellerDocRef, {
+        uid: user.uid,
+        shopName: namaBaru,
+        isOpen: false
+      }, { merge: true });
+      
+      shopNameLink.innerText = namaBaru;
+      alert("Nama lapak Anda berhasil dibuat & diubah!");
+      closeEditShopModal();
+    } catch (err) {
+      alert("Terjadi kesalahan sistem, gagal menyimpan nama lapak.");
+    }
+  } finally {
+    btnSaveShopName.innerText = "Simpan";
+    btnSaveShopName.disabled = false;
+  }
+}
 
 /* EVENT TOGGLE SAKLAR STATUS */
 document.getElementById("shopStatusToggle").onchange = async function(e) {
@@ -938,7 +1084,6 @@ window.saveEditMenu = async function() {
 }
 
 /* EDIT MENU */
-/* EDIT MENU (Sudah disesuaikan untuk memuat Gambar) */
 let currentEditMenuId = null;
 window.editMenu = async function(menuId) {
   try {
@@ -953,11 +1098,9 @@ window.editMenu = async function(menuId) {
 
     const data = menuSnap.data();
     
-    // Tampilkan data ke input utama
     document.getElementById("editMenuName").value = data.title;
     document.getElementById("editMenuPrice").value = data.price;
     
-    // Tampilkan gambar lama ke pratinjau modal gambar
     const imgPreview = document.getElementById("editMenuImgPreview");
     imgPreview.src = data.image || 'logo.png';
 
