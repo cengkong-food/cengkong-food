@@ -1,23 +1,32 @@
 /* =========================
-   FIREBASE IMPORT (SUDAH DIPERBAIKI)
+   FIREBASE IMPORT (SUDAH DIPERBAIKI + ADD ADD_DOC)
 ========================= */
-
-import { initializeApp }
+import { initializeApp } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
-getFirestore,
-collection,
-onSnapshot,
-doc,     
-getDoc   
+  getFirestore,
+  collection,
+  onSnapshot,
+  doc,
+  getDoc,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  updateDoc
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 /* =========================
    FIREBASE CONFIG
 ========================= */
-
 const firebaseConfig = {
   apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
   authDomain: "food-delivery-97a5f.firebaseapp.com",
@@ -30,11 +39,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 /* =========================
    STORE LOCATION
 ========================= */
-
 const STORE_LAT = -6.365752;
 const STORE_LNG = 107.395501;
 
@@ -47,22 +56,17 @@ let routeLine;
 
 let cart = [];
 let currentMenu = null;
-
 let menuData = {};
 
 /* =========================
    LOGIN CHECK
 ========================= */
-
 function isLoggedIn(){
   return !!localStorage.getItem("cengkongUser");
 }
 
 /* =========================
-   LOAD MENU FIREBASE (VERSI KEBAL & AMAN)
-========================= */
-/* =========================
-   LOAD MENU FIREBASE (SUDAH DITAMBAH NAMA LAPAK)
+   LOAD MENU FIREBASE
 ========================= */
 const menuContainer = document.getElementById("menuContainer");
 
@@ -77,7 +81,7 @@ onSnapshot(collection(db, "menus"), async (snapshot) => {
     menuData[id] = data; 
 
     let labelStatus = `<span class="badge-status tutup">TUTUP</span>`;
-    let namaLapak = "Lapak Pedagang"; // Nama default jika data tidak ditemukan
+    let namaLapak = "Lapak Pedagang";
 
     try {
       if (data && data.sellerId) {
@@ -86,10 +90,20 @@ onSnapshot(collection(db, "menus"), async (snapshot) => {
         
         if (sellerSnap.exists()) {
           const sellerData = sellerSnap.data();
-          
-          // Mengambil nama lapak dari database sellers
-          // Sesuai screenshot lapakmu, field-nya kemungkinan adalah 'shopName' atau 'name'
-          namaLapak = sellerData.shopName || sellerData.name || "Lapak Pedagang";
+
+          data.sellerName =
+            sellerData.shopName ||
+            sellerData.name ||
+            "Lapak Pedagang";
+
+          data.sellerAddress =
+            sellerData.sellerAddress || "";
+
+          data.sellerPhone =
+            sellerData.whatsap || "";
+            namaLapak = sellerData.shopName ||  
+            sellerData.name || 
+            "Lapak Pedagang";
 
           if (sellerData.isOpen === true) {
             labelStatus = `<span class="badge-status buka">BUKA</span>`;
@@ -108,9 +122,7 @@ onSnapshot(collection(db, "menus"), async (snapshot) => {
         <div class="food-mobile-info">
           ${labelStatus}
           <h3>${data.title}</h3>
-          
           <p class="lapak-info">Lapak: <strong>${namaLapak}</strong></p>
-          
           <p class="food-desc">Cepat saji</p>
           <div class="food-meta">
             ⭐ 4.8 <span>•</span> Rp ${hargaMenu}
@@ -126,10 +138,10 @@ onSnapshot(collection(db, "menus"), async (snapshot) => {
   const allMenuHtmls = await Promise.all(menuPromises);
   menuContainer.innerHTML = allMenuHtmls.join("");
 });
+
 /* =========================
    OPEN MENU MODAL
 ========================= */
-
 window.openMenuModal = function(menuKey){
   if(!isLoggedIn()){
     alert("Silakan daftar / login terlebih dahulu");
@@ -172,7 +184,6 @@ window.openMenuModal = function(menuKey){
 /* =========================
    CLOSE MENU
 ========================= */
-
 window.closeMenuModal = function(){
   document.getElementById("menuModal").style.display = "none";
 }
@@ -180,7 +191,6 @@ window.closeMenuModal = function(){
 /* =========================
    CHANGE QTY
 ========================= */
-
 window.changeQty = function(index, change){
   const variant = currentMenu.variants[index];
   const itemIndex = cart.findIndex(item => item.name === variant.name);
@@ -190,16 +200,16 @@ window.changeQty = function(index, change){
     if(cart[itemIndex].qty <= 0){
       cart.splice(itemIndex, 1);
     }
-  /* BAGIAN DALAM WINDOW.CHANGEQTY KAMU */
-} else if(change > 0){
-  cart.push({
-    name: variant.name,
-    price: variant.price,
-    qty: 1,
-    image: currentMenu.image,
-    menuTitle: currentMenu.title // Menitipkan nama menu utama ke dalam item keranjang
-  });
-}
+  } else if(change > 0){
+    cart.push({
+      name: variant.name,
+      price: variant.price,
+      qty: 1,
+      image: currentMenu.image,
+      menuTitle: currentMenu.title,
+      sellerName: currentMenu.sellerName || "Pasar Cengkong" 
+    });
+  }
   updateCart();
 
   const currentItem = cart.find(item => item.name === variant.name);
@@ -209,7 +219,6 @@ window.changeQty = function(index, change){
 /* =========================
    CONFIRM ORDER
 ========================= */
-
 window.confirmOrder = function(){
   closeMenuModal();
   showToast();
@@ -219,7 +228,6 @@ window.confirmOrder = function(){
 /* =========================
    UPDATE CART
 ========================= */
-
 function updateCart(){
   const cartItems = document.getElementById("cartItems");
   const cartCount = document.getElementById("cartCount");
@@ -269,7 +277,6 @@ function updateCart(){
 /* =========================
    CART QTY
 ========================= */
-
 window.cartQty = function(index, change){
   cart[index].qty += change;
   if(cart[index].qty <= 0){
@@ -281,7 +288,6 @@ window.cartQty = function(index, change){
 /* =========================
    OPEN CART
 ========================= */
-
 window.openCart = function(){
   if(!isLoggedIn()){
     alert("Silakan daftar / login terlebih dahulu");
@@ -295,7 +301,6 @@ window.openCart = function(){
 /* =========================
    CLOSE CART
 ========================= */
-
 window.closeCart = function(){
   document.getElementById("cartModal").style.display = "none";
 }
@@ -303,7 +308,6 @@ window.closeCart = function(){
 /* =========================
    CANCEL ORDER
 ========================= */
-
 window.cancelOrder = function(){
   cart = [];
   shippingCost = 0;
@@ -314,7 +318,6 @@ window.cancelOrder = function(){
 /* =========================
    GET USER LOCATION
 ========================= */
-
 window.getUserLocation = function(){
   if(!navigator.geolocation){
     alert("Geolocation tidak didukung");
@@ -355,7 +358,7 @@ function initMap(lat, lng){
   L.marker([lat, lng]).addTo(map).bindPopup("📍 Lokasi Anda");
 
   /* =========================
-     ROUTE JALAN ASLI
+      ROUTE JALAN ASLI
   ========================= */
   fetch(`https://router.project-osrm.org/route/v1/driving/${STORE_LNG},${STORE_LAT};${lng},${lat}?overview=full&geometries=geojson`)
   .then(res => res.json())
@@ -387,71 +390,111 @@ function initMap(lat, lng){
   updateCart();
 }
 
-
 /* =========================
-   WHATSAPP (FORMAT GROUPING: LAPAK & MULTI MENU)
+   KONEKSI KE DATABASE DRIVER + TRIGGER PELACAKAN NYATA
 ========================= */
-/* =========================
-   WHATSAPP (FORMAT GROUPING - SUDAH FIX SYNTAX)
-========================= */
-window.checkoutWhatsApp = function(){
-  if(cart.length === 0){
-    alert("Keranjang kosong");
-    return;
-  }
+const btnBayarDinamis = document.getElementById("btnBayarDinamis");
 
-  let subtotal = 0;
-  
-  // 1. Ambil daftar nama lapak (unik) dari semua item di keranjang
-  const daftarLapak = [...new Set(cart.map(item => item.sellerName || "Lapak Pedagang"))];
-  const stringLapak = daftarLapak.join(", "); // Gabungkan jika ada lebih dari 1 lapak
-  
-  // Kalimat pembuka utama
-  let text = `Halo Admin Cengkong Food%0A%0ASaya ingin memesan :`;
+if (btnBayarDinamis) {
+  btnBayarDinamis.addEventListener("click", async () => {
 
-  // 2. KELOMPOKKAN ITEM BERDASARKAN NAMA MENU UTAMA
-  const menuGroups = {};
-  
-  cart.forEach(item => {
-    subtotal += item.price * item.qty;
-    const namaMenu = item.menuTitle || "Menu Utama";
-    
-    // Jika grup menu belum ada, buat array kosong baru
-    if (!menuGroups[namaMenu]) {
-      menuGroups[namaMenu] = [];
+    const user = auth.currentUser;
+
+    // 1. VALIDASI LOGIN
+    if (!user) {
+      alert("Anda harus login terlebih dahulu sebelum memesan makanan!");
+      window.location.href = "register.html";
+      return;
     }
-    // Masukkan varian ke dalam grup menu yang sesuai
-    menuGroups[namaMenu].push(item);
-  });
 
-  // 3. SUSUN TEKS BERDASARKAN GRUP (Sudah diperbaiki dari 'dalam' menjadi 'in')
-  for (const namaMenu in menuGroups) {
-    text += `%0A*=== ${namaMenu} ===*%0A`; // Judul Menu Utama
-    
-    menuGroups[namaMenu].forEach(item => {
-      text += `• ${item.name} x${item.qty} = Rp ${(item.price * item.qty).toLocaleString('id-ID')}%0A`; // Rincian varian
+    // 2. VALIDASI CART
+    if (cart.length === 0) {
+      alert("Keranjang belanja Anda masih kosong!");
+      return;
+    }
+
+    // 3. VALIDASI LOKASI
+    if (!userLat || !userLng) {
+      alert("Silakan klik 'Gunakan Lokasi Saya' terlebih dahulu agar Kurir tahu arah rute!");
+      return;
+    }
+
+    btnBayarDinamis.disabled = true;
+    btnBayarDinamis.innerText = "Mencari Driver...";
+
+    try {
+
+    // 4. HITUNG TOTAL
+    let subtotalValue = 0;
+
+    cart.forEach(item => {
+      subtotalValue += item.price * item.qty;
     });
-  }
 
-  // 4. SUSUN BAGIAN TOTALAN DAN ONGKIR
-  const grandTotal = subtotal + shippingCost;
-  text += `%0A---------------------------------------`;
-  text += `%0ASubtotal : Rp ${subtotal.toLocaleString('id-ID')}`;
-  text += `%0AOngkir : Rp ${shippingCost.toLocaleString('id-ID')}`;
-  text += `%0A*Total Bayar : Rp ${grandTotal.toLocaleString('id-ID')}*`;
+    const grandTotalValue = subtotalValue + shippingCost;
+const orderData = {
+customerId: user.uid,
+customerName: user.displayName || "Pelanggan",
 
-  // 5. LINK GOOGLE MAPS UNTUK ADMIN
-  if(userLat && userLng){
-    text += `%0A%0A📍 *Lokasi Customer* : http://maps.google.com/?q=${userLat},${userLng}`;
-  }
+sellerId: currentMenu?.sellerId || null,
 
-  // Buka WhatsApp
-  window.open(`https://wa.me/6285773300051?text=${text}`, "_blank");
+shopName: currentMenu?.sellerName || "Pasar Cengkong",
+sellerAddress:
+  currentMenu?.sellerAddress || "",
+
+sellerPhone:
+  currentMenu?.sellerPhone || "",
+menuTitle: currentMenu?.title || "",
+
+items: cart,
+itemsName: cart.map(i => i.name).join(", "),
+
+  subtotal: subtotalValue,
+  ongkir: shippingCost,
+  grandTotal: grandTotalValue,
+
+  customerLatitude: userLat,
+  customerLongitude: userLng,
+
+  customerLocation: {
+  latitude: userLat,
+  longitude: userLng
+},
+
+
+  status: "PENDING",
+  createdAt: new Date()
 };
+
+await addDoc(
+  collection(db, "orders"),
+  orderData
+);
+
+
+      // 6. RESET UI
+      cart = [];
+      shippingCost = 0;
+      updateCart();
+      closeCart();
+
+      alert("Pesanan berhasil dibuat! Mencari driver... 🚗");
+
+      window.location.href = "orders.html";
+
+    } catch (error) {
+      console.error("Gagal membuat pesanan:", error);
+
+      alert("Terjadi masalah jaringan, coba lagi.");
+
+      btnBayarDinamis.disabled = false;
+      btnBayarDinamis.innerText = "Pesan & Cari Driver";
+    }
+  });
+}
 /* =========================
    TOAST
 ========================= */
-
 function showToast(){
   const toast = document.getElementById("toast");
   if(!toast) return;
@@ -464,7 +507,6 @@ function showToast(){
 /* =========================
    DARK MODE & LIVE SEARCH
 ========================= */
-
 const darkToggle = document.getElementById("darkToggle");
 if(darkToggle){
   darkToggle.onclick = function(){
@@ -492,7 +534,6 @@ if(searchInput){
   });
 }
 
-/* BUTTON CARI */
 const filterBtn = document.querySelector(".filter-btn");
 if(filterBtn){
   filterBtn.addEventListener("click", () => {
@@ -504,99 +545,50 @@ if(filterBtn){
 /* =========================
    USER LOGIN DISPLAY
 ========================= */
-
 window.addEventListener("DOMContentLoaded", () => {
-
-  const savedUser =
-  localStorage.getItem("cengkongUser");
- 
-  const loginBtn =
-  document.getElementById("loginBtn");
-
-  const userBox =
-  document.getElementById("userBox");
-
-  const profileInitial =
-  document.getElementById("profileInitial");
-
-  const profileName =
-  document.getElementById("profileName");
+  const savedUser = localStorage.getItem("cengkongUser");
+  const loginBtn = document.getElementById("loginBtn");
+  const userBox = document.getElementById("userBox");
+  const profileInitial = document.getElementById("profileInitial");
+  const profileName = document.getElementById("profileName");
 
   if(!savedUser) return;
 
-  try{
+  try {
+    const user = JSON.parse(savedUser);
+    const nama = user.name || "User";
+    const hurufAwal = nama.charAt(0).toUpperCase();
 
-    const user =
-    JSON.parse(savedUser);
-
-    const nama =
-    user.name || "User";
-
-    const hurufAwal =
-    nama.charAt(0).toUpperCase();
-
-    if(loginBtn)
-      loginBtn.style.display = "none";
-
-    if(userBox)
-      userBox.style.display = "flex";
-
-    if(profileInitial)
-      profileInitial.innerText = hurufAwal;
-
-    if(profileName)
-      profileName.innerText = nama;
-
-  }
-
-  catch(err){
-
+    if(loginBtn) loginBtn.style.display = "none";
+    if(userBox) userBox.style.display = "flex";
+    if(profileInitial) profileInitial.innerText = hurufAwal;
+    if(profileName) profileName.innerText = nama;
+  } catch(err) {
     console.log(err);
-
   }
-
 });
 
 /* =========================
-   FIREBASE AUTH
+   CEK USER LOGIN STATS (FIREBASE AUTH)
 ========================= */
-
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-const auth = getAuth(app);
-
-/* =========================
-   CEK USER LOGIN STATS
-========================= */
-
 onAuthStateChanged(auth, (user) => {
   const profileInitial = document.getElementById("profileInitial");
   const profileName = document.getElementById("profileName");
   const profileEmail = document.getElementById("profileEmail");
   const loginText = document.getElementById("loginText");
 
-  /* USER LOGIN */
   if(user){
     console.log("USER LOGIN:", user.email);
     localStorage.setItem(
-  "cengkongUser",
-  JSON.stringify({
-    name: user.displayName || user.email.split("@")[0],
-    email: user.email
-  })
-);
+      "cengkongUser",
+      JSON.stringify({
+        name: user.displayName || user.email.split("@")[0],
+        email: user.email
+      })
+    );
 
-    let name = "";
-    if(user.displayName && user.displayName !== ""){
-      name = user.displayName;
-    } else {
-      name = user.email.split("@")[0];
-      if(profileInitial) profileInitial.style.display = "flex";
-    }
+    let name = user.displayName || user.email.split("@")[0];
+    if(profileInitial) profileInitial.style.display = "flex";
 
     const initial = name.charAt(0).toUpperCase();
 
@@ -606,9 +598,6 @@ onAuthStateChanged(auth, (user) => {
     if(loginText) loginText.innerText = initial;
 
   } else {
-
-    /* USER BELUM LOGIN */
-
     if(profileInitial) profileInitial.style.display = "none";
     if(profileName){
       profileName.innerHTML = `
@@ -624,7 +613,6 @@ onAuthStateChanged(auth, (user) => {
 /* =========================
    LOGOUT ACTION
 ========================= */
-
 window.logout = function(){
   const yakin = confirm("Yakin ingin keluar?");
   if(!yakin) return;

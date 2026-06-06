@@ -1,35 +1,19 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akun & Pelacakan Saya</title>
 
-  <meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <title>Akun Saya</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
 
-  <!-- FONT -->
-  <link rel="preconnect"
-  href="https://fonts.googleapis.com">
-
-  <link
-  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-  rel="stylesheet">
-
-  <!-- FONT AWESOME -->
-  <link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
-
-  <!-- BOXICONS -->
-  <link
-  rel="stylesheet"
-  href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
   <style>
-
     *{
       margin:0;
       padding:0;
@@ -52,12 +36,11 @@
       background:#f7f7f7;
       position:relative;
       overflow:hidden;
-      padding-bottom:120px;
+      padding-bottom:40px;
       box-shadow:0 0 30px rgba(0,0,0,0.12);
     }
 
     /* HEADER */
-
     .profile-header{
       width:100%;
       height:74px;
@@ -96,7 +79,6 @@
     }
 
     /* PROFILE CARD */
-
     .profile-card{
       margin:20px 18px;
       background:white;
@@ -139,19 +121,52 @@
       color:#888;
     }
 
-    .edit-btn{
-      border:none;
-      background:#f5f5f5;
-      padding:10px 14px;
-      border-radius:14px;
-      font-size:12px;
-      font-weight:600;
-      cursor:pointer;
-      color:#555;
+    /* TRACKING AREA STYLE */
+    .tracking-card {
+      margin: 0 18px 20px;
+      background: white;
+      border-radius: 24px;
+      padding: 18px;
+      border: 1px solid #ececec;
+      display: none; /* Muncul jika ada order aktif */
+    }
+
+    .tracking-card h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #111;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background: #ffebe6;
+      color: #ff3131;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    #trackingMap {
+      width: 100%;
+      height: 220px;
+      border-radius: 16px;
+      margin-bottom: 15px;
+      z-index: 1;
+    }
+
+    .driver-info-box {
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 14px;
+      font-size: 13px;
     }
 
     /* MENU */
-
     .menu-card{
       margin:0 18px 18px;
       background:white;
@@ -203,7 +218,6 @@
     }
 
     /* LOGOUT */
-
     .logout-card{
       margin:0 18px;
       background:white;
@@ -239,338 +253,72 @@
       font-size:14px;
       font-weight:600;
     }
-
-    /* BOTTOM NAV */
-
-    .bottom-nav{
-      position:fixed;
-      bottom:0;
-      left:50%;
-      transform:translateX(-50%);
-      width:100%;
-      max-width:430px;
-      height:78px;
-      background:white;
-      border-top:1px solid #ececec;
-      display:flex;
-      justify-content:space-around;
-      align-items:center;
-      z-index:9999;
-    }
-
-    .nav-item{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:4px;
-      text-decoration:none;
-      color:#777;
-      font-size:12px;
-      font-weight:500;
-    }
-
-    .nav-item i{
-      font-size:23px;
-    }
-
-    .nav-item.active{
-      color:#ff3131;
-    }
-
   </style>
-
 </head>
 
 <body>
 
   <div class="mobile">
 
-    <!-- HEADER -->
     <div class="profile-header">
-
-      <button
-      class="back-btn"
-      onclick="window.location.href='index.html'">
-
+      <button class="back-btn" onclick="window.location.href='index.html'">
         <i class='bx bx-arrow-back'></i>
-
       </button>
-
       <h2>Akun Saya</h2>
-
     </div>
 
-    <!-- PROFILE -->
     <div class="profile-card">
-
       <div class="profile-left">
-
-        <!-- FOTO / HURUF -->
-        <div
-        class="profile-img"
-        id="profileInitial">
-          G
-        </div>
-
-        <!-- DATA USER -->
+        <div class="profile-img" id="profileInitial">G</div>
         <div>
-
-          <div
-          class="profile-name"
-          id="profileName">
-            Guest
-          </div>
-
-          <div
-          class="profile-phone"
-          id="profileEmail">
-            Belum login
-          </div>
-
+          <div class="profile-name" id="profileName">Guest</div>
+          <div class="profile-phone" id="profileEmail">Belum login</div>
         </div>
-
       </div>
-
-      <button class="edit-btn">
-        Ubah Profil
-      </button>
-
+      <button class="edit-btn">Ubah Profil</button>
     </div>
 
-    <!-- MENU -->
+  
     <div class="menu-card">
-
       <div class="menu-item">
-
         <div class="menu-left">
-          <div class="menu-icon">
-            <i class="fa-regular fa-clipboard"></i>
-          </div>
-
-          <div class="menu-text">
-            Pesanan Saya
-          </div>
+          <div class="menu-icon"><i class="fa-regular fa-clipboard"></i></div>
+          <div class="menu-text">Pesanan Saya</div>
         </div>
-
-        <div class="menu-arrow">
-          <i class="fa-solid fa-chevron-right"></i>
-        </div>
-
+        <div class="menu-arrow"><i class="fa-solid fa-chevron-right"></i></div>
       </div>
 
       <div class="menu-item">
-
         <div class="menu-left">
-          <div class="menu-icon">
-            <i class="fa-solid fa-location-dot"></i>
-          </div>
-
-          <div class="menu-text">
-            Alamat Saya
-          </div>
+          <div class="menu-icon"><i class="fa-solid fa-location-dot"></i></div>
+          <div class="menu-text">Alamat Saya</div>
         </div>
-
-        <div class="menu-arrow">
-          <i class="fa-solid fa-chevron-right"></i>
-        </div>
-
+        <div class="menu-arrow"><i class="fa-solid fa-chevron-right"></i></div>
       </div>
 
       <div class="menu-item">
-
         <div class="menu-left">
-          <div class="menu-icon">
-            <i class="fa-regular fa-credit-card"></i>
-          </div>
-
-          <div class="menu-text">
-            Pembayaran
-          </div>
+          <div class="menu-icon"><i class="fa-regular fa-credit-card"></i></div>
+          <div class="menu-text">Pembayaran</div>
         </div>
-
-        <div class="menu-arrow">
-          <i class="fa-solid fa-chevron-right"></i>
-        </div>
-
+        <div class="menu-arrow"><i class="fa-solid fa-chevron-right"></i></div>
       </div>
-
-      <div class="menu-item">
-
-        <div class="menu-left">
-          <div class="menu-icon">
-            <i class="fa-regular fa-circle-question"></i>
-          </div>
-
-          <div class="menu-text">
-            Bantuan
-          </div>
-        </div>
-
-        <div class="menu-arrow">
-          <i class="fa-solid fa-chevron-right"></i>
-        </div>
-
-      </div>
-
     </div>
 
-    <!-- LOGOUT -->
     <div class="logout-card">
-
-      <button
-      class="logout-btn"
-      onclick="logout()">
-
+      <button class="logout-btn" onclick="logout()">
         <div class="logout-left">
-
-          <div class="logout-icon">
-            <i class="fa-solid fa-right-from-bracket"></i>
-          </div>
-
-          <div class="logout-text">
-            Keluar
-          </div>
-
+          <div class="logout-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
+          <div class="logout-text">Keluar</div>
         </div>
-
-        <div class="menu-arrow">
-          <i class="fa-solid fa-chevron-right"></i>
-        </div>
-
+        <div class="menu-arrow"><i class="fa-solid fa-chevron-right"></i></div>
       </button>
-
     </div>
 
   </div>
 
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-
-  <!-- FIREBASE SCRIPT -->
-  <script type="module">
-
-    import {
-      initializeApp
-    }
-    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-    import {
-      getAuth,
-      onAuthStateChanged,
-      signOut
-    }
-    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    /* FIREBASE CONFIG */
-      const firebaseConfig = {
-  apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
-  authDomain: "food-delivery-97a5f.firebaseapp.com",
-  databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "food-delivery-97a5f",
-  storageBucket: "food-delivery-97a5f.firebasestorage.app",
-  messagingSenderId: "1071083538977",
-  appId: "1:1071083538977:web:51e617513f6fb639cf3160"
-};
-
-    /* INIT */
-    const app = initializeApp(firebaseConfig);
-
-    const auth = getAuth(app);
-
-    /* ELEMENT */
-    const profileInitial =
-    document.getElementById("profileInitial");
-
-    const profileName =
-    document.getElementById("profileName");
-
-    const profileEmail =
-    document.getElementById("profileEmail");
-
-    /* USER LOGIN */
-    onAuthStateChanged(auth, (user) => {
-
-      if(user){
-
-        let name = "User";
-
-        if(user.displayName){
-
-          name = user.displayName;
-
-        }
-        else if(user.email){
-
-          name =
-          user.email.split("@")[0];
-
-        }
-
-        const initial =
-        name.charAt(0).toUpperCase();
-
-        profileInitial.innerHTML =
-        initial;
-
-        profileName.innerHTML =
-        name;
-
-        profileEmail.innerHTML =
-        user.email;
-
-      }
-
-      else{
-
-        profileInitial.innerHTML =
-        "G";
-
-        profileName.innerHTML =
-        "Guest";
-
-        profileEmail.innerHTML =
-        "Belum login";
-
-      }
-
-    });
-
-    /* LOGOUT */
-    window.logout = function(){
-
-      const konfirmasi = confirm(
-        "Yakin ingin keluar dari akun?"
-      );
-
-      if(konfirmasi){
-
-        signOut(auth)
-
-        .then(()=>{
-
-          localStorage.removeItem(
-            "cengkongUser"
-          );
-
-          alert("Logout berhasil");
-
-          window.location.href =
-          "index.html";
-
-        })
-
-        .catch((error)=>{
-
-          console.log(error);
-
-          alert("Logout gagal");
-
-        });
-
-      }
-
-    }
-
-  </script>
-
+ 
 </body>
 </html>

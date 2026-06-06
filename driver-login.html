@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Driver - Cengkong Food</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* CONFIG BINGKAI HP DI PC */
+body { 
+  background: #ececec; 
+  font-family: 'Poppins', sans-serif; 
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.phone-wrapper {
+  width: 100%;
+  max-width: 430px;
+  height: 100vh;
+  max-height: 880px;
+  background: white;
+  overflow-y: auto;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  padding: 35px 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Konten login pas di tengah HP */
+  position: relative;
+}
+
+@media (max-width: 480px) {
+  body { background: white; }
+  .phone-wrapper { max-height: 100vh; box-shadow: none;}
+}
+
+@media (min-width: 481px) {
+  .phone-wrapper {border: 8px solid #222; }
+}
+
+/* STYLING KOMPONEN LOGIN */
+.logo { width: 95px; display: block; margin: 0 auto 20px; }
+h1 { text-align: center; font-size: 26px; font-weight: 800; color: #ff0037; margin-bottom: 6px; }
+.desc { text-align: center; color: #666; font-size: 13px; margin-bottom: 30px; }
+
+.input-box { width: 100%; height: 56px; border: 2px solid #eee; border-radius: 18px; padding: 0 18px; outline: none; font-size: 15px; margin-bottom: 16px; font-family: 'Poppins', sans-serif; }
+.input-box:focus { border-color: #ff0037; }
+
+.password-wrapper { position: relative; margin-bottom: 20px; }
+.password-wrapper .input-box { margin-bottom: 0; padding-right: 75px; }
+.toggle-password { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: #ff0037; font-size: 13px; font-weight: 700; cursor: pointer; }
+
+.main-btn { width: 100%; height: 56px; border: none; border-radius: 18px; background: #ff0037; color: white; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 5px; box-shadow: 0 4px 12px rgba(255, 0, 55, 0.2); }
+.main-btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
+
+.footer-link { 
+  text-align: center; 
+  margin-top: 30px; 
+  font-size: 13px; 
+  color: #666; 
+}
+.footer-link a { 
+  color: #ff0037; 
+  font-weight: 700; 
+  text-decoration: none; 
+}
+.footer-link a:hover {
+  text-decoration: underline; /* Memberi efek garis bawah saat kursor diarahkan ke tombol daftar */
+}
+</style>
+</head>
+<body>
+
+  <div class="phone-wrapper">
+    <img src="logo.png" class="logo" alt="Logo Cengkong Food">
+    <h1>Khusus Driver</h1>
+    <p class="desc">Silakan masuk untuk mulai mengantar pesanan</p>
+    
+    <form id="loginDriverForm">
+      <input type="email" id="email" class="input-box" placeholder="Email Terdaftar" required>
+      
+      <div class="password-wrapper">
+        <input type="password" id="password" class="input-box" placeholder="Kata Sandi" required>
+        <span id="togglePassword" class="toggle-password">Show</span>
+      </div>
+      
+      <button type="submit" id="loginBtn" class="main-btn">Masuk Aplikasi</button>
+    </form>
+    
+  <div class="footer-link">
+  Belum punya akun driver? Silakan <a href="driver-registrasi.html">daftar</a>
+</div>
+  </div>
+
+<script type="module">
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { app } from "./firebase-config.js";
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const db = getFirestore(app);
+
+const auth = getAuth(app);
+
+// Sembunyi / Tampilkan Password
+const passwordInput = document.getElementById("password");
+const togglePassword = document.getElementById("togglePassword");
+
+togglePassword.addEventListener("click", () => {
+  if (passwordInput.type === "password") {
+    passwordInput.type = "text";
+    togglePassword.innerText = "Hide";
+  } else {
+    passwordInput.type = "password";
+    togglePassword.innerText = "Show";
+  }
+});
+
+// Proses Logika Login ke Firebase
+document.getElementById("loginDriverForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const btn = document.getElementById("loginBtn");
+
+  btn.disabled = true;
+  btn.innerText = "Memverifikasi...";
+
+  try {
+    // Jalankan otentikasi login Firebase
+   const userCredential =
+  await signInWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+
+const user = userCredential.user;
+
+const driverSnap = await getDoc(
+  doc(db, "drivers", user.uid)
+);
+
+if (!driverSnap.exists()) {
+
+  alert("Akun ini bukan driver yang terdaftar!");
+
+  await auth.signOut();
+  btn.disabled = false;
+  btn.innerText = "Masuk Aplikasi";
+
+  return;
+}
+
+alert("Login Berhasil! Selamat Bekerja.");
+window.location.href = "driver-dashboard.html";
+  } catch (error) {
+    btn.disabled = false;
+    btn.innerText = "Masuk Aplikasi";
+    
+    if (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found") {
+      alert("Email atau password driver salah!");
+    } else {
+      alert("Gagal Masuk: " + error.message);
+    }
+  }
+});
+</script>
+</body>
+</html>

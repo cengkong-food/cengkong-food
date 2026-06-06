@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pendaftaran Driver - Cengkong Food</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* CONFIG BINGKAI HP DI PC */
+body { 
+  background: #ececec; 
+  font-family: 'Poppins', sans-serif; 
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.phone-wrapper {
+  width: 100%;
+  max-width: 430px;
+  height: 100vh;
+  max-height: 880px;
+  background: white;
+  overflow-y: auto;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  padding: 35px 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+@media (max-width: 480px) {
+  body { background: white; }
+  .phone-wrapper { max-height: 100vh; box-shadow: none; border-radius: 0; }
+}
+
+@media (min-width: 481px) {
+  .phone-wrapper { border-radius: 35px; border: 8px solid #222; }
+}
+
+/* STYLING KOMPONEN REGISTRASI */
+h1 { text-align: center; font-size: 24px; font-weight: 800; color: #ff0037; margin-bottom: 6px; }
+.desc { text-align: center; color: #666; font-size: 13px; margin-bottom: 25px; }
+
+.input-box { width: 100%; height: 52px; border: 2px solid #eee; border-radius: 16px; padding: 0 18px; outline: none; font-size: 14px; margin-bottom: 14px; font-family: 'Poppins', sans-serif; }
+.input-box:focus { border-color: #ff0037; }
+
+.main-btn { width: 100%; height: 54px; border: none; border-radius: 16px; background: #ff0037; color: white; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(255, 0, 55, 0.2); }
+.main-btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
+
+.footer-link { text-align: center; margin-top: 25px; font-size: 13px; color: #666; }
+.footer-link a { color: #ff0037; font-weight: 700; text-decoration: none; }
+.footer-link a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+  <div class="phone-wrapper">
+    <h1>Daftar Mitra Driver</h1>
+    <p class="desc">Bergabunglah dengan tim logistik Cengkong Food</p>
+    
+    <form id="registerDriverForm">
+      <!-- Input Nama Lengkap -->
+      <input type="text" id="driverName" class="input-box" placeholder="Nama Lengkap" required>
+      
+      <!-- Input No WhatsApp -->
+      <input type="tel" id="driverPhone" class="input-box" placeholder="Nomor WhatsApp (Aktif)" required>
+      
+      <!-- Input Email -->
+      <input type="email" id="driverEmail" class="input-box" placeholder="Alamat Email" required>
+      
+      <!-- Input Password -->
+      <input type="password" id="driverPassword" class="input-box" placeholder="Kata Sandi (Min. 6 Karakter)" minlength="6" required>
+      
+      <button type="submit" id="registerBtn" class="main-btn">Daftar Sekarang</button>
+    </form>
+    
+    <div class="footer-link">
+      Sudah punya akun? <a href="driver-login.html">Login di sini</a>
+    </div>
+  </div>
+
+<script type="module">
+
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { app } from "./firebase-config.js";
+import { updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+// Saat pendaftaran berhasil:
+await updateProfile(userCredential.user, {
+  displayName: "Jajang" // Nama yang dimasukkan saat daftar
+});
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+document.getElementById("registerDriverForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("driverName").value.trim();
+  const phone = document.getElementById("driverPhone").value.trim();
+  const email = document.getElementById("driverEmail").value.trim();
+  const password = document.getElementById("driverPassword").value;
+  const btn = document.getElementById("registerBtn");
+
+  // Kunci tombol agar tidak double click submit
+  btn.disabled = true;
+  btn.innerText = "Mendaftarkan Akun...";
+
+  let user = null; // Menyimpan referensi user secara global di dalam scope event
+
+  try {
+    // 1. Buat user baru di Firebase Authentication
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    user = userCredential.user;
+
+    // 2. Pasang Nama Driver ke dalam Profil Firebase Auth agar langsung terbaca di dasbor
+    await updateProfile(user, { displayName: name });
+
+    // 3. Simpan data detail kurir ke Firestore Database (Tabel drivers)
+    await setDoc(doc(db, "drivers", user.uid), {
+      uid: user.uid,
+      name: name,
+      phone: phone,
+      email: email,
+      role: "driver",
+      statusOnline: false, // Tambahan status awal driver offline
+      createdAt: new Date()
+    });
+
+    alert("Pendaftaran Berhasil! Akun Driver Anda siap digunakan.");
+    window.location.href = "driver-dashboard.html"; // Alihkan otomatis ke dasbor setelah daftar
+
+  } catch (error) {
+    btn.disabled = false;
+    btn.innerText = "Daftar Sekarang";
+    
+    console.error("Error Registrasi:", error);
+
+    // SISTEM PEMBERSIH OTOMATIS:
+    // Jika user sempat sukses terbuat di Auth tetapi proses simpan Firestore (Langkah 3) gagal,
+    // Hapus kembali user auth yang menggantung tersebut agar email tidak terkunci/bisa didaftarkan ulang.
+    if (user && error.code !== "auth/email-already-in-use") {
+      try {
+        await user.delete();
+        console.log("Sistem sukses membersihkan email auth menggantung karena Firestore error.");
+      } catch (delError) {
+        console.error("Gagal menghapus user auth yang gantung:", delError);
+      }
+    }
+
+    // Handling error bawaan Firebase untuk dimunculkan ke user
+    if (error.code === "auth/email-already-in-use") {
+      alert("Maaf, Email tersebut sudah terdaftar! Silakan gunakan email lain atau langsung Login.");
+    } else if (error.code === "auth/weak-password") {
+      alert("Password terlalu lemah! Gunakan minimal 6 karakter.");
+    } else if (error.code === "auth/invalid-email") {
+      alert("Format penulisan email salah!");
+    } else {
+      alert("Gagal mendaftar ke Database: " + error.message + "\n\n-> Solusi: Periksa kembali Rules Cloud Firestore di Firebase Console Anda (set ke allow read, write: if true;)");
+    }
+  }
+});
+</script>
+</body>
+</html>

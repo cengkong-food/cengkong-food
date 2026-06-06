@@ -1,13 +1,14 @@
+// firebase-config.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-/* FIREBASE CONFIG SINKRON: MENGGUNAKAN CENGKONG-FOOD */
 const firebaseConfig = {
-  apiKey: "AIzaSyBbrr3_EW19Ax0B-WsIjyo7gudSLGaacZ4",
-  authDomain: "cengkong-food.firebaseapp.com",
-  projectId: "cengkong-food",
-  storageBucket: "cengkong-food.firebasestorage.app",
-  messagingSenderId: "341642005798",
-  appId: "1:341642005798:web:4b002116b46256c7c845e7"
+  apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
+  authDomain: "food-delivery-97a5f.firebaseapp.com",
+  databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "food-delivery-97a5f",
+  storageBucket: "food-delivery-97a5f.firebasestorage.app",
+  messagingSenderId: "1071083538977",
+  appId: "1:1071083538977:web:51e617513f6fb639cf3160"
 };
 
 export const app = initializeApp(firebaseConfig);

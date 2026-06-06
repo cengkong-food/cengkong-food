@@ -5,493 +5,142 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login Seller - Cengkong Food</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
 <style>
-/* =========================
-    RESET
-========================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background: #ececec;
-  font-family: 'Poppins', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
-/* =========================
-    CARD
-========================= */
-.auth-card {
-  width: 100%;
-  max-width: 420px;
-  background: white;
-  border-radius: 30px;
-  padding: 35px 25px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-}
-
-.logo {
-  width: 90px;
-  display: block;
-  margin: 0 auto 20px;
-}
-
-h1 {
-  text-align: center;
-  font-size: 28px;
-  font-weight: 800;
-  margin-bottom: 10px;
-  color: #ff0037;
-}
-
-.desc {
-  text-align: center;
-  color: #777;
-  margin-bottom: 28px;
-  font-size: 14px;
-}
-
-/* =========================
-    INPUT
-========================= */
-.input-box {
-  width: 100%;
-  height: 56px;
-  border: 2px solid #eee;
-  border-radius: 18px;
-  padding: 0 18px;
-  outline: none;
-  font-size: 16px;
-  margin-bottom: 16px;
-  font-family: 'Poppins', sans-serif;
-  transition: 0.3s ease;
-}
-
-.input-box:focus {
-  border-color: #ff0037;
-}
-.password-wrapper{
-  position: relative;
-  margin-bottom: 16px;
-}
-
-.password-wrapper .input-box{
-  margin-bottom: 0;
-  padding-right: 70px;
-}
-
-.toggle-password{
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 13px;
-  font-weight: 600;
-  color: #ff0037;
-  cursor: pointer;
-  user-select: none;
-}
-
-.toggle-password:hover{
-  opacity: .8;
-}
-
-/* =========================
-    FORGOT ACCOUNT LINKS (TAMBAHAN BARU)
-========================= */
-.forgot-container {
-  display: flex;
-  justify-content: space-between;
-  margin: -4px 0 18px 0;
-  padding: 0 4px;
-  font-size: 13px;
-}
-
-.forgot-btn-link {
-  color: #64748b;
-  text-decoration: none;
-  font-weight: 500;
-  transition: 0.2s ease;
-  background: none;
-  border: none;
-  font-family: 'Poppins', sans-serif;
-  cursor: pointer;
-}
-
-.forgot-btn-link:hover {
-  color: #ff0037;
-  text-decoration: underline;
-}
-
-/* =========================
-    BUTTON
-========================= */
-.main-btn {
-  width: 100%;
-  height: 56px;
-  border: none;
-  border-radius: 18px;
-  background: #ff0037;
-  color: white;
-  font-size: 17px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: 0.3s ease;
-  box-shadow: 0 4px 12px rgba(255, 0, 55, 0.2);
-}
-
-.main-btn:disabled {
-  background: #ccc;
-  box-shadow: none;
-  cursor: not-allowed;
-}
-
-/* =========================
-    REGISTER LINK
-========================= */
-.register-link {
-  text-align: center;
-  margin-top: 24px;
-  font-size: 14px;
-  color: #666;
-}
-
-.register-link a {
-  color: #ff0037;
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.register-link a:hover {
-  text-decoration: underline;
-}
-
-/* =========================
-    MODAL RESET STYLE (TAMBAHAN BARU)
-========================= */
-.forgot-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.modal-card {
-  background: white;
-  padding: 30px 25px;
-  border-radius: 24px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-  animation: fadeIn 0.3s ease;
-}
-
-.modal-card h3 {
-  font-size: 19px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 8px;
-}
-
-.modal-card p {
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 16px;
-  line-height: 1.5;
-}
-
-.modal-card .input-box {
-  margin-bottom: 12px;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 18px;
-  justify-content: flex-end;
-}
-
-.modal-btn-cancel {
-  background: #f1f5f9;
-  color: #64748b;
-  border: none;
-  padding: 0 20px;
-  height: 46px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-}
-
-.modal-btn-submit {
-  background: #ff0037;
-  color: white;
-  border: none;
-  padding: 0 20px;
-  height: 46px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #ececec; font-family: 'Poppins', sans-serif; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+.auth-card { width: 100%; max-width: 430px; background: white; border-radius: 30px; padding: 35px 25px; box-shadow: 0 10px 30px rgba(0,0,0,.05); }
+.logo { width: 90px; display: block; margin: 0 auto 20px; }
+h1 { text-align: center; font-size: 28px; font-weight: 800; color: #ff0037; margin-bottom: 8px; }
+.desc { text-align: center; color: #777; font-size: 14px; margin-bottom: 25px; }
+.input-box { width: 100%; height: 56px; border: 2px solid #eee; border-radius: 18px; padding: 0 18px; outline: none; font-size: 15px; margin-bottom: 15px; font-family: 'Poppins', sans-serif; }
+.input-box:focus { border-color: #ff0037; }
+.password-wrapper { position: relative; margin-bottom: 15px; }
+.password-wrapper .input-box { margin-bottom: 0; padding-right: 75px; }
+.toggle-password { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: #ff0037; font-size: 13px; font-weight: 700; cursor: pointer; }
+.main-btn { width: 100%; height: 56px; border: none; border-radius: 18px; background: #ff0037; color: white; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+.main-btn:disabled { background: #ccc; cursor: not-allowed; }
+.links-container { display: flex; justify-content: space-between; margin-top: 15px; font-size: 13px; }
+.links-container a { color: #ff0037; text-decoration: none; font-weight: 600; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; justify-content: center; align-items: center; z-index: 1000; }
+.modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 </style>
 </head>
-
 <body>
 
 <div class="auth-card">
-  <img src="logo.png" class="logo" alt="Logo Cengkong Food">
+  <img src="logo.png" class="logo" alt="Logo">
   <h1>Login Seller</h1>
-  <p class="desc">Masuk ke dashboard mitra penjual</p>
-
-  <input type="email" id="email" class="input-box" placeholder="Email Bisnis">
-
-  <div class="password-wrapper">
-    <input type="password" id="password" class="input-box" placeholder="Kata Sandi">
-    <span id="togglePassword" class="toggle-password">Show</span>
-  </div>
-
-  <div class="forgot-container">
-    <button class="forgot-btn-link" id="forgotEmailLink">Lupa Email?</button>
-    <button class="forgot-btn-link" id="forgotPasswordLink">Lupa Password?</button>
-  </div>
-
-  <button class="main-btn" id="loginBtn">Masuk</button>
-
-  <div class="register-link">
-    Belum punya akun mitra? <a href="seller-register.html">Daftar di sini</a>
+  <p class="desc">Masuk ke Dashboard Toko Anda</p>
+  
+  <form id="loginForm">
+    <input type="email" id="email" class="input-box" placeholder="Email Bisnis" autocomplete="username" required>
+    
+    <div class="password-wrapper">
+      <input type="password" id="password" class="input-box" placeholder="Kata Sandi" autocomplete="current-password" required>
+      <span id="togglePassword" class="toggle-password">Show</span>
+    </div>
+    
+    <button type="button" id="loginBtn" class="main-btn">Masuk</button>
+  </form>
+  
+  <div class="links-container">
+    <a href="#" id="forgotPasswordLink">Lupa Password?</a>
+    <a href="seller-register.html">Daftar Akun Baru</a>
   </div>
 </div>
 
-<div id="forgotModal" class="forgot-modal">
-  <div class="modal-card">
-    <h3 id="modalTitle">Reset Akun</h3>
-    <p id="modalDesc">Silakan masukkan data verifikasi Anda.</p>
-    
-    <div id="modalFields">
-      </div>
-    
-    <div class="modal-actions">
-      <button class="modal-btn-cancel" id="closeModalBtn">Batal</button>
-      <button class="modal-btn-submit" id="btnSubmitReset">Simpan</button>
-    </div>
+<div id="resetModal" class="modal">
+  <div class="modal-content">
+    <h3 style="margin-bottom: 15px;">Reset Password</h3>
+    <input type="email" id="resetEmail" class="input-box" placeholder="Masukkan Email Bisnis" autocomplete="email">
+    <button type="button" id="sendResetBtn" class="main-btn" style="height: 45px;">Kirim Link</button>
+    <button type="button" id="closeModal" class="main-btn" style="height: 45px; background: #bbb; margin-top: 10px;">Batal</button>
   </div>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { app } from "./firebase-config.js";
+import { loginSeller } from "./auth-seller.js";
 
-/* KODE SINKRONISASI DATABASE - CENGKONG FOOD */
-const firebaseConfig = {
-  apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
-  authDomain: "food-delivery-97a5f.firebaseapp.com",
-  databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "food-delivery-97a5f",
-  storageBucket: "food-delivery-97a5f.firebasestorage.app",
-  messagingSenderId: "1071083538977",
-  appId: "1:1071083538977:web:51e617513f6fb639cf3160"
-};
-
-/* INITIALIZATION */
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* ==========================================
-   DOM ELEMENTS UNTUK MODAL & INPUT
-=========================================== */
-const forgotModal = document.getElementById("forgotModal");
-const modalTitle = document.getElementById("modalTitle");
-const modalDesc = document.getElementById("modalDesc");
-const modalFields = document.getElementById("modalFields");
-const btnSubmitReset = document.getElementById("btnSubmitReset");
-const closeModalBtn = document.getElementById("closeModalBtn");
-
-let currentResetType = "";
-
-/* 1. AKSI LOGIN EMAIL & PASSWORD */
-document.getElementById("loginBtn").onclick = async function() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const loginBtn = document.getElementById("loginBtn");
-
-  if (email === "" || password === "") {
-    alert("Mohon lengkapi email dan password Anda.");
-    return;
-  }
-
-  loginBtn.innerText = "Memvalidasi...";
-  loginBtn.disabled = true;
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    localStorage.setItem("userRole", "seller");
-    alert("Login Berhasil! Selamat datang kembali.");
-    window.location.href = "seller.html";
-  } catch (error) {
-    console.error(error);
-    if (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found" || error.code === "auth/wrong-password") {
-      alert("Email atau kata sandi salah. Silakan periksa kembali.");
-    } else {
-      alert("Gagal Masuk: " + error.message);
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const sellerRef = doc(db, "sellers", user.uid);
+    const sellerSnap = await getDoc(sellerRef);
+    if (sellerSnap.exists()) {
+      localStorage.setItem("userRole", "seller");
+      window.location.href = "seller.html";
     }
-    loginBtn.innerText = "Masuk";
-    loginBtn.disabled = false;
-  }
-}
-
-/* 2. TOGGLE SHOW/HIDE PASSWORD */
-const passwordInput = document.getElementById("password");
-const togglePassword = document.getElementById("togglePassword");
-
-togglePassword.addEventListener("click", () => {
-  if(passwordInput.type === "password"){
-    passwordInput.type = "text";
-    togglePassword.textContent = "Hide";
-  } else {
-    passwordInput.type = "password";
-    togglePassword.textContent = "Show";
   }
 });
 
-/* ==========================================
-   LOGIKA BARU: POPUP LUPA EMAIL & PASSWORD
-=========================================== */
-
-// Buka Modal Lupa Email
-document.getElementById("forgotEmailLink").onclick = function() {
-  currentResetType = "email";
-  modalTitle.innerText = "Pulihkan Email Lapak";
-  modalDesc.innerText = "Masukkan Nama Lapak Anda yang terdaftar secara tepat untuk melihat email login.";
-  modalFields.innerHTML = `
-    <input type="text" id="resetShopName" class="input-box" placeholder="Nama Lapak Anda (Contoh: Martabak Unyil)">
-  `;
-  btnSubmitReset.innerText = "Cari Email";
-  forgotModal.style.display = "flex";
-}
-
-// Buka Modal Lupa Password
-document.getElementById("forgotPasswordLink").onclick = function() {
-  currentResetType = "password";
-  modalTitle.innerText = "Perbarui Kata Sandi";
-  modalDesc.innerText = "Masukkan Email Bisnis terdaftar beserta Kata Sandi Baru untuk mereset akun.";
-  modalFields.innerHTML = `
-    <input type="email" id="resetEmail" class="input-box" placeholder="Email Bisnis Lapak">
-    <input type="password" id="resetNewPassword" class="input-box" placeholder="Kata Sandi Baru (Min. 6 Karakter)">
-  `;
-  btnSubmitReset.innerText = "Perbarui Kata Sandi";
-  forgotModal.style.display = "flex";
-}
-
-// Tutup Modal
-closeModalBtn.onclick = function() {
-  forgotModal.style.display = "none";
-}
-
-// Eksekusi Tombol Submit Reset Database
-btnSubmitReset.onclick = async function() {
-  btnSubmitReset.innerText = "Memproses...";
-  btnSubmitReset.disabled = true;
-
-  try {
-    if (currentResetType === "email") {
-      // PROSES CARI EMAIL BERDASARKAN NAMA LAPAK
-      const shopNameInput = document.getElementById("resetShopName").value.trim();
-      if(!shopNameInput) {
-        alert("Nama lapak wajib diisi!");
-        resetSubmitBtn("Cari Email");
-        return;
-      }
-
-      // Query database mencari lapak dengan field shopName atau name
-      const q = query(collection(db, "sellers"), where("shopName", "==", shopNameInput));
-      const querySnapshot = await getDocs(q);
-
-      if (querySnapshot.empty) {
-        alert("Nama lapak tidak ditemukan! Periksa kembali kesesuaian huruf besar/kecil.");
-      } else {
-        querySnapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          alert(`Email login terdaftar untuk lapak "${shopNameInput}" adalah:\n\n👉 ${data.email}`);
-        });
-        forgotModal.style.display = "none";
-      }
-
-    } else if (currentResetType === "password") {
-      // PROSES UPDATE PASSWORD BERDASARKAN EMAIL LAPAK
-      const emailInput = document.getElementById("resetEmail").value.trim();
-      const newPasswordInput = document.getElementById("resetNewPassword").value.trim();
-
-      if(!emailInput || !newPasswordInput) {
-        alert("Mohon isi email dan kata sandi baru.");
-        resetSubmitBtn("Perbarui Kata Sandi");
-        return;
-      }
-      if(newPasswordInput.length < 6) {
-        alert("Kata sandi baru minimal harus 6 karakter.");
-        resetSubmitBtn("Perbarui Kata Sandi");
-        return;
-      }
-
-      // Cari seller berdasarkan email
-      const q = query(collection(db, "sellers"), where("email", "==", emailInput));
-      const querySnapshot = await getDocs(q);
-
-      if (querySnapshot.empty) {
-        alert("Alamat email tidak terdaftar sebagai mitra penjual!");
-      } else {
-        let docId = "";
-        querySnapshot.forEach((docSnap) => {
-          docId = docSnap.id;
-        });
-
-        // Update kata sandi baru langsung di dokumen Firestore koleksi 'sellers'
-        const sellerRef = doc(db, "sellers", docId);
-        await updateDoc(sellerRef, {
-          password: newPasswordInput
-        });
-
-        alert("Kata sandi berhasil diganti!\nSilakan login kembali dengan kata sandi baru Anda.");
-        forgotModal.style.display = "none";
-      }
+const passwordInput = document.getElementById("password");
+const togglePassword = document.getElementById("togglePassword");
+if (togglePassword && passwordInput) {
+  togglePassword.addEventListener("click", () => {
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      togglePassword.innerText = "Hide";
+    } else {
+      passwordInput.type = "password";
+      togglePassword.innerText = "Show";
     }
-  } catch (err) {
-    console.error(err);
-    alert("Terjadi kesalahan sistem: " + err.message);
-  }
-
-  resetSubmitBtn(currentResetType === "email" ? "Cari Email" : "Perbarui Kata Sandi");
+  });
 }
 
-function resetSubmitBtn(text) {
-  btnSubmitReset.innerText = text;
-  btnSubmitReset.disabled = false;
+const loginBtn = document.getElementById("loginBtn");
+if (loginBtn) {
+  loginBtn.addEventListener("click", async () => {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (email === "" || password === "") {
+      alert("Mohon lengkapi email dan password.");
+      return;
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.innerText = "Memproses...";
+    await loginSeller(email, password);
+    loginBtn.disabled = false;
+    loginBtn.innerText = "Masuk";
+  });
+}
+
+const resetModal = document.getElementById("resetModal");
+const forgotLink = document.getElementById("forgotPasswordLink");
+const closeBtn = document.getElementById("closeModal");
+const sendResetBtn = document.getElementById("sendResetBtn");
+
+if (forgotLink) {
+  forgotLink.addEventListener("click", (e) => { 
+    e.preventDefault(); 
+    if (resetModal) { resetModal.style.background = "rgba(0,0,0,0.5)"; resetModal.style.display = "flex"; }
+  });
+}
+if (closeBtn) { closeBtn.addEventListener("click", () => { if (resetModal) resetModal.style.display = "none"; }); }
+
+if (sendResetBtn) {
+  sendResetBtn.addEventListener("click", async () => {
+    const email = document.getElementById("resetEmail").value.trim();
+    if (email === "") { alert("Masukkan email bisnis."); return; }
+    sendResetBtn.disabled = true;
+    sendResetBtn.innerText = "Mengirim...";
+    try {
+      await sendPasswordResetEmail(auth, email);
+      alert("Link reset password berhasil dikirim.");
+      if (resetModal) resetModal.style.display = "none";
+    } catch (error) {
+      alert(error.message);
+    }
+    sendResetBtn.disabled = false;
+    sendResetBtn.innerText = "Kirim Link";
+  });
 }
 </script>
-
 </body>
 </html>

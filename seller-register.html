@@ -1,281 +1,215 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar Penjual - Cengkong Food</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar Seller - Cengkong Food</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #ececec;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    .mobile-container {
-      width: 430px;
-      min-height: 100vh;
-      background: #f5f5f5;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 30px 24px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #ececec; font-family: 'Poppins', sans-serif; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+.auth-card { width: 100%; max-width: 450px; background: white; border-radius: 30px; padding: 35px 25px; box-shadow: 0 10px 30px rgba(0,0,0,.05); margin-top: 20px; margin-bottom: 20px; }
+.logo { width: 90px; display: block; margin: 0 auto 20px; }
+h1 { text-align: center; font-size: 28px; font-weight: 800; color: #ff0037; margin-bottom: 8px; }
+.desc { text-align: center; color: #777; font-size: 14px; margin-bottom: 25px; }
+.info-box { background: #fff5f7; border: 1px solid #ffd7e0; padding: 14px; border-radius: 15px; font-size: 13px; line-height: 1.6; margin-bottom: 20px; }
+.input-box { width: 100%; height: 56px; border: 2px solid #eee; border-radius: 18px; padding: 0 18px; outline: none; font-size: 15px; margin-bottom: 15px; font-family: 'Poppins', sans-serif; }
+.input-box:focus { border-color: #ff0037; }
+textarea.input-box { height: auto; padding: 15px 18px; resize: none; }
 
-    .header-area {
-      text-align: center;
-      margin-bottom: 35px;
-    }
+/* Wrapper untuk Lokasi */
+.location-wrapper { display: flex; gap: 10px; margin-bottom: 10px; }
+.location-wrapper .input-box { margin-bottom: 0; }
+.location-btn { height: 56px; padding: 0 15px; border: 2px solid #ff0037; background: transparent; color: #ff0037; border-radius: 18px; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; transition: all 0.3s ease; }
+.location-btn:hover { background: #ff0037; color: white; }
 
-    .logo-container {
-      width: 90px;
-      height: 90px;
-      background: white;
-      border-radius: 50%;
-      padding: 10px;
-      margin: 0 auto 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+/* Styling Wadah Peta */
+#map { width: 100%; height: 250px; border-radius: 18px; border: 2px solid #eee; margin-bottom: 15px; z-index: 1; }
+.map-hint { font-size: 11px; color: #666; margin-top: -10px; margin-bottom: 15px; padding-left: 5px; font-weight: 500; }
 
-    .logo-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .header-area h1 {
-      font-size: 24px;
-      font-weight: 800;
-      color: #ff0037;
-    }
-
-    .header-area p {
-      font-size: 14px;
-      color: #666;
-      margin-top: 5px;
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 6px;
-    }
-
-    .input-wrapper {
-      position: relative;
-    }
-
-    .input-box {
-      width: 100%;
-      height: 54px;
-      border: 2px solid #eee;
-      border-radius: 16px;
-      padding: 0 16px;
-      font-size: 14px;
-      outline: none;
-      background: white;
-      transition: all 0.3s ease;
-    }
-
-    .input-box:focus {
-      border-color: #ff0037;
-      box-shadow: 0 0 0 4px rgba(255, 0, 55, 0.1);
-    }
-
-    .btn-register {
-      width: 100%;
-      height: 56px;
-      border: none;
-      border-radius: 16px;
-      background: #ff0037;
-      color: white;
-      font-size: 16px;
-      font-weight: 700;
-      margin-top: 15px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(255, 0, 55, 0.2);
-      transition: all 0.3s ease;
-    }
-
-    .btn-register:shadow:active {
-      transform: scale(0.98);
-    }
-
-    .footer-text {
-      text-align: center;
-      margin-top: 25px;
-      font-size: 13px;
-      color: #666;
-    }
-
-    .footer-text a {
-      color: #ff0037;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .footer-text a:hover {
-      text-decoration: underline;
-    }
-  </style>
+.password-wrapper { position: relative; margin-bottom: 15px; }
+.password-wrapper .input-box { margin-bottom: 0; padding-right: 75px; }
+.toggle-password { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: #ff0037; font-size: 13px; font-weight: 700; cursor: pointer; }
+.main-btn { width: 100%; height: 56px; border: none; border-radius: 18px; background: #ff0037; color: white; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+.main-btn:disabled { background: #ccc; cursor: not-allowed; }
+.login-link { text-align: center; margin-top: 24px; font-size: 14px; }
+.login-link a { color: #ff0037; font-weight: 700; text-decoration: none; }
+</style>
 </head>
 <body>
 
-<div class="mobile-container">
+<div class="auth-card">
+  <img src="logo.png" class="logo" alt="Logo">
+  <h1>Daftar Seller</h1>
+  <p class="desc">Bergabung menjadi Mitra Cengkong Food</p>
   
-  <div class="header-area">
-    <div class="logo-container">
-      <img src="logo.png" alt="Cengkong Food Logo">
-    </div>
-    <h1>Daftar Mitra Penjual</h1>
-    <p>Buka tokomu di Cengkong Food sekarang</p>
+  <div class="info-box">
+    Isi data dengan benar karena digunakan untuk login dan pengelolaan toko.
   </div>
-
-  <form id="registerForm" onsubmit="handleRegister(event)">
+  
+  <form id="registerForm">
+    <input type="text" id="shopName" class="input-box" placeholder="Nama Lapak" required>
+    <input type="text" id="ownerName" class="input-box" placeholder="Nama Pemilik" required>
+    <input type="tel" id="phone" class="input-box" placeholder="Nomor WhatsApp" required>
+    <input type="email" id="email" class="input-box" placeholder="Email Bisnis" required>
     
-    <div class="form-group">
-      <label for="shopName">Nama Toko / Warung</label>
-      <div class="input-wrapper">
-        <input type="text" id="shopName" class="input-box" placeholder="Contoh: Warung Bu Siti" required>
-      </div>
+    <textarea id="address" class="input-box" placeholder="Alamat Lengkap Toko" rows="2" required></textarea>
+    
+    <div class="location-wrapper">
+      <input type="text" id="coordinates" class="input-box" placeholder="Titik Koordinat (Lat, Lng)" readonly required>
+      <button type="button" id="getLocationBtn" class="location-btn">Cari Lokasi</button>
     </div>
-
-    <div class="form-group">
-      <label for="email">Email Bisnis</label>
-      <div class="input-wrapper">
-        <input type="email" id="email" class="input-box" placeholder="Contoh: busiti@gmail.com" required>
-      </div>
+    
+    <div id="map"></div>
+    <div class="map-hint">*Tampilan Satelit aktif. Geser pin merah tepat di atas atap toko/rumah Anda.</div>
+    
+    <div class="password-wrapper">
+      <input type="password" id="password" class="input-box" placeholder="Kata Sandi" required>
+      <span id="togglePassword1" class="toggle-password">Show</span>
     </div>
-    <!-- TAMBAHAN NOMOR WHATSAPP -->
-<div class="form-group">
-  <label for="whatsapp">Nomor WhatsApp</label>
-  <div class="input-wrapper">
-    <input 
-      type="tel" 
-      id="whatsapp" 
-      class="input-box" 
-      placeholder="Contoh: 081234567890" 
-      required
-    >
-  </div>
-</div>
-
-    <div class="form-group">
-      <label for="password">Kata Sandi</label>
-      <div class="input-wrapper">
-        <input type="password" id="password" class="input-box" placeholder="Minimal 6 karakter" minlength="6" required>
-      </div>
+    
+    <div class="password-wrapper">
+      <input type="password" id="confirmPassword" class="input-box" placeholder="Ulangi Kata Sandi" required>
+      <span id="togglePassword2" class="toggle-password">Show</span>
     </div>
-
-    <button type="submit" class="btn-register" id="btnSubmit">Mulai Berjualan</button>
-
+    
+    <button type="submit" id="registerBtn" class="main-btn">Daftar Sekarang</button>
   </form>
-
-  <div class="footer-text">
-    Sudah punya akun toko? <a href="seller-login.html">Masuk di sini</a>
+  
+  <div class="login-link">
+    Sudah punya akun? <a href="seller-login.html">Login di sini</a>
   </div>
-
 </div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { registerSeller } from "./auth-seller.js";
 
-  /* CONFIG SINKRON KE CENGKONG-FOOD */
- const firebaseConfig = {
-  apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
-  authDomain: "food-delivery-97a5f.firebaseapp.com",
-  databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "food-delivery-97a5f",
-  storageBucket: "food-delivery-97a5f.firebasestorage.app",
-  messagingSenderId: "1071083538977",
-  appId: "1:1071083538977:web:51e617513f6fb639cf3160"
-};
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  // Fungsi pendaftaran agar bisa diakses dari HTML formal form submission
-  window.handleRegister = async function(event) {
-    event.preventDefault(); // Mencegah reload halaman bawaan form
-
-    const shopName = document.getElementById("shopName").value;
-    const email = document.getElementById("email").value;
-    const whatsapp = document.getElementById("whatsapp").value;
-    const password = document.getElementById("password").value;
-    const btnSubmit = document.getElementById("btnSubmit");
-
-    // Mengubah tampilan tombol saat proses simpan sedang berjalan
-    btnSubmit.innerText = "Membuat Akun Toko...";
-    btnSubmit.disabled = true;
-
-    try {
-      // 1. Membuat user baru di Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // 2. Memperbarui nama tampilan akun (Display Name) menggunakan nama Toko
-      await updateProfile(user, {
-        displayName: shopName
-      });
-
-      // 3. Menyimpan profile data identitas toko ke Firestore database 'sellers'
-      await setDoc(doc(db, "sellers", user.uid), {
-        uid: user.uid,
-        shopName: shopName,
-        email: email,
-        whatsapp: whatsapp,
-        role: "seller",
-        createdAt: new Date()
-      });
-
-      alert("Pendaftaran Berhasil! Selamat datang di Cengkong Food.");
-      
-      // Simpan status role di local storage komputer untuk pengecekan halaman
-      localStorage.setItem("userRole", "seller");
-      
-      // Alihkan penjual langsung ke halaman dashboard-nya
-      window.location.href = "seller.html";
-
-    } catch (error) {
-      console.error(error);
-      
-      // Terjemahan pesan error umum agar mudah dipahami penjual
-      if (error.code === "auth/email-already-in-use") {
-        alert("Email ini sudah pernah terdaftar sebagai mitra penjual.");
-      } else if (error.code === "auth/weak-password") {
-        alert("Kata sandi terlalu lemah. Silakan buat password yang lebih kuat.");
+function setupTogglePassword(inputId, buttonId) {
+  const input = document.getElementById(inputId);
+  const button = document.getElementById(buttonId);
+  if(button && input) {
+    button.addEventListener("click", () => {
+      if (input.type === "password") {
+        input.type = "text";
+        button.innerText = "Hide";
       } else {
-        alert("Gagal melakukan pendaftaran: " + error.message);
+        input.type = "password";
+        button.innerText = "Show";
       }
-
-      // Kembalikan status tombol jika gagal
-      btnSubmit.innerText = "Mulai Berjualan";
-      btnSubmit.disabled = false;
-    }
+    });
   }
-</script>
+}
 
+setupTogglePassword("password", "togglePassword1");
+setupTogglePassword("confirmPassword", "togglePassword2");
+
+
+// ==================== CONFIG PETA SATELIT INTERAKTIF ====================
+// Default koordinat awal (tengah Indonesia / Jakarta)
+const defaultLat = -6.2000;
+const defaultLng = 106.8166;
+
+const map = L.map('map').setView([defaultLat, defaultLng], 13);
+
+// 1. Lapisan Gambar Satelit (Esri World Imagery)
+const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+}).addTo(map);
+
+// 2. Lapisan Nama Jalan/Label (Biar tidak bingung melihat peta satelit polos)
+const labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 20
+}).addTo(map);
+
+// Buat Marker yang bisa digeser (draggable)
+const marker = L.marker([defaultLat, defaultLng], {
+  draggable: true
+}).addTo(map);
+
+const coordinatesInput = document.getElementById("coordinates");
+const getLocationBtn = document.getElementById("getLocationBtn");
+
+function updateInputCoordinates(lat, lng) {
+  coordinatesInput.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+}
+
+// Event ketika pin digeser manual oleh user
+marker.on('dragend', function (e) {
+  const position = marker.getLatLng();
+  updateInputCoordinates(position.lat, position.lng);
+});
+
+// Fitur Otomatis Ambil GPS Pengguna
+getLocationBtn.addEventListener("click", () => {
+  if (navigator.geolocation) {
+    getLocationBtn.innerText = "Mencari...";
+    getLocationBtn.disabled = true;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        
+        marker.setLatLng([latitude, longitude]);
+        map.setView([latitude, longitude], 18); // Zoom level 18 (sangat dekat untuk melihat bangunan)
+        
+        updateInputCoordinates(latitude, longitude);
+        
+        getLocationBtn.innerText = "Lokasi Sesuai";
+        getLocationBtn.disabled = false;
+      },
+      (error) => {
+        getLocationBtn.innerText = "Cari Lokasi";
+        getLocationBtn.disabled = false;
+        alert("Gagal mengambil lokasi otomatis. Silakan geser pin peta secara manual.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  } else {
+    alert("Browser tidak mendukung deteksi lokasi.");
+  }
+});
+// ========================================================================
+
+
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const shopName = document.getElementById("shopName").value.trim();
+  const ownerName = document.getElementById("ownerName").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const address = document.getElementById("address").value.trim();
+  const coordinates = document.getElementById("coordinates").value.trim();
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+
+  if (!coordinates) {
+    alert("Harap tentukan titik koordinat lokasi toko Anda terlebih dahulu!");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert("Konfirmasi password tidak sama!");
+    return;
+  }
+
+  const btn = document.getElementById("registerBtn");
+  btn.disabled = true;
+  btn.innerText = "Mendaftarkan...";
+
+  await registerSeller(shopName, ownerName, phone, email, address, coordinates, password);
+
+  btn.disabled = false;
+  btn.innerText = "Daftar Sekarang";
+});
+</script>
 </body>
 </html>

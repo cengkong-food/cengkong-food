@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pesanan Saya</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+<link href="https://unpkg.com/leaflet/dist/leaflet.css" rel="stylesheet">
+
+
+<style>
+
+.driver-card{
+display:flex;
+align-items:center;
+gap:14px;
+background:#fff;
+border-radius:16px;
+padding:14px;
+margin-top:12px;
+border:1px solid #e5e7eb;
+}
+
+.driver-avatar{
+width:68px;
+height:68px;
+border-radius:50%;
+background:#2563eb;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:26px;
+font-weight:700;
+overflow:hidden;
+flex-shrink:0;
+}
+
+.driver-avatar img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.driver-info{
+flex:1;
+}
+
+.driver-label{
+font-size:13px;
+color:#666;
+}
+
+.driver-name{
+font-size:22px;
+font-weight:700;
+margin-top:2px;
+}
+
+.driver-phone{
+margin-top:4px;
+font-size:15px;
+color:#555;
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.eta-box{
+margin-top:10px;
+margin-bottom:10px;
+background:#eff6ff;
+border-radius:16px;
+padding:15px;
+text-align:center;
+}
+
+.detail-box{
+background:#fff;
+border:1px solid #ececec;
+border-radius:20px;
+padding:16px;
+margin-top:10px;
+}
+
+.detail-title{
+font-size:22px;
+font-weight:700;
+margin-bottom:15px;
+}
+
+.menu-row{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:10px;
+padding-bottom:12px;
+margin-bottom:12px;
+border-bottom:1px dashed #ddd;
+}
+
+.menu-left{
+flex:1;
+}
+
+.menu-name{
+font-size:16px;
+font-weight:600;
+margin-bottom:5px;
+}
+
+.menu-variant{
+font-size:13px;
+color:#666;
+line-height:1.6;
+}
+
+.menu-price{
+font-weight:600;
+white-space:nowrap;
+}
+
+.total-footer{
+margin-top:10px;
+}
+
+.total-highlight{
+margin-top:14px;
+background:#eff6ff;
+padding:14px;
+border-radius:14px;
+display:flex;
+justify-content:space-between;
+font-size:18px;
+font-weight:700;
+color:#2563eb;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f5f6fa;
+display:flex;
+justify-content:center;
+}
+
+.mobile{
+width:100%;
+max-width:430px;
+min-height:100vh;
+background:white;
+padding-bottom:100px;
+}
+
+.header{
+height:70px;
+display:flex;
+align-items:center;
+gap:15px;
+padding:0 18px;
+border-bottom:1px solid #eee;
+background:white;
+position:sticky;
+top:0;
+z-index:99;
+}
+
+.back-btn{
+width:42px;
+height:42px;
+border:none;
+border-radius:50%;
+background:#f3f4f6;
+cursor:pointer;
+}
+
+.header h2{
+font-size:20px;
+font-weight:700;
+}
+
+.tabs{
+display:flex;
+margin:18px;
+background:#f1f5f9;
+padding:5px;
+border-radius:14px;
+}
+
+.tab-btn{
+flex:1;
+padding:12px;
+border:none;
+background:none;
+font-weight:600;
+border-radius:10px;
+cursor:pointer;
+}
+
+.tab-btn.active{
+background:white;
+color:#2563eb;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+.order-card{
+background:white;
+margin:18px;
+padding:18px;
+border-radius:20px;
+border:1px solid #ececec;
+}
+
+.order-title{
+font-size:16px;
+font-weight:700;
+margin-bottom:8px;
+}
+
+.order-subtitle{
+font-size:13px;
+color:#666;
+margin-bottom:20px;
+}
+
+.tracker{
+position:relative;
+display:flex;
+justify-content:space-between;
+margin:25px 0;
+}
+
+.progress-line{
+position:absolute;
+top:11px;
+left:10%;
+width:80%;
+height:5px;
+background:#dbeafe;
+border-radius:20px;
+z-index:1;
+}
+
+.progress-fill{
+height:100%;
+background:#2563eb;
+border-radius:20px;
+transition:.4s ease;
+}
+
+.step{
+position:relative;
+z-index:2;
+width:20%;
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+.circle{
+width:22px;
+height:22px;
+border-radius:50%;
+background:#d1d5db;
+border:3px solid #d1d5db;
+}
+
+.circle.done{
+background:#2563eb;
+border-color:#2563eb;
+}
+
+.circle.active{
+background:white;
+border-color:#2563eb;
+}
+
+.step label{
+font-size:11px;
+margin-top:8px;
+text-align:center;
+}
+
+.step{
+position:relative;
+z-index:2;
+display:flex;
+flex-direction:column;
+align-items:center;
+width:20%;
+}
+
+.circle{
+width:22px;
+height:22px;
+border-radius:50%;
+background:#d1d5db;
+border:3px solid #d1d5db;
+}
+
+.circle.done{
+background:#2563eb;
+border-color:#2563eb;
+}
+
+.circle.active{
+background:white;
+border-color:#2563eb;
+}
+
+.step label{
+font-size:11px;
+text-align:center;
+margin-top:8px;
+}
+
+.status-box{
+background:#eff6ff;
+padding:15px;
+border-radius:14px;
+margin-top:15px;
+}
+
+.status-box h4{
+color:#2563eb;
+margin-bottom:5px;
+}
+
+.driver-card{
+display:flex;
+align-items:center;
+gap:14px;
+background:#f8faf8;
+border:1px solid #e5e7eb;
+border-radius:18px;
+padding:14px;
+margin-top:12px;
+}
+
+.driver-avatar{
+width:68px;
+height:68px;
+border-radius:50%;
+background:#2563eb;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:700;
+color:white;
+overflow:hidden;
+flex-shrink:0;
+}
+
+.driver-avatar img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.driver-info{
+flex:1;
+}
+
+.driver-label{
+font-size:13px;
+color:#666;
+margin-bottom:3px;
+}
+
+.driver-name{
+font-size:20px;
+font-weight:700;
+color:#111;
+margin-bottom:4px;
+}
+
+.driver-phone{
+font-size:15px;
+color:#555;
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.detail-box{
+margin-top:10px;
+background:white;
+border:1px solid #ececec;
+border-radius:18px;
+padding:16px;
+}
+
+.detail-title{
+font-size:22px;
+font-weight:700;
+margin-bottom:16px;
+}
+
+.menu-row{
+display:flex;
+justify-content:space-between;
+gap:12px;
+margin-bottom:14px;
+}
+
+.menu-left{
+flex:1;
+}
+
+.menu-name{
+font-weight:600;
+font-size:16px;
+margin-bottom:6px;
+}
+
+.menu-variant{
+font-size:13px;
+color:#666;
+line-height:1.6;
+}
+
+.menu-price{
+font-weight:600;
+white-space:nowrap;
+}
+
+.total-footer{
+margin-top:12px;
+padding-top:12px;
+border-top:1px dashed #ddd;
+}
+
+.total-highlight{
+background:#eff6ff;
+padding:14px;
+border-radius:14px;
+font-size:18px;
+font-weight:700;
+color:#2563eb;
+display:flex;
+justify-content:space-between;
+}
+
+.total-box{
+margin-top:15px;
+padding-top:15px;
+border-top:1px solid #eee;
+}
+
+.total-row{
+display:flex;
+justify-content:space-between;
+margin-bottom:8px;
+font-size:14px;
+}
+
+.history-list{
+padding:18px;
+display:none;
+}
+
+.history-item{
+background:white;
+padding:15px;
+border-radius:16px;
+margin-bottom:12px;
+border:1px solid #ececec;
+}
+
+.badge{
+padding:5px 10px;
+border-radius:10px;
+font-size:12px;
+font-weight:600;
+}
+
+.success{
+background:#dcfce7;
+color:#166534;
+}
+
+.cancel{
+background:#fee2e2;
+color:#991b1b;
+}
+
+.bottom-navbar{
+position:fixed;
+bottom:0;
+width:100%;
+max-width:430px;
+background:white;
+height:70px;
+display:flex;
+justify-content:space-around;
+align-items:center;
+border-top:1px solid #eee;
+}
+
+.bottom-item{
+background:none;
+border:none;
+display:flex;
+flex-direction:column;
+align-items:center;
+color:#666;
+cursor:pointer;
+}
+
+.bottom-item.active{
+color:#2563eb;
+}
+
+.bottom-item i{
+font-size:22px;
+}
+.eta-box{
+margin-top:12px;
+margin-bottom:10px;
+background:#eff6ff;
+border-radius:14px;
+padding:15px;
+text-align:center;
+}
+
+.eta-box h4{
+color:#2563eb;
+margin-bottom:5px;
+}
+
+.eta-box h2{
+font-size:28px;
+font-weight:700;
+color:#111;
+}
+.order-map{
+height:220px;
+margin-top:15px;
+border-radius:18px;
+overflow:hidden;
+}
+.total-box hr{
+margin:12px 0;
+border:none;
+border-top:1px solid #eee;
+}
+
+.total-row small{
+color:#666;
+font-size:12px;
+}
+
+.order-title{
+font-size:18px;
+font-weight:700;
+margin-bottom:6px;
+color:#111;
+}
+
+.status-box p{
+font-size:15px;
+font-weight:600;
+}
+
+.total-box{
+margin-top:18px;
+padding-top:12px;
+border-top:1px solid #eee;
+}
+
+.total-row{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:10px;
+margin-bottom:10px;
+font-size:14px;
+}
+
+.total-row span:first-child{
+flex:1;
+}
+
+/* =========================
+   DRIVER CARD
+========================= */
+
+.driver-card{
+display:flex;
+align-items:center;
+gap:14px;
+margin-top:15px;
+padding:14px;
+background:#f8fafc;
+border-radius:18px;
+border:1px solid #e5e7eb;
+}
+
+.driver-avatar{
+width:65px;
+height:65px;
+border-radius:50%;
+background:#2563eb;
+color:white;
+font-size:24px;
+font-weight:700;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+flex-shrink:0;
+}
+
+.driver-avatar img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.driver-info{
+flex:1;
+}
+
+.driver-label{
+font-size:12px;
+color:#64748b;
+margin-bottom:3px;
+}
+
+.driver-name{
+font-size:18px;
+font-weight:700;
+color:#111827;
+margin-bottom:4px;
+}
+
+.driver-phone{
+font-size:14px;
+color:#475569;
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+/* =========================
+   DETAIL PESANAN
+========================= */
+
+.detail-box{
+margin-top:12px;
+background:white;
+border:1px solid #ececec;
+border-radius:18px;
+padding:15px;
+}
+
+.detail-title{
+font-size:18px;
+font-weight:700;
+margin-bottom:15px;
+}
+
+.item-row{
+display:flex;
+justify-content:space-between;
+gap:10px;
+margin-bottom:12px;
+}
+
+.item-left{
+flex:1;
+}
+
+.item-menu{
+font-weight:600;
+margin-bottom:3px;
+}
+
+.item-variant{
+font-size:13px;
+color:#666;
+}
+
+.item-price{
+font-weight:600;
+}
+
+.total-row{
+display:flex;
+justify-content:space-between;
+margin-top:10px;
+font-size:14px;
+}
+
+.total-bayar{
+margin-top:15px;
+padding-top:15px;
+border-top:1px solid #eee;
+display:flex;
+justify-content:space-between;
+font-size:18px;
+font-weight:700;
+color:#2563eb;
+}
+
+/* =========================
+   ETA
+========================= */
+
+.eta-box{
+margin-top:12px;
+margin-bottom:12px;
+background:#eff6ff;
+padding:15px;
+border-radius:16px;
+text-align:center;
+}
+
+.eta-box h4{
+color:#2563eb;
+margin-bottom:5px;
+}
+
+.eta-box h2{
+font-size:32px;
+font-weight:700;
+}
+</style>
+</head>
+
+<body>
+
+<div class="mobile">
+
+<div class="header">
+<button class="back-btn" onclick="location.href='index.html'">
+<i class='bx bx-arrow-back'></i>
+</button>
+<h2>Pesanan Saya</h2>
+</div>
+
+<div class="tabs">
+<button class="tab-btn active" id="aktifBtn">Aktif</button>
+<button class="tab-btn" id="riwayatBtn">Riwayat</button>
+</div>
+
+<div id="aktifContainer"></div>
+
+<div id="riwayatContainer" class="history-list"></div>
+
+</div>
+
+<div class="bottom-navbar">
+
+<button class="bottom-item"
+onclick="location.href='index.html'">
+<i class='bx bx-home'></i>
+<p>Home</p>
+</button>
+
+<button class="bottom-item"
+onclick="location.href='index.html'">
+<i class='bx bx-cart'></i>
+<p>Keranjang</p>
+</button>
+
+<button class="bottom-item active">
+<i class='bx bx-package'></i>
+<p>Pesanan</p>
+</button>
+
+<button class="bottom-item"
+onclick="location.href='profile.html'">
+<i class='bx bx-user'></i>
+<p>Profil</p>
+</button>
+
+</div>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+query,
+where,
+onSnapshot
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+getAuth,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+/* =========================
+   FIREBASE CONFIG
+========================= */
+
+const firebaseConfig = {
+apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
+authDomain: "food-delivery-97a5f.firebaseapp.com",
+databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "food-delivery-97a5f",
+storageBucket: "food-delivery-97a5f.firebasestorage.app",
+messagingSenderId: "1071083538977",
+appId: "1:1071083538977:web:51e617513f6fb639cf3160"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+/* =========================
+   ELEMENT
+========================= */
+
+const aktifContainer =
+document.getElementById("aktifContainer");
+
+const riwayatContainer =
+document.getElementById("riwayatContainer");
+
+let maps = {};
+let markers = {};
+
+/* =========================
+   STATUS TRANSLATE
+========================= */
+function translateStatus(status){
+
+if(status==="PENDING")
+return "Menunggu Konfirmasi Toko";
+
+if(status==="READY_FOR_PICKUP")
+return "Menunggu Driver";
+
+if(status==="PICKED_UP")
+return "Driver Menuju Toko";
+
+if(status==="ON_THE_WAY")
+return "Pesanan Sedang Diantar";
+
+if(status==="COMPLETED")
+return "Pesanan Selesai";
+
+return status;
+
+}
+
+/* =========================
+   STEP TRACKER
+========================= */
+
+function getStep(status){
+
+switch(status){
+
+case "PENDING":
+return 1;
+
+case "ACCEPTED_BY_SELLER":
+return 2;
+
+case "READY_FOR_PICKUP":
+return 2;
+
+case "DRIVER_ASSIGNED":
+return 3;
+
+case "PICKED_UP":
+return 3;
+
+case "ON_THE_WAY":
+return 4;
+
+case "COMPLETED":
+return 5;
+
+default:
+return 1;
+}
+}
+
+function getProgressPercent(step){
+
+switch(step){
+
+case 1:
+return 0;
+
+case 2:
+return 25;
+
+case 3:
+return 50;
+
+case 4:
+return 75;
+
+case 5:
+return 100;
+
+default:
+return 0;
+}
+}
+
+/* =========================
+   DISTANCE
+========================= */
+
+function calculateDistance(
+lat1,
+lon1,
+lat2,
+lon2
+){
+
+const R = 6371;
+
+const dLat =
+(lat2-lat1) * Math.PI/180;
+
+const dLon =
+(lon2-lon1) * Math.PI/180;
+
+const a =
+Math.sin(dLat/2) *
+Math.sin(dLat/2)
++
+Math.cos(lat1*Math.PI/180)
+*
+Math.cos(lat2*Math.PI/180)
+*
+Math.sin(dLon/2)
+*
+Math.sin(dLon/2);
+
+const c =
+2 *
+Math.atan2(
+Math.sqrt(a),
+Math.sqrt(1-a)
+);
+
+return R*c;
+}
+
+/* =========================
+   TRACKER UI
+========================= */
+
+function createTracker(step){
+
+const labels = [
+"Pesan",
+"Diterima",
+"Driver",
+"Diantar",
+"Selesai"
+];
+
+let html = `
+
+<div class="tracker">
+
+<div class="progress-line">
+<div class="progress-fill"
+style="width:${getProgressPercent(step)}%">
+</div>
+</div>
+`;
+
+for(let i=1;i<=5;i++){
+
+let cls="";
+
+if(i<step){
+cls="done";
+}
+else if(i===step){
+cls="active";
+}
+
+html += `
+<div class="step">
+<div class="circle ${cls}"></div>
+<label>${labels[i-1]}</label>
+</div>
+`;
+}
+
+html += `
+</div>
+`;
+
+return html;
+}
+
+/* =========================
+   LOAD ORDERS
+========================= */
+
+onAuthStateChanged(auth,user=>{
+
+if(!user) return;
+
+const q = query(
+  collection(db,"orders"),
+  where(
+    "customerId",
+    "==",
+    user.uid
+  )
+);
+onSnapshot(q,(snapshot)=>{
+
+aktifContainer.innerHTML = "";
+riwayatContainer.innerHTML = "";
+
+snapshot.forEach(docSnap=>{
+
+const order = docSnap.data();
+
+const step = getStep(order.status);
+
+const isHistory =
+order.status==="COMPLETED" ||
+order.status==="CANCELLED";
+
+if(!isHistory){
+
+let etaText = "-";
+
+if(
+order.driverLocation &&
+order.customerLocation
+){
+
+const distance =
+calculateDistance(
+order.driverLocation.latitude,
+order.driverLocation.longitude,
+order.customerLocation.latitude,
+order.customerLocation.longitude
+);
+
+const eta =
+Math.ceil(
+(distance / 30) * 60
+);
+
+etaText = eta + " menit";
+
+}
+
+
+aktifContainer.innerHTML += `
+
+<div class="order-card">
+
+<div class="order-title">
+${order.shopName || "Cengkong Food"}
+</div>
+
+<div class="order-subtitle">
+${translateStatus(order.status)}
+</div>
+
+${createTracker(step)}
+
+<div class="status-box">
+
+<h4>Status Saat Ini</h4>
+
+<p>${order.shopName || "Cengkong Food"}</p>
+
+<div class="driver-card" style="${!order.driverId ? 'background: #fffbeb; border-color: #fef3c7;' : ''}">
+  ${order.driverId ? `
+    <div class="driver-avatar" style="width:48px; height:48px; border-radius:50%; background:#2563eb; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; font-weight:700; overflow:hidden; flex-shrink:0;">
+      ${order.driverName ? order.driverName.charAt(0).toUpperCase() : "D"}
+    </div>
+
+    <div class="driver-info" style="margin-left: 12px; flex-grow: 1;">
+      <div class="driver-label" style="font-size:11px; color:#6b7280;">Kurir Pengantar</div>
+      <div class="driver-name" style="font-weight:600; font-size:15px; color:#1f2937; text-align:left;">
+        ${order.driverName}
+      </div>
+      <div class="driver-phone" style="font-size:13px; color:#10b981; margin-top:2px; text-align:left;">
+        <i class='bx bxl-whatsapp'></i> ${order.driverPhone || "-"}
+      </div>
+    </div>
+
+    <a href="https://wa.me/${order.driverPhone ? order.driverPhone.replace(/[^0-9]/g, '') : ''}" target="_blank" class="call-driver-btn" style="margin-left:auto; width:36px; height:36px; background:#e6f7f0; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#10b981; font-size:20px; text-decoration:none;">
+      <i class='bx bxl-whatsapp'></i>
+    </a>
+  ` : `
+    <div class="driver-avatar" style="width:48px; height:48px; border-radius:50%; background:#d97706; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; flex-shrink:0;">
+      <i class='bx bx-loader-alt bx-spin'></i>
+    </div>
+
+    <div class="driver-info" style="margin-left: 12px;">
+      <div class="driver-name" style="font-weight:600; font-size:15px; color:#b45309; text-align:left;">
+        Mencari Driver...
+      </div>
+      <div class="driver-label" style="font-size:12px; color:#d97706; text-align:left; margin-top:2px;">
+        Pesanan Anda sedang diproses merchant
+      </div>
+    </div>
+  `}
+</div>
+
+</div>
+
+<div class="eta-box">
+
+<h4>
+<i class='bx bx-time'></i>
+Estimasi Tiba
+</h4>
+
+<h2>${etaText}</h2>
+
+</div>
+
+<div class="detail-box">
+
+<div class="detail-title">
+Detail Pesanan
+</div>
+
+${
+order.items
+? order.items.map(item => `
+
+<div class="menu-row">
+
+<div class="menu-left">
+
+<div class="menu-name">
+${item.menuTitle || "-"}
+</div>
+
+<div class="menu-variant">
+• ${item.variant}<br>
+• Qty ${item.qty}
+</div>
+
+</div>
+
+<div class="menu-price">
+Rp ${(item.price * item.qty).toLocaleString('id-ID')}
+</div>
+
+</div>
+
+`).join("")
+:
+`
+
+<div class="menu-row">
+
+<div class="menu-left">
+${order.itemsName || "-"}
+</div>
+
+</div>
+
+`
+}
+
+<div class="total-footer">
+
+<div class="total-row">
+<span>Subtotal</span>
+<span>
+Rp ${(order.subtotal || 0).toLocaleString('id-ID')}
+</span>
+</div>
+
+<div class="total-row">
+<span>Ongkos Kirim</span>
+<span>
+Rp ${(order.ongkir || 0).toLocaleString('id-ID')}
+</span>
+</div>
+
+</div>
+
+<div class="total-highlight">
+
+<span>Total Bayar</span>
+
+<span>
+Rp ${(order.grandTotal || 0).toLocaleString('id-ID')}
+</span>
+
+</div>
+
+</div>
+
+${
+order.driverLocation &&
+order.customerLocation
+?
+`
+<div
+id="map-${docSnap.id}"
+class="order-map">
+</div>
+`
+:
+""
+}
+
+</div>
+
+`;
+setTimeout(()=>{
+
+if(
+order.driverLocation &&
+order.customerLocation
+){
+
+const mapId = `map-${docSnap.id}`;
+
+if(!maps[docSnap.id]){
+
+maps[docSnap.id] =
+L.map(mapId).setView(
+[
+order.driverLocation.latitude,
+order.driverLocation.longitude
+],
+14
+);
+
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+).addTo(maps[docSnap.id]);
+
+markers[docSnap.id] = {
+
+driver:
+L.marker([
+order.driverLocation.latitude,
+order.driverLocation.longitude
+]).addTo(maps[docSnap.id])
+.bindPopup("Driver"),
+
+customer:
+L.marker([
+order.customerLocation.latitude,
+order.customerLocation.longitude
+]).addTo(maps[docSnap.id])
+.bindPopup("Tujuan")
+
+};
+
+const bounds = L.latLngBounds([
+[
+order.driverLocation.latitude,
+order.driverLocation.longitude
+],
+[
+order.customerLocation.latitude,
+order.customerLocation.longitude
+]
+]);
+
+maps[docSnap.id].fitBounds(bounds);
+
+}
+else{
+
+markers[docSnap.id]
+.driver
+.setLatLng([
+order.driverLocation.latitude,
+order.driverLocation.longitude
+]);
+
+}
+
+}
+
+},300);
+
+}else{
+
+riwayatContainer.innerHTML += `
+
+<div class="history-item">
+
+<h4>${order.itemsName || "-"}</h4>
+
+<br>
+
+<span class="badge ${
+order.status==="COMPLETED"
+? "success"
+: "cancel"
+}">
+${translateStatus(order.status)}
+</span>
+
+</div>
+
+`;
+
+}
+
+});
+
+});
+
+});
+
+/* =========================
+   TAB
+========================= */
+
+const aktifBtn =
+document.getElementById("aktifBtn");
+
+const riwayatBtn =
+document.getElementById("riwayatBtn");
+
+aktifBtn.onclick = ()=>{
+
+aktifBtn.classList.add("active");
+riwayatBtn.classList.remove("active");
+
+aktifContainer.style.display="block";
+riwayatContainer.style.display="none";
+
+};
+
+riwayatBtn.onclick = ()=>{
+
+riwayatBtn.classList.add("active");
+aktifBtn.classList.remove("active");
+
+aktifContainer.style.display="none";
+riwayatContainer.style.display="block";
+
+};
+
+</script>
+
+</body>
+</html>

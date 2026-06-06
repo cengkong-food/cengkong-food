@@ -43,14 +43,14 @@
       <div class="hero-overlay"></div>
       <div class="hero-content">
         <h1>Mau DO Makanan?<br><span>Cengkong Food aja!</span></h1>
-        <p>Aplikasi mandiri Paguyuban Pedagang Cengkong</p>
+        <p>Aplikasi mandiri Pedagang Pasar Kuliner Cengkong</p>
         <div class="hero-features">
           <div class="feature-box">Mulai DO Dari Jam 17:00 WIB s/d 00.00 WIB</div>
         </div>
       </div>
     </section>
 
-    <!-- RESTAURANT LIST (Koneksi Database) -->
+    <!-- RESTAURANT LIST -->
     <section class="restaurants">
       <h2 style="padding: 0 20px; margin-bottom: 10px; font-size: 18px;">Toko Tersedia</h2>
       <div class="card-container" id="menuContainer">
@@ -102,7 +102,7 @@
           <h3>Subtotal : Rp <span id="cartTotal">0</span></h3>
           <h3>Ongkir : Rp <span id="finalShipping">0</span></h3>
           <h2>Total Bayar : Rp <span id="grandTotal">0</span></h2>
-          <button class="wa-btn" onclick="checkoutWhatsApp()">Pesan via WhatsApp</button>
+          <button class="wa-btn" id="btnBayarDinamis">Pesan & Cari Driver</button>
           <button class="cancel-btn" onclick="cancelOrder()">Batalkan Pesanan</button>
         </div>
       </div>
@@ -110,27 +110,37 @@
 
     <!-- TOAST -->
     <div class="toast" id="toast">✅ Berhasil ditambahkan</div>
-  </div> <!-- End Mobile Wrapper -->
+  </div>
 
   <!-- BOTTOM NAVBAR -->
   <div class="bottom-navbar">
-    <button class="bottom-item active">
-      <i class='bx bxs-home'></i>
-      <p>Home</p>
-    </button>
-    <button class="bottom-item">
-      <i class='bx bx-search'></i>
-      <p>Cari</p>
-    </button>
-    <button class="bottom-item" onclick="openCart()">
-      <i class='bx bx-cart'></i>
-      <p>Keranjang</p>
-    </button>
-    <button class="bottom-item" onclick="checkProfileAccess()">
-      <i class='bx bx-user'></i>
-      <p>Akun</p>
-    </button>
-  </div>
+
+  <button class="bottom-item active"
+          onclick="window.location.href='index.html'">
+    <i class='bx bxs-home'></i>
+    <p>Home</p>
+  </button>
+
+  <button class="bottom-item"
+          onclick="openCart()">
+    <i class='bx bx-cart'></i>
+    <p>Keranjang</p>
+  </button>
+
+  <button class="bottom-item"
+onclick="window.location.href='orders.html'">
+
+<i class='bx bx-package'></i>
+<p>Pesanan</p>
+
+</button>
+  <button class="bottom-item"
+          onclick="checkProfileAccess()">
+    <i class='bx bx-user'></i>
+    <p>Profil</p>
+  </button>
+
+</div>
 
   <!-- SCRIPTS -->
   <script type="module" src="script.js"></script>
@@ -141,7 +151,7 @@
       if(user){
         window.location.href = "profile.html";
       } else {
-        alert("Silakan masuk / daftar terlebih dahulu");
+        alert("Silakan masuk / daftar terlebih dahulu untuk melihat pelacakan.");
         window.location.href = "login.html";
       }
     }

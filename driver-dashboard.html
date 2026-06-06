@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cengkong Food - Driver App</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+:root {
+  --primary: #ff0037;
+  --primary-light: #fff0f2;
+  --bg-gray: #f8f9fa;
+  --text-dark: #222222;
+  --text-muted: #777777;
+  --green: #10b981;
+  --green-light: #e6f7f0;
+  --amber: #f59e0b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+body { background: #ececec; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: var(--text-dark); }
+
+/* BINGKAI HP REALISTIS */
+.phone-wrapper {
+  width: 100%;
+  max-width: 430px;
+  height: 100vh;
+  max-height: 880px;
+  background: var(--bg-gray);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .phone-wrapper { max-height: 100vh; border-radius: 0; border: none; box-shadow: none; }
+}
+@media (min-width: 481px) {
+  .phone-wrapper { border-radius: 40px;}
+}
+
+/* AREA KONTEN UTAMA (YANG BISA DI-SCROLL) */
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  padding-bottom: 90px;
+}
+.app-content::-webkit-scrollbar { width: 0px; }
+
+/* CONTAINER HALAMAN */
+.app-page { display: none; animation: fadeIn 0.3s ease-in-out; }
+.app-page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* HEADER BERANDA */
+.home-header {
+  background: var(--primary);
+  color: white;
+  padding: 30px 20px 40px 20px;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  position: relative;
+  margin: -20px -20px 20px -20px;
+}
+.top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.brand-logo { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+.profile-area { display: flex; align-items: center; gap: 10px; }
+.avatar-container { position: relative; }
+.avatar-img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
+.status-badge { width: 12px; height: 12px; background: var(--green); border: 2px solid white; border-radius: 50%; position: absolute; bottom: 0; right: 0; }
+.welcome-text p { font-size: 12px; opacity: 0.9; }
+.welcome-text h2 { font-size: 20px; font-weight: 700; }
+
+/* TOGGLE ONLINE STATUS CARD */
+.status-card {
+  background: white;
+  padding: 15px 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -25px;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 5;
+}
+.status-left h4 { font-size: 14px; font-weight: 700; color: var(--green); }
+.status-left p { font-size: 11px; color: var(--text-muted); }
+.switch { position: relative; display: inline-block; width: 46px; height: 26px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--green); }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* STATISTIK GRID MINI */
+.section-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--text-dark); }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.stats-box { background: white; padding: 15px; border-radius: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+.stats-box .icon-label { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.stats-box .value { font-size: 16px; font-weight: 700; color: var(--text-dark); }
+.stats-box .sub-trend { font-size: 10px; color: var(--green); font-weight: 600; margin-top: 4px; }
+
+/* BONUS TARGET PROGRESS */
+.bonus-card {
+  background: #fff5f6; border: 1px solid #ffe2e6; padding: 15px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+}
+.progress-container { width: 70%; }
+.progress-bar-bg { width: 100%; height: 6px; background: #eef2f5; border-radius: 10px; margin-top: 6px; overflow: hidden; }
+.progress-bar-fill { width: 60%; height: 100%; background: var(--primary); }
+
+/* DAFTAR ORDER TAB HEADERS */
+.order-tabs { display: flex; background: white; padding: 6px; border-radius: 14px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+.order-tab-btn { flex: 1; text-align: center; padding: 10px; border: none; background: transparent; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 10px; }
+.order-tab-btn.active { background: var(--primary-light); color: var(--primary); }
+
+/* KARTU ORDERAN MASUK / AKTIF */
+.order-card { background: white; padding: 18px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 15px; border: 1px solid #f0f0f0; position: relative; }
+.card-header-info { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 12px; }
+.route-line { position: relative; padding-left: 20px; margin-bottom: 15px; }
+.route-line::before { content: "●"; position: absolute; left: 0; top: 0; color: var(--primary); font-size: 12px; }
+.route-line::after { content: "●"; position: absolute; left: 0; bottom: 0; color: var(--green); font-size: 12px; }
+.route-node { font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 12px; }
+.route-node p { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+.pay-status { font-size: 11px; font-weight: 700; color: var(--green); background: var(--green-light); padding: 4px 10px; border-radius: 6px; display: inline-block; margin-bottom: 15px; }
+
+/* BUTTONS */
+.btn-primary { width: 100%; height: 48px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(255, 0, 55, 0.2); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-secondary { width: 100%; height: 44px; background: white; border: 1px solid #ddd; color: var(--text-dark); border-radius: 14px; font-weight: 600; font-size: 13px; margin-top: 8px; cursor: pointer; }
+
+/* DETAIL ORDER PAGE SPECIFIC */
+.back-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.back-btn { font-size: 20px; cursor: pointer; background: none; border: none; }
+.info-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: var(--text-muted); }
+.info-row.total { font-weight: 700; color: var(--primary); border-top: 1px dashed #eee; padding-top: 8px; margin-top: 8px; font-size: 15px; }
+
+/* PETA JAUH LEBIH BESAR DAN LUAS */
+#detail-map { 
+  width: 100%; 
+  height: 320px; 
+  border-radius: 18px; 
+  margin: 15px 0; 
+  border: 2px solid white; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+  z-index: 1; 
+}
+
+/* FIX MUTLAK: DIKUNCI DI PALING BAWAH FRAME HP */
+.bottom-nav {
+  position: absolute; 
+  bottom: 0; 
+  left: 0; 
+  right: 0; 
+  height: 72px; 
+  background: white;
+  display: flex; 
+  justify-content: space-around; 
+  align-items: center;
+  border-top-left-radius: 24px; 
+  border-top-right-radius: 24px;
+  box-shadow: 0 -8px 25px rgba(0,0,0,0.1); 
+  z-index: 9999;
+}
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer; width: 33.33%; height: 100%; justify-content: center; }
+.nav-item.active { color: var(--primary); }
+.nav-icon { font-size: 22px; margin-bottom: 2px; }
+
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 12px; }
+.logo-driver-nav { width: 28px; height: 28px; object-fit: contain; background: white; border-radius: 50%; padding: 2px; }
+
+/* POPUP CUSTOM UNTUK ORDERAN BARU */
+.order-popup-overlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6); display: none; justify-content: center;
+  align-items: center; z-index: 10000; padding: 20px;
+}
+.order-popup-box {
+  background: white; width: 100%; max-width: 340px; border-radius: 24px;
+  padding: 24px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes popupScale { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.popup-icon { font-size: 45px; margin-bottom: 10px; animation: bounce 1s infinite alternate; }
+@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+</style>
+</head>
+<body>
+
+  <div class="phone-wrapper">
+    
+    <div id="customOrderPopup" class="order-popup-overlay">
+      <div class="order-popup-box">
+        <div class="popup-icon">🔔</div>
+        <h3 style="color: var(--primary); font-weight:800; margin-bottom:5px;">ORDERAN MASUK!</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Ada pesanan makanan baru disekitar Cengkong</p>
+        
+        <div style="background:var(--bg-gray); padding:12px; border-radius:14px; text-align:left; font-size:13px; margin-bottom:20px;">
+          <div style="margin-bottom:4px;"><b>🏪 Toko:</b> <span id="pop-shop">Warung</span></div>
+          <div><b>💵 Ongkir:</b> <span id="pop-ongkir" style="color:var(--green); font-weight:700;">Rp 0</span></div>
+        </div>
+
+        <button class="btn-primary" id="btn-buka-tab-order">Buka Tab Orderan</button>
+      </div>
+    </div>
+    
+
+  <div class="app-content">
+
+  <!-- ===================== -->
+  <!-- PAGE: BERANDA -->
+  <!-- ===================== -->
+  <div id="page-beranda" class="app-page active">
+
+    <!-- HEADER BERANDA (HANYA DI SINI) -->
+    <div class="home-header">
+      <div class="top-bar">
+        <div class="brand-logo">
+          <img src="logo.png" alt="Logo" class="logo-driver-nav">
+          <span>Dashboard Driver</span>
+        </div>
+
+        <div class="profile-area">
+          <div class="avatar-container">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60"
+                 class="avatar-img"
+                 alt="Driver Profile">
+            <div class="status-badge"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="welcome-text">
+        <p>Semangat hari ini!</p>
+        <h2 id="driverNameDisplay">Halo, Kurir</h2>
+      </div>
+    </div>
+
+    <!-- STATUS ONLINE -->
+    <div class="status-card">
+      <div class="status-left">
+        <h4 id="statusText">Status Anda: Online</h4>
+        <p>Menerima order otomatis aktif</p>
+      </div>
+
+      <label class="switch">
+        <input type="checkbox" id="statusToggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- STATISTIK -->
+    <div class="section-title">Ringkasan Hari Ini</div>
+
+    <div class="stats-grid">
+      <div class="stats-box">
+        <div class="icon-label">📅 <b>Order Selesai</b></div>
+        <div class="value" id="stats-orders">0</div>
+        <div class="sub-trend">▲ 20% dari kemarin</div>
+      </div>
+
+      <div class="stats-box">
+        <div class="icon-label">💰 <b>Pendapatan</b></div>
+        <div class="value" id="stats-earnings">Rp 0</div>
+        <div class="sub-trend">▲ 15% dari kemarin</div>
+      </div>
+
+      <div class="stats-box">
+        <div class="icon-label">⭐ <b>Rating Anda</b></div>
+        <div class="value">4.6</div>
+        <div class="sub-trend" style="color:var(--amber)">★ Bagus!</div>
+      </div>
+
+      <div class="stats-box">
+        <div class="icon-label">🛣️ <b>Jarak Ditempuh</b></div>
+        <div class="value" id="stats-distance">0.0 km</div>
+        <div class="sub-trend">Hari ini</div>
+      </div>
+    </div>
+
+    <!-- ORDER AKTIF -->
+    <div class="section-title">Order Aktif Saat Ini</div>
+
+    <div id="homeActiveOrderContainer">
+      <div class="empty-state">
+        Tidak ada tugas berjalan. Buka tab Order untuk mencari uang! 💰
+      </div>
+
+    </div>
+
+  </div>
+<div class="bottom-nav">
+      <button class="nav-item active" onclick="switchMainPage('beranda')">
+        <span class="nav-icon">🏠</span>Beranda
+      </button>
+      <button class="nav-item" onclick="switchMainPage('order')">
+        <span class="nav-icon">📦</span>Order
+      </button>
+      <button class="nav-item" onclick="switchMainPage('earnings')">
+        <span class="nav-icon">📊</span>Earnings
+      </button>
+      <button class="nav-item" onclick="switchMainPage('profile')">
+        <span class="nav-icon">👤</span>Profil</button>
+    </div>
+
+  <!-- ===================== -->
+  <!-- PAGE: ORDER -->
+  <!-- ===================== -->
+  <div id="page-order" class="app-page">
+
+    <div class="section-title" style="font-size: 18px;">Daftar Order</div>
+
+    <div class="order-tabs">
+      <button class="order-tab-btn active" id="subtab-tersedia">Tersedia</button>
+      <button class="order-tab-btn" id="subtab-diproses">Diproses</button>
+    </div>
+
+    <div id="orderListContainer">
+      <div class="empty-state">Mencari pesanan terdekat di Cengkong... 📡</div>
+    </div>
+
+  </div>
+
+
+  <!-- ===================== -->
+  <!-- PAGE: DETAIL ORDER -->
+  <!-- ===================== -->
+  <div id="page-detail" class="app-page">
+
+    <div class="back-header">
+      <button class="back-btn" onclick="switchMainPage('order')">←</button>
+      <span style="font-weight: 700;">Detail Order</span>
+      <a href="tel:0812" id="customerPhoneLink">📞</a>
+    </div>
+
+    <div class="order-card" style="box-shadow:none; padding:0;">
+      <div class="card-header-info">
+        <span id="det-id">#-----</span>
+        <span class="pay-status" id="det-status-badge">DIAMBIL</span>
+      </div>
+
+      <div class="route-line">
+        <div class="route-node">
+          <span id="det-shopName">Nama Warung</span>
+          <p id="det-sellerAddress">Alamat Penjual</p>
+        </div>
+
+        <div class="route-node">
+          <span id="det-customerName">Nama Pembeli</span>
+          <p id="det-customerAddress">Alamat Pengantaran</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Detail Pesanan</div>
+    <div id="det-items-box"></div>
+
+    <div class="section-title">Peta Rute</div>
+    <div id="detail-map"></div>
+
+    <button class="btn-primary" id="btn-action-main">Aksi</button>
+    <button class="btn-secondary">Ada Kendala</button>
+
+  </div>
+
+
+  <!-- ===================== -->
+  <!-- PAGE: EARNINGS -->
+  <!-- ===================== -->
+  <div id="page-earnings" class="app-page">
+
+    <div class="section-title" style="font-size: 18px;">Statistik Mingguan</div>
+
+    <div class="stats-grid">
+      <div class="stats-box" style="grid-column: span 2; text-align:center;">
+        <div class="icon-label">💰 Total Dompet</div>
+        <div class="value" id="totalPendapatanDompet">Rp 0</div>
+      </div>
+    </div>
+
+  <div id="earningsHistoryContainer" style="margin-top:16px;">
+  <h3 style="margin-bottom:10px;">📜 Riwayat Hari Ini</h3>
+  <div id="earningsHistoryList"></div>
+</div>
+
+  </div>
+
+
+  <!-- ===================== -->
+  <!-- PAGE: PROFILE -->
+  <!-- ===================== -->
+  <div id="page-profile" class="app-page">
+
+    <div class="section-title" style="font-size: 18px;">
+      Profil Saya
+    </div>
+
+    <div style="background:white; padding:20px; border-radius:20px; text-align:center;">
+      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200"
+           style="width:100px;height:100px;border-radius:50%;">
+
+      <h3 id="prof-name">Memuat...</h3>
+      <p id="prof-email"></p>
+
+      <div style="background:var(--green-light); display:inline-block; padding:5px 15px; border-radius:20px;">
+        Driver Terverifikasi
+      </div>
+    </div>
+
+
+    <div style="background:white; padding:20px; border-radius:20px;">
+      <div class="info-row">
+        <span>Nomor HP</span>
+        <span id="prof-phone">-</span>
+      </div>
+
+      <div class="info-row">
+        <span>Role</span>
+        <span>Driver</span>
+      </div>
+
+      <div class="info-row">
+        <span>UID</span>
+        <span id="prof-uid">-</span>
+      </div>
+      <div class="section-title">Informasi Akun</div>
+      <button class="btn-primary" id="logoutBtn">
+      Keluar / Logout
+    </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+    </div> 
+
+
+  </div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module">
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+// Tambahkan updateDoc di baris import ini
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  getDoc,
+  updateDoc,
+  serverTimestamp // <-- WAJIB DITAMBAHKAN AGAR NYETIR PERUBAHAN STATUS BERHASIL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { app } from "./firebase-config.js";
+
+
+const auth = getAuth(app);
+console.log("DRIVER LOGIN =", auth.currentUser?.uid);
+const db = getFirestore(app);
+
+let driverInitialized = false;
+let liveOrdersUnsub = null;
+let earningsUnsub = null;
+
+let currentDriver = null;
+let currentActiveOrderGlobal = null; 
+let subTabActive = "TERSEDIA"; 
+
+// ===================================================
+// INISIALISASI PENGATURAN NADA DERING & FILTER LOAD
+// ===================================================
+// Menggunakan ringtone klakson/bell khas pengantar makanan
+const orderRingtone = new Audio("https://assets.mixkit.co/active_storage/sfx/2869/2869-200.wav");
+orderRingtone.loop = false; // Setel ke true jika ingin berbunyi terus-menerus sampai diklik
+
+let isInitialLoad = true; // Supaya data lama tidak berisik saat aplikasi baru dibuka
+
+// Inisialisasi Peta Satelit Hybrid
+const detailMap = L.map('detail-map').setView([-6.3150, 107.3400], 14);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(detailMap);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', { maxZoom: 20 }).addTo(detailMap);
+
+let mapMarkers = [];
+let routePolyline = null; 
+
+onAuthStateChanged(auth, async (user) => {
+
+  if (!user) {
+    window.location.href = "driver-login.html";
+    return;
+  }
+
+  if (driverInitialized) return;
+  driverInitialized = true;
+
+  currentDriver = user;
+
+  try {
+    const driverRef = doc(db, "drivers", user.uid);
+    const driverSnap = await getDoc(driverRef);
+
+    if (!driverSnap.exists()) {
+      console.error("Driver tidak ditemukan:", user.uid);
+      return;
+    }
+
+    const driverData = driverSnap.data();
+
+    document.getElementById("driverNameDisplay").innerText =
+      "Halo, " + (driverData.name || "Kurir");
+
+    // ❗ CEGAH DUPLIKAT LISTENER
+    if (!liveOrdersUnsub) {
+      initLiveOrders();
+    }
+
+    if (!earningsUnsub) {
+      initRealTimeEarnings(user.uid);
+    }
+
+  } catch (err) {
+    console.error(err);
+  }
+});
+    // 3. Jika ada, ambil data dan tampilkan nama yang benar dari field 'name'
+
+window.switchMainPage = function(pageId) {
+  document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const page = document.getElementById(`page-${pageId}`);
+  if (page) page.classList.add('active');
+
+  const navIdx =
+    pageId === 'beranda' ? 0 :
+    pageId === 'order' ? 1 :
+    pageId === 'earnings' ? 2 :
+    pageId === 'profile' ? 3 : -1;
+
+  if (navIdx !== -1) {
+    document.querySelectorAll('.nav-item')[navIdx].classList.add('active');
+  }
+
+  handlePageChange(pageId);
+  if (pageId === "earnings" && currentDriver) {
+  initRealTimeEarnings(currentDriver.uid);
+}
+
+  if (pageId === 'detail') {
+    setTimeout(() => {
+      if (typeof detailMap !== "undefined") {
+        detailMap.invalidateSize();
+      }
+    }, 300);
+  }
+};
+
+
+function handlePageChange(pageId) {
+  if (pageId === "profile" && currentDriver) {
+    ProfilePage.listen(currentDriver.uid);
+  }
+}
+
+
+function initRealTimeEarnings(driverUid) {
+  const awalHariIni = new Date();
+  awalHariIni.setHours(0, 0, 0, 0);
+
+const qEarnings = query(
+  collection(db, "orders"),
+  where("driverId", "==", driverUid),
+  where("status", "==", "COMPLETED"),
+);
+
+ earningsUnsub = onSnapshot(qEarnings, (snapshot) => {
+    let orderSelesaiHariIni = 0;
+    let cuanHariIni = 0;
+    const awalMinggu = new Date();
+awalMinggu.setDate(awalMinggu.getDate() - 7);
+    let cuanMingguanTotal = 0;
+    let jarakHariIni = 0;
+    let historyHTML = "";
+
+    snapshot.forEach((orderDoc) => {
+      const order = orderDoc.data();
+      const nominalOngkir = parseFloat(order.ongkir) || 0;
+      const jarakOrder = parseFloat(order.distance) || 2.1; 
+
+      let waktuBuat = new Date();
+      console.log("EARNINGS SNAPSHOT SIZE:", snapshot.size);
+
+if (order.completedAt?.toDate) {
+  waktuBuat = order.completedAt.toDate();
+}
+      const historyList = document.getElementById("earningsHistoryList");
+  if (historyList) {
+    historyList.innerHTML = historyHTML || `
+      <div style="text-align:center;color:#999;">
+        Belum ada order selesai hari ini
+      </div>
+    `;
+  }
+
+
+      if (waktuBuat >= awalMinggu) {
+         cuanMingguanTotal += nominalOngkir;
+      }
+    
+      if (waktuBuat >= awalHariIni) {
+        orderSelesaiHariIni++;
+        cuanHariIni += nominalOngkir;
+        jarakHariIni += jarakOrder;
+        historyHTML += `
+  <div style="
+    background:#fff;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+  ">
+    <div style="font-weight:700;">
+      🧾 ${order.shopName || "Warung"}
+    </div>
+
+    <div style="font-size:12px; color:#666;">
+      👤 ${order.customerName || "-"}
+    </div>
+
+    <div style="font-size:12px; margin-top:4px;">
+      💰 Rp ${(order.ongkir || 0).toLocaleString('id-ID')}
+    </div>
+
+    <div style="font-size:11px; color:#999; margin-top:4px;">
+      ⏱ ${waktuBuat.toLocaleTimeString('id-ID')}
+    </div>
+  </div>
+`;
+      }
+    });
+
+    document.getElementById("stats-orders").innerText = orderSelesaiHariIni;
+    document.getElementById("stats-earnings").innerText = "Rp " + cuanHariIni.toLocaleString('id-ID');
+    document.getElementById("stats-distance").innerText = jarakHariIni.toFixed(1) + " km";
+    document.getElementById("totalPendapatanDompet").innerText = "Rp " + cuanMingguanTotal.toLocaleString('id-ID');
+  });
+
+}
+
+function initLiveOrders() {
+const q = query(
+collection(db, "orders"),
+where("status", "in",
+["READY_FOR_PICKUP","PICKED_UP","ON_THE_WAY","COMPLETED"])
+);
+ liveOrdersUnsub = onSnapshot(q, (snapshot) => {
+
+  console.log("JUMLAH ORDER DRIVER =", snapshot.size);
+
+  snapshot.forEach((docSnap) => {
+
+    const order = docSnap.data();
+
+    console.log(
+      "ORDER DRIVER:",
+      docSnap.id,
+      order.status
+    );
+
+  });
+
+});
+  
+  onSnapshot(q, (snapshot) => {
+    let htmlTersedia = "";
+    let htmlDiproses = "";
+    let htmlHomeActiveSekilas = "";
+
+    // Deteksi Modifikasi Data untuk Peringatan Orderan Baru
+    if (!isInitialLoad) {
+      snapshot.docChanges().forEach((change) => {
+        // Jika dokumen baru ditambahkan & statusnya siap diambil driver
+        console.log(
+  "CHANGE DRIVER:",
+  change.type,
+  change.doc.data().status
+);
+        if (change.type === "added" && change.doc.data().status === "READY_FOR_PICKUP") {
+          const newOrder = change.doc.data();
+          
+          // 1. Bunyikan Ringtone (Menerobos restriksi dengan catch log)
+          orderRingtone.play().catch(err => console.log("Audio dimainkan setelah interaksi layar."));
+
+          // 2. Isi data ke modal popup custom
+          document.getElementById("pop-shop").innerText = newOrder.shopName || "Warung Makan";
+          document.getElementById("pop-ongkir").innerText = "Rp " + (newOrder.ongkir || 0).toLocaleString('id-ID');
+          
+          // 3. Munculkan popup di layar dashboard
+          document.getElementById("customOrderPopup").style.display = "flex";
+        }
+      });
+    }
+
+    snapshot.forEach((orderDoc) => {
+      const order = orderDoc.data();
+      const orderId = orderDoc.id;
+      const shortId = orderId.substring(0, 6).toUpperCase();
+
+if (
+
+order.status === "READY_FOR_PICKUP" &&
+!order.driverId
+) {
+    htmlTersedia += `
+      <div class="order-card">
+        <div class="card-header-info">
+          <span>#${shortId}</span>
+          <span style="color:var(--text-muted)">Terdekat</span>
+        </div>
+
+        <div class="route-line">
+          <div class="route-node">
+            ${order.shopName}
+            <p>${order.sellerAddress}</p>
+          </div>
+
+          <div class="route-node" style="margin-bottom:0;">
+            ${order.customerName}
+            <p>${order.customerAddress}</p>
+          </div>
+        </div>
+
+        <span class="pay-status">Tunai / COD</span>
+
+        <button
+          class="btn-primary"
+          onclick="ambilOrderanLangsung('${orderId}')">
+          Terima Order
+        </button>
+      </div>
+    `;
+}
+
+if (
+  order.driverId === currentDriver.uid &&
+  (
+    order.status === "PICKED_UP" ||
+    order.status === "ON_THE_WAY"
+  )
+) {
+        const txtStatus =
+order.status === "READY_FOR_PICKUP"
+? "Menunggu Diambil"
+: order.status === "PICKED_UP"
+? "Menuju Toko"
+: order.status === "ON_THE_WAY"
+? "Mengantar"
+: "Selesai";
+        
+        const cardWidgetHTML = `
+          <div class="order-card" style="border-left: 4px solid var(--primary);">
+            <div class="card-header-info">
+              <span>#${shortId}</span>
+              <span style="background:#fff0f2; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:700; color:var(--primary);">${txtStatus}</span>
+            </div>
+            <div style="font-size:14px; font-weight:700; margin-bottom:4px;">🏪 ${order.shopName}</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">📍 Ke: ${order.customerName}</div>
+            <button class="btn-primary" onclick="bukaDetailOrderan('${orderId}', ${JSON.stringify(order).replace(/"/g, '&quot;')})">Lihat Detail Order</button>
+          </div>
+        `;
+        
+        htmlDiproses += cardWidgetHTML;
+        htmlHomeActiveSekilas += cardWidgetHTML; 
+      }
+    });
+
+    // Selesai looping load pertama kali, nonaktifkan flag initial load
+    isInitialLoad = false;
+
+    const homeContainer = document.getElementById("homeActiveOrderContainer");
+    if(homeContainer) {
+      homeContainer.innerHTML = htmlHomeActiveSekilas || `<div class="empty-state">Tidak ada tugas berjalan. Buka tab Order untuk mencari uang! 💰</div>`;
+    }
+    
+    window.renderSubTabs = () => {
+      const container = document.getElementById("orderListContainer");
+      if(!container) return;
+      if(subTabActive === "TERSEDIA") {
+        container.innerHTML = htmlTersedia || `<div class="empty-state">Belum ada orderan masuk area Cengkong saat ini. Standby ya!☕</div>`;
+      } else {
+        container.innerHTML = htmlDiproses || `<div class="empty-state">Kamu tidak memiliki pesanan berjalan saat ini.</div>`;
+      }
+    }
+    renderSubTabs();
+  });
+}
+
+// Event handler tutup popup dan arahkan ke halaman Order
+document.getElementById("btn-buka-tab-order").addEventListener("click", () => {
+  document.getElementById("customOrderPopup").style.opacity = "0";
+  setTimeout(() => {
+    document.getElementById("customOrderPopup").style.display = "none";
+    document.getElementById("customOrderPopup").style.opacity = "1";
+  }, 200);
+  
+  // Hentikan suara jika diset loop
+  orderRingtone.pause();
+  orderRingtone.currentTime = 0;
+
+  switchMainPage('order');
+});
+
+
+window.ambilOrderanLangsung = async function(orderId){
+
+  const orderRef = doc(db, "orders", orderId);
+
+  try {
+   
+await updateDoc(orderRef, {
+  status: "PICKED_UP",
+  driverId: currentDriver.uid,
+  driverName: currentDriver.displayName || "Driver",
+  locked: true,
+  assignedAt: Date.now(),
+  pickedUpAt: new Date(),
+  acceptedByDriverAt: new Date()
+});
+    alert("Order berhasil kamu ambil!");
+
+    subTabActive = "DIPROSES";
+    renderSubTabs();
+
+  } catch (err) {
+    console.error(err);
+    alert("Order sudah diambil driver lain!");
+  }
+}
+
+// ===================================================
+// FIX MUTLAK & LIVE TRACKING OSRM MAPS FUNCTION
+// ===================================================
+window.bukaDetailOrderan = function(id, orderData) {
+  currentActiveOrderGlobal = { id: id, ...orderData };
+  
+  document.getElementById("det-id").innerText = "#" + id.substring(0,6).toUpperCase();
+  document.getElementById("det-shopName").innerText = orderData.shopName;
+  document.getElementById("det-sellerAddress").innerText = orderData.sellerAddress;
+  document.getElementById("det-customerName").innerText = orderData.customerName;
+  document.getElementById("det-customerAddress").innerText = orderData.customerAddress;
+  
+  const totalTagihanFormatted = orderData.grandTotal ? "Rp " + orderData.grandTotal.toLocaleString('id-ID') : "Rp 43.000";
+
+  document.getElementById("det-items-box").innerHTML = `
+    <div class="info-row"><span>Makanan/Minuman Terpilih</span><span>1x Paket Menu</span></div>
+    <div class="info-row"><span>Ongkos Kirim Masuk</span><span>Rp ${(orderData.ongkir || 0).toLocaleString('id-ID')}</span></div>
+    <div class="info-row total"><span>Total Tagihan Driver</span><span>${totalTagihanFormatted}</span></div>
+  `;
+
+  const btnMain = document.getElementById("btn-action-main");
+  if(orderData.status === "PICKED_UP") {
+    document.getElementById("det-status-badge").innerText = "DIAMBIL (DI WARUNG)";
+    btnMain.innerText = "Mulai Antar (Pesanan Diantar)";
+    btnMain.style.background = "var(--primary)";
+  } else if(orderData.status === "ON_THE_WAY") {
+    document.getElementById("det-status-badge").innerText = "DALAM PERJALANAN";
+    btnMain.innerText = "Selesai / Sampai Tujuan";
+    btnMain.style.background = "var(--green)";
+  }
+
+  // Bersihkan objek layer peta sebelumnya
+  mapMarkers.forEach(m => detailMap.removeLayer(m));
+  if(routePolyline) detailMap.removeLayer(routePolyline);
+  mapMarkers = [];
+
+  const shopLat = orderData.sellerLocation?.latitude || -6.3150;
+  const shopLng = orderData.sellerLocation?.longitude || 107.3400;
+  const custLat = orderData.customerLocation?.latitude || -6.3210;
+  const custLng = orderData.customerLocation?.longitude || 107.3480;
+
+  // Render Pin Target Point Utama
+  const shopMarker = L.marker([shopLat, shopLng]).addTo(detailMap)
+    .bindPopup(`<b>🏪 Lapak: ${orderData.shopName}</b><br>${orderData.sellerAddress}`);
+  mapMarkers.push(shopMarker);
+
+  const custMarker = L.marker([custLat, custLng]).addTo(detailMap)
+    .bindPopup(`<b>🏠 Pengantaran: ${orderData.customerName}</b><br>${orderData.customerAddress}`);
+  mapMarkers.push(custMarker);
+
+  if (routePolyline) detailMap.removeLayer(routePolyline);
+
+  // Langsung gambar garis biru statis dari seller ke customer saat halaman dibuka
+  routePolyline = L.polyline([[shopLat, shopLng], [custLat, custLng]], {
+    color: '#0066ff',  // Warna Biru
+    weight: 6,         // Ketebalan garis
+    opacity: 0.85,     // Transparansi
+    lineJoin: 'round'
+  }).addTo(detailMap);
+
+  // Paksa peta langsung autofocus ke area seller & customer
+  const initialGroup = new L.featureGroup([shopMarker, custMarker]);
+  detailMap.fitBounds(initialGroup.getBounds().pad(0.20));
+
+  if (navigator.geolocation) {
+    if (window.driverWatchId) {
+      navigator.geolocation.clearWatch(window.driverWatchId);
+    }
+
+    window.driverWatchId = navigator.geolocation.watchPosition(async (position) => {
+      const driverLat = position.coords.latitude;
+      const driverLng = position.coords.longitude;
+
+      // 1. Sinkronisasi Koordinat Driver ke Cloud Firestore
+      if (orderData.status === "PICKED_UP" || orderData.status === "ON_THE_WAY") {
+        try {
+          const orderRef = doc(db, "orders", id);
+          await updateDoc(orderRef, {
+            driverLocation: { latitude: driverLat, longitude: driverLng }
+          });
+          console.log("Lokasi driver sinkron ke Firestore.");
+        } catch (err) {
+          console.error("Gagal update data lokasi kurir:", err);
+        }
+      }
+
+
+
+
+      // 2. Clear layer marker driver lama
+      mapMarkers = mapMarkers.filter(m => {
+        if (m.options && m.options.isDriverMarker) {
+          detailMap.removeLayer(m);
+          return false;
+        }
+        return true;
+      });
+
+
+
+
+      // 3. Logika Teks Keterangan Dinamis Perjalanan Kurir
+      let petunjukRuteText = "";
+      if (orderData.status === "PICKED_UP") {
+        petunjukRuteText = "<br><span style='color:var(--primary); font-weight:bold;'>腔 Menuju lokasi seller</span>";
+      } else if (orderData.status === "ON_THE_WAY") {
+        petunjukRuteText = "<br><span style='color:var(--green); font-weight:bold;'>腔 Menuju lokasi pelanggan</span>";
+      }
+
+      // 4. Buat Marker Driver Terkini dengan Popup Informasi
+      const driverMarker = L.marker([driverLat, driverLng], {
+        isDriverMarker: true,
+        icon: L.divIcon({
+          className: 'custom-driver-icon',
+          html: "<div style='background-color:#0052ff; width:16px; height:16px; border-radius:50%; border:3px solid white; box-shadow:0 0 10px rgba(0,82,255,0.6);'></div>",
+          iconSize: [16, 16],
+          iconAnchor: [8, 8]
+        })
+      }).addTo(detailMap).bindPopup(`<b>Anda (Driver)</b>${petunjukRuteText}`).openPopup();
+      mapMarkers.push(driverMarker);
+
+
+
+      // Autofocus popup target
+      if (orderData.status === "PICKED_UP") {
+        shopMarker.bindPopup(`<b>🏪 Lapak: ${orderData.shopName}</b><br>${orderData.sellerAddress}<br><b style='color:var(--primary)'>[Tujuan Anda Saat Ini]</b>`).openPopup();
+      } else if (orderData.status === "ON_THE_WAY") {
+        custMarker.bindPopup(`<b>🏠 Pengantaran: ${orderData.customerName}</b><br>${orderData.customerAddress}<br><b style='color:var(--green)'>[Tujuan Pengantaran]</b>`).openPopup();
+      }
+
+      // 5. Pembuatan Jalur Navigasi Jalan Raya Nyata (API OSRM Routing)
+      try {
+        if (routePolyline) detailMap.removeLayer(routePolyline);
+
+        let osrmUrl = "";
+        if (orderData.status === "PICKED_UP") {
+          osrmUrl = `https://router.project-osrm.org/route/v1/driving/${driverLng},${driverLat};${shopLng},${shopLat}?overview=full&geometries=geojson`;
+        } else {
+          osrmUrl = `https://router.project-osrm.org/route/v1/driving/${driverLng},${driverLat};${custLng},${custLat}?overview=full&geometries=geojson`;
+        }
+
+        const response = await fetch(osrmUrl);
+        const routeData = await response.json();
+
+        if (routeData.code === "Ok" && routeData.routes.length > 0) {
+          const coordinates = routeData.routes[0].geometry.coordinates;
+          const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
+
+          routePolyline = L.polyline(latLngs, {
+            color: '#0066ff',
+            weight: 6,
+            opacity: 0.85,
+            lineJoin: 'round'
+          }).addTo(detailMap);
+        } else {
+          let fallbackCoords = (orderData.status === "PICKED_UP") ? [[driverLat, driverLng], [shopLat, shopLng]] : [[driverLat, driverLng], [custLat, custLng]];
+          routePolyline = L.polyline(fallbackCoords, {color: '#0066ff', weight: 5, dashArray: '5, 10'}).addTo(detailMap);
+        }
+      } catch (error) {
+        console.error("Gagal memuat rute OSRM:", error);
+      }
+
+      // Zoom Autofit Screen HP
+      const group = new L.featureGroup(mapMarkers);
+      detailMap.fitBounds(group.getBounds().pad(0.20));
+
+    }, (error) => {
+      console.error("Akses GPS Driver Gagal:", error);
+      detailMap.setView([shopLat, shopLng], 14);
+    }, {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 8000
+    });
+  } else {
+    detailMap.setView([shopLat, shopLng], 14);
+  }
+
+  switchMainPage('detail');
+}
+
+// Handler Tombol Aksi Status Utama Orderan
+document.getElementById("btn-action-main").addEventListener("click", async () => {
+  if (!currentActiveOrderGlobal) return;
+  
+  const id = currentActiveOrderGlobal.id;
+  const currentStatus = currentActiveOrderGlobal.status;
+
+  if (currentStatus === "PICKED_UP") {
+  
+await updateDoc(
+doc(db, "orders", id),
+{
+  status: "ON_THE_WAY",
+  deliveryStartedAt: serverTimestamp()
+}
+);
+    alert("Hati-hati di jalan! Status berubah menjadi sedang diantar.");
+    switchMainPage('order');
+  } else if (currentStatus === "ON_THE_WAY") {
+    if(confirm("Apakah pesanan benar-benar sudah sampai ke tangan pembeli?")) {
+      if (window.driverWatchId) {
+        navigator.geolocation.clearWatch(window.driverWatchId);
+        window.driverWatchId = null;
+      }
+      
+    
+await updateDoc(doc(db, "orders", id), {
+  status: "COMPLETED",
+  completedAt: serverTimestamp(),
+  locked: false
+});
+      alert("Hebat! Pekerjaan pengantaran selesai.");
+      switchMainPage('beranda');
+    }
+  }
+});
+
+document.getElementById("subtab-tersedia").addEventListener("click", (e) => {
+  subTabActive = "TERSEDIA";
+  document.querySelectorAll('.order-tab-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  renderSubTabs();
+});
+
+document.getElementById("subtab-diproses").addEventListener("click", (e) => {
+  subTabActive = "DIPROSES";
+  document.querySelectorAll('.order-tab-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  renderSubTabs();
+});
+
+// Solusi Cerdas Menerobos Kebijakan Autoplay: Mancing klik pertama lewat status toggle online/offline
+document.getElementById("statusToggle").addEventListener("change", (e) => {
+  const txt = document.getElementById("statusText");
+  txt.innerText = e.target.checked ? "Status Anda: Online" : "Status Anda: Offline";
+  
+  if(e.target.checked) {
+    // Memancing ijin web audio dengan memutar sound 0.1 detik kosong
+    orderRingtone.play().then(() => {
+       orderRingtone.pause();
+       orderRingtone.currentTime = 0;
+    }).catch(e => console.log(e));
+  }
+});
+
+window.logout = function () {
+  if (confirm("Yakin ingin logout?")) {
+    signOut(auth).then(() => {
+      window.location.href = "driver-login.html";
+    });
+  }
+};
+
+
+const ProfilePage = {
+  unsubscribe: null,
+
+  listen(uid) {
+    this.unsubscribe = onSnapshot(doc(db, "drivers", uid), (snap) => {
+      if (!snap.exists()) return;
+      this.render(snap.data(), uid);
+    });
+  },
+
+  render(data, uid) {
+    const nameEl = document.getElementById("prof-name");
+    const emailEl = document.getElementById("prof-email");
+    const phoneEl = document.getElementById("prof-phone");
+    const uidEl = document.getElementById("prof-uid");
+
+    if (nameEl) nameEl.innerText = data.name || "Nama belum diisi";
+    if (emailEl) emailEl.innerText = data.email || "-";
+    if (phoneEl) phoneEl.innerText = data.phone || "-";
+    if (uidEl) uidEl.innerText = uid || "-";
+  }
+};
+
+
+document.addEventListener("click", (e) => {
+  if (e.target && e.target.id === "logoutBtn") {
+    if (confirm("Yakin ingin logout?")) {
+      signOut(auth).then(() => {
+        window.location.href = "driver-login.html";
+      });
+    }
+  }
+});
+
+window.addEventListener("beforeunload", () => {
+  if (liveOrdersUnsub) liveOrdersUnsub();
+  if (earningsUnsub) earningsUnsub();
+});
+
+</script>
+</body>
+</html>

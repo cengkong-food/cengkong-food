@@ -7,10 +7,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
     
-    /* Background dasar PC dibuat abu-abu seperti screenshot */
     body { 
       background-color: #e2e8f0; 
       display: flex;
@@ -19,12 +20,11 @@
       min-height: 100vh;
     }
 
-    /* KUNCI UKURAN HP DI TENGAH PC */
     .phone-container {
       width: 100%;
-      max-width: 430px; /* Standar lebar layar HP modern */
+      max-width: 430px;
       height: 100vh;
-      background-color: #f8fafc; /* Warna background dalam aplikasi */
+      background-color: #f8fafc;
       display: flex; 
       flex-direction: column;
       position: relative;
@@ -32,7 +32,6 @@
       overflow: hidden;
     }
 
-    /* Header Merah Melengkung Khas Cengkong Food */
     .header-mobile { 
       background: linear-gradient(135deg, #e11d48, #be123c); 
       color: white; 
@@ -46,7 +45,6 @@
     .header-mobile h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
     .header-mobile p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
 
-    /* Area Konten Utama (Bisa Di-scroll di dalam frame HP) */
     .main-content { 
       flex: 1; 
       overflow-y: auto; 
@@ -54,14 +52,12 @@
       -webkit-overflow-scrolling: touch; 
     }
 
-    /* Sembunyikan halaman yang tidak aktif */
     .mobile-page { display: none; }
     .mobile-page.active { display: block; animation: slideUp 0.3s ease-out; }
 
     h2 { font-size: 17px; font-weight: 700; color: #be123c; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
     .date-badge { font-size: 11px; color: #64748b; background: #e2e8f0; padding: 3px 8px; border-radius: 20px; font-weight: 600; display: inline-block; margin-bottom: 18px; }
 
-    /* Gaya Card List Minimalis ala Aplikasi HP */
     .list-container { display: flex; flex-direction: column; gap: 12px; }
     
     .data-card { 
@@ -76,20 +72,35 @@
     }
     .card-info h4 { font-size: 14px; font-weight: 600; color: #1e293b; }
     .card-info p { font-size: 11px; color: #64748b; margin-top: 2px; }
-   .card-right{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+    
+    .btn-profile-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 6px;
+      background: #fff1f2;
+      color: #e11d48;
+      border: 1px solid #ffe4e6;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-profile-trigger:hover {
+      background: #e11d48;
+      color: white;
+    }
+
+    .card-right { display: flex; align-items: center; gap: 10px; }
     .card-price { font-size: 14px; font-weight: 700; color: #e11d48; }
 
-    /* Badges Status */
     .badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block; }
     .badge-buka { background-color: #dcfce7; color: #15803d; }
     .badge-tutup { background-color: #fee2e2; color: #b91c1c; }
     .badge-status { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; text-transform: capitalize; }
 
-    /* Kartu Dashboard Total Penjualan */
     .report-card { 
       background: linear-gradient(135deg, #ffffff, #fff5f5); 
       border: 2px solid #ffe4e6; 
@@ -104,7 +115,6 @@
     .report-card .total-money { font-size: 32px; color: #be123c; font-weight: 700; margin: 8px 0; }
     .report-card p { font-size: 12px; color: #475569; }
 
-    /* Menu Navigasi Bawah nempel di dasar container HP */
     .bottom-nav { 
       position: absolute; 
       bottom: 0; 
@@ -137,102 +147,174 @@
     .nav-item i { font-size: 18px; }
     .nav-item.active { color: #e11d48; }
 
+    .seller-actions { display: flex; align-items: center; gap: 10px; }
+    .btn-delete-icon {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      border-radius: 50%;
+      color: #e11d48;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: .2s;
+    }
+    .btn-delete-icon:hover {
+      background: rgba(225,29,72,.08);
+      color: #be123c;
+    }
+
+    /* MODAL POPUP EDIT PROFILE SELLER */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      padding: 16px;
+    }
+    .modal-overlay.active { display: flex; }
+    
+    .modal-card {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 10px;
+    }
+    .modal-header h3 { font-size: 16px; color: #1e293b; font-weight: 700; }
+    .btn-close-modal { background: none; border: none; font-size: 18px; color: #94a3b8; cursor: pointer; }
+    
+    .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 4px; text-transform: uppercase; }
+    .form-input {
+      width: 100%;
+      height: 42px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+      transition: 0.2s;
+    }
+    .form-input:focus { border-color: #e11d48; background-color: #fff; }
+    
+    /* Style komponen peta khusus admin modal picker */
+    .admin-map-container {
+      width: 100%;
+      height: 180px;
+      border-radius: 12px;
+      border: 1.5px solid #e2e8f0;
+      margin-top: 4px;
+      z-index: 1;
+    }
+    .coords-indicator {
+      font-size: 11px;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-top: 6px;
+      display: inline-block;
+    }
+
+    .modal-footer {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .btn-save-profile {
+      width: 100%;
+      height: 44px;
+      background: #e11d48;
+      border: none;
+      color: white;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .btn-save-profile:active { transform: scale(0.98); }
+    
+    .btn-danger-profile {
+      width: 100%;
+      height: 44px;
+      background: #fff1f2;
+      border: 1px dashed #ffe4e6;
+      color: #be123c;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
-.btn-hapus{
-  margin-top:8px;
-  background: linear-gradient(135deg,#ef4444,#dc2626);
-  color:white;
-  border:none;
-  border-radius:10px;
-  padding:7px 12px;
-  font-size:11px;
-  font-weight:600;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:5px;
-  transition:all .2s ease;
-  box-shadow:0 3px 8px rgba(239,68,68,.25);
-}
-
-.btn-hapus:hover{
-  transform:translateY(-2px);
-  box-shadow:0 5px 12px rgba(239,68,68,.35);
-}
-
-.btn-hapus:active{
-  transform:scale(.96);
-}
-.seller-actions{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.btn-delete-icon{
-  width:32px;
-  height:32px;
-  border:none;
-  background:transparent;
-  border-radius:50%;
-  color:#e11d48;
-  cursor:pointer;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  transition:.2s;
-}
-
-.btn-delete-icon:hover{
-  background:rgba(225,29,72,.08);
-  color:#be123c;
-}
     }
   </style>
 </head>
 <body>
 
-  <!-- FRAME HP UTAMA -->
   <div class="phone-container">
-
-    <!-- Top Header -->
     <div class="header-mobile">
       <h1>Cengkong Food</h1>
       <p>Dashboard Utama Administrator</p>
     </div>
 
-    <!-- Area Isi Konten (Scrollable di dalam frame HP) -->
     <div class="main-content">
-
-      <!-- MENU 1: SELLER TERDAFTAR -->
       <div id="page-sellers" class="mobile-page active">
         <h2><i class="fa-solid fa-store"></i> Seller Terdaftar</h2>
         <span class="date-badge">Real-time Kemitraan</span>
-        
         <div class="list-container" id="seller-list">
           <div style="text-align:center; color:#94a3b8; font-size:12px; padding:20px;">Mengambil data mitra...</div>
         </div>
       </div>
 
-      <!-- MENU 2: ORDERAN HARI INI -->
+      <div id="page-menus" class="mobile-page">
+        <h2><i class="fa-solid fa-utensils"></i> Daftar Menu Produk</h2>
+        <span class="date-badge">Semua Produk Terpajang</span>
+        <div class="list-container" id="admin-menu-list">
+          <div style="text-align:center; color:#94a3b8; font-size:12px; padding:20px;">Mengambil daftar makanan...</div>
+        </div>
+      </div>
+
       <div id="page-orders" class="mobile-page">
         <h2><i class="fa-solid fa-bag-shopping"></i> Orderan Hari Ini</h2>
         <span class="date-badge" id="order-date-label">Tanggal: --</span>
-        
         <div class="list-container" id="order-list">
           <div style="text-align:center; color:#94a3b8; font-size:12px; padding:20px;">Mengambil pesanan masuk...</div>
         </div>
       </div>
 
-      <!-- MENU 3: TOTAL PENJUALAN (OMSET) -->
       <div id="page-reports" class="mobile-page">
         <h2><i class="fa-solid fa-chart-line"></i> Total Penjualan</h2>
         <span class="date-badge" id="report-date-label">Tanggal: --</span>
-        
         <div class="report-card">
           <i class="fa-solid fa-wallet"></i>
           <h3>Pendapatan Kotor Hari Ini</h3>
@@ -240,14 +322,16 @@
           <p>Akumulasi dari <b id="live-count" style="color:#e11d48;">0</b> pesanan masuk.</p>
         </div>
       </div>
-
     </div>
 
-    <!-- Menu Navigasi Bawah Sticky di Frame HP -->
     <div class="bottom-nav">
       <button class="nav-item active" onclick="switchMobileTab(this, 'page-sellers')">
         <i class="fa-solid fa-store"></i>
         <span>Seller</span>
+      </button>
+      <button class="nav-item" onclick="switchMobileTab(this, 'page-menus')">
+        <i class="fa-solid fa-utensils"></i>
+        <span>Menu</span>
       </button>
       <button class="nav-item" onclick="switchMobileTab(this, 'page-orders')">
         <i class="fa-solid fa-bag-shopping"></i>
@@ -258,148 +342,372 @@
         <span>Penjualan</span>
       </button>
     </div>
-
   </div>
 
-  <!-- JAVASCRIPT CONNECT FIREBASE -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Edit Profil Lapak</h3>
+        <button class="btn-close-modal" onclick="closeProfileModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-seller-id">
+        
+        <div class="form-group">
+          <label>Nama Lapak / Toko</label>
+          <input type="text" id="edit-shop-name" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Nama Pemilik</label>
+          <input type="text" id="edit-owner-name" class="form-input" placeholder="Belum diisi seller">
+        </div>
+        <div class="form-group">
+          <label>Email Kontak</label>
+          <input type="email" id="edit-email" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Nomor WhatsApp</label>
+          <input type="tel" id="edit-whatsapp" class="form-input" placeholder="Belum diisi seller">
+        </div>
+        <div class="form-group">
+          <label>Alamat Lengkap</label>
+          <input type="text" id="edit-address" class="form-input" placeholder="Belum diisi seller">
+        </div>
+        
+        <div class="form-group">
+          <label>Titik Koordinat Lokasi Lapak</label>
+          <div id="adminMapPicker" class="admin-map-container"></div>
+          <div class="coords-indicator">
+            📍 Lat: <span id="lbl-lat">-6.31500</span>, Lng: <span id="lbl-lng">107.34000</span>
+          </div>
+          <input type="hidden" id="edit-lat" value="-6.31500">
+          <input type="hidden" id="edit-lng" value="107.34000">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-save-profile" id="btnUpdateProfile" onclick="simpanPerubahanProfile()">Simpan Perubahan</button>
+        <button class="btn-danger-profile" id="btnDeleteFromProfile" onclick="hapusDariProfile()">Hapus Kemitraan Seller</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
-            getFirestore,
-            collection,
-            onSnapshot,
-            query,
-            where,
-            deleteDoc,
-            doc
-            } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      getFirestore,
+      collection,
+      onSnapshot,
+      deleteDoc,
+      updateDoc,
+      getDoc,
+      doc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-   const firebaseConfig = {
-  apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
-  authDomain: "food-delivery-97a5f.firebaseapp.com",
-  databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "food-delivery-97a5f",
-  storageBucket: "food-delivery-97a5f.firebasestorage.app",
-  messagingSenderId: "1071083538977",
-  appId: "1:1071083538977:web:51e617513f6fb639cf3160"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
+      authDomain: "food-delivery-97a5f.firebaseapp.com",
+      databaseURL: "https://food-delivery-97a5f-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "food-delivery-97a5f",
+      storageBucket: "food-delivery-97a5f.firebasestorage.app",
+      messagingSenderId: "1071083538977",
+      appId: "1:1071083538977:web:51e617513f6fb639cf3160"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    // Global Instance Peta
+    let adminMap = null;
+    let adminMarker = null;
 
     const hariIni = new Date().toISOString().split('T')[0];
     document.getElementById('order-date-label').innerText = "Hari Ini: " + hariIni;
     document.getElementById('report-date-label').innerText = "Hari Ini: " + hariIni;
 
-    
-// --- SNAPSHOT SELLER (DIPERBAIKI) ---
-// --- SNAPSHOT SELLER (DIPERBAIKI) ---
-onSnapshot(collection(db, "sellers"), (snapshot) => {
-  const sellerList = document.getElementById('seller-list');
-  sellerList.innerHTML = ""; // Bersihkan tampilan agar tidak menumpuk
+    // 1. SNAPSHOT SELLER REALTIME
+    onSnapshot(collection(db, "sellers"), (snapshot) => {
+      const sellerList = document.getElementById('seller-list');
+      sellerList.innerHTML = ""; 
 
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-    
-    // MENGGUNAKAN 'shopName' SESUAI DATABASE KAMU
-    const namaToko = data.shopName || "Lapak Tanpa Nama";
-    const statusOpen = data.isOpen === true;
-    
-    const statusBadge = statusOpen 
-      ? '<span class="badge badge-buka">BUKA</span>' 
-      : '<span class="badge badge-tutup">TUTUP</span>';
+      if (snapshot.empty) {
+        sellerList.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:12px;">Belum ada seller terdaftar.</div>`;
+        return;
+      }
 
-    sellerList.innerHTML += `
-  <div class="data-card">
-    <div class="card-info">
-      <h4>${namaToko}</h4>
-      <p>
-        <i class="fa-regular fa-envelope"></i>
-        ${data.email || 'Tanpa Email'}
-      </p>
-    </div>
-
-  <div class="card-right seller-actions">
-  ${statusBadge}
-
-  <button
-    class="btn-delete-icon"
-    title="Hapus Seller"
-    onclick="hapusSeller('${doc.id}','${namaToko}')">
-    <i class="fa-solid fa-trash"></i>
-  </button>
-</div>
-  </div>
-`;
-  });
-});
-
-// --- SNAPSHOT ORDERS (TANPA FILTER TANGGAL - PASTI MUNCUL) ---
-const ordersRef = collection(db, "orders");
-
-onSnapshot(ordersRef, (snapshot) => {
-    const orderList = document.getElementById('order-list');
-    const liveOmset = document.getElementById('live-omset');
-    const liveCount = document.getElementById('live-count');
-    
-    orderList.innerHTML = "";
-    let totalOmset = 0;
-    let totalTransaksi = 0;
-
-    snapshot.forEach((doc) => {
-        const order = doc.data();
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const namaToko = data.shopName || "Lapak Tanpa Nama";
+        const statusOpen = data.isOpen === true;
         
-        // Data langsung diproses tanpa cek tanggal
-        const bill = Number(order.totalBill) || 0;
-        totalOmset += bill;
-        totalTransaksi++;
+        const statusBadge = statusOpen 
+          ? '<span class="badge badge-buka">BUKA</span>' 
+          : '<span class="badge badge-tutup">TUTUP</span>';
 
-        orderList.innerHTML += `
-        <div class="data-card">
-          <div class="card-info">
-            <h4>${order.itemsName || 'Paket Makanan'}</h4>
-            <p>ID: ${doc.id.substring(0,8).toUpperCase()} | Tanggal: ${order.orderDate || 'N/A'}</p>
+        sellerList.innerHTML += `
+          <div class="data-card">
+            <div class="card-info">
+              <h4>${namaToko}</h4>
+              <button class="btn-profile-trigger" onclick="window.bukaProfileSeller('${doc.id}')">
+                <i class="fa-solid fa-address-card"></i> Profile Seller
+              </button>
+            </div>
+            <div class="card-right seller-actions">
+              ${statusBadge}
+              <button class="btn-delete-icon" title="Hapus Seller" onclick="window.hapusSeller('${doc.id}','${namaToko}')">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
           </div>
-          <div class="card-right">
-            <div class="card-price">Rp ${bill.toLocaleString('id-ID')}</div>
-            <div class="badge badge-status">${order.status || 'Pending'}</div>
-          </div>
-        </div>
-      `;
+        `;
+      });
+    }, (error) => {
+      console.error("Error load sellers: ", error);
+      document.getElementById('seller-list').innerHTML = `<div style="text-align:center; color:red; padding:20px; font-size:12px;">Gagal akses database. Cek Rules Firestore kamu!</div>`;
     });
 
-    if (totalTransaksi === 0) {
-        orderList.innerHTML = `<div style="text-align:center; padding:20px;">Belum ada pesanan masuk.</div>`;
+    // 2. REAL-TIME VIEW DAFTAR MENU & FITUR HAPUS MENU (Sinkron ke index.html)
+    onSnapshot(collection(db, "menus"), (snapshot) => {
+      const menuList = document.getElementById('admin-menu-list');
+      menuList.innerHTML = "";
+
+      if (snapshot.empty) {
+        menuList.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:12px;">Belum ada menu makanan yang terdaftar.</div>`;
+        return;
+      }
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const namaMakanan = data.title || "Menu Tanpa Nama";
+        const harga = Number(data.price) || 0;
+        const tokoAsal = data.shopName || data.sellerName || "Mitra Kuliner";
+
+        menuList.innerHTML += `
+          <div class="data-card">
+            <div class="card-info">
+              <h4>${namaMakanan}</h4>
+              <p><i class="fa-solid fa-store" style="font-size:10px; color:#e11d48;"></i> ${tokoAsal}</p>
+            </div>
+            <div class="card-right">
+              <div class="card-price">Rp ${harga.toLocaleString('id-ID')}</div>
+              <button class="btn-delete-icon" title="Hapus Menu" onclick="window.hapusMenuDariAdmin('${doc.id}', '${namaMakanan.replace(/'/g, "\\'")}')">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+    }, (error) => {
+      console.error("Error load menus: ", error);
+      document.getElementById('admin-menu-list').innerHTML = `<div style="text-align:center; color:red; padding:20px; font-size:12px;">Gagal mengambil data menu.</div>`;
+    });
+
+    // FUNGSI AKSI: MENGHAPUS MENU SECARA GLOBAL
+    window.hapusMenuDariAdmin = async function(menuId, namaMenu) {
+      const konfirmasi = confirm(`Apakah Anda yakin ingin menghapus menu "${namaMenu}"? Menu ini akan langsung hilang dari halaman pembeli.`);
+      if (!konfirmasi) return;
+
+      try {
+        await deleteDoc(doc(db, "menus", menuId));
+        alert(`Menu "${namaMenu}" berhasil dihapus secara permanen.`);
+      } catch (error) {
+        console.error("Gagal menghapus menu: ", error);
+        alert("Terjadi kesalahan sistem saat mencoba menghapus menu.");
+      }
+    };
+
+    // LOGIKA RENDER PETA INTERAKTIF DI DALAM MODAL MENGGUNAKAN LAPISAN SATELIT (ESRI IMAGERY HYBRID)
+    window.initAdminMapPicker = function(lat, lng) {
+      const startLat = lat || -6.31500;
+      const startLng = lng || 107.34000;
+
+      document.getElementById('edit-lat').value = startLat;
+      document.getElementById('edit-lng').value = startLng;
+      document.getElementById('lbl-lat').innerText = parseFloat(startLat).toFixed(5);
+      document.getElementById('lbl-lng').innerText = parseFloat(startLng).toFixed(5);
+
+      if (!adminMap) {
+        adminMap = L.map('adminMapPicker').setView([startLat, startLng], 17); // Set zoom level lebih dekat (17) khas satelit
+        
+        // Lapisan 1: Citra Satelit Utama dari Esri
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        }).addTo(adminMap);
+
+        // Lapisan 2: Overlay Transparan untuk Nama Jalan, Landmark & Batas Wilayah
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Labels &copy; Esri'
+        }).addTo(adminMap);
+
+        adminMarker = L.marker([startLat, startLng], { draggable: true }).addTo(adminMap);
+
+        adminMarker.on('dragend', function() {
+          const position = adminMarker.getLatLng();
+          updateAdminCoordsFields(position.lat, position.lng);
+        });
+
+        adminMap.on('click', function(e) {
+          adminMarker.setLatLng(e.latlng);
+          updateAdminCoordsFields(e.latlng.lat, e.latlng.lng);
+        });
+      } else {
+        adminMap.setView([startLat, startLng], 17);
+        adminMarker.setLatLng([startLat, startLng]);
+      }
+
+      setTimeout(() => {
+        adminMap.invalidateSize();
+      }, 400);
     }
 
-    liveOmset.innerText = "Rp " + totalOmset.toLocaleString('id-ID');
-    liveCount.innerText = totalTransaksi;
-});
-window.hapusSeller = async function(id, nama) {
-  const yakin = confirm(
-    `Yakin ingin menghapus seller "${nama}" ?`
-  );
+    function updateAdminCoordsFields(lat, lng) {
+      document.getElementById('edit-lat').value = lat;
+      document.getElementById('edit-lng').value = lng;
+      document.getElementById('lbl-lat').innerText = parseFloat(lat).toFixed(5);
+      document.getElementById('lbl-lng').innerText = parseFloat(lng).toFixed(5);
+    }
 
-  if (!yakin) return;
+    // AKSES MODAL PROFILE SELLER UNTUK ADMIN EDIT
+    window.bukaProfileSeller = async function(id) {
+      document.getElementById('edit-seller-id').value = id;
+      
+      try {
+        const docSnap = await getDoc(doc(db, "sellers", id));
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          
+          document.getElementById('edit-shop-name').value = data.shopName || "";
+          document.getElementById('edit-owner-name').value = data.ownerName || "";
+          document.getElementById('edit-email').value = data.email || "";
+          document.getElementById('edit-whatsapp').value = data.whatsapp || "";
+          document.getElementById('edit-address').value = data.sellerAddress || "";
+          
+          const latSaved = data.sellerLocation?.latitude || -6.31500;
+          const lngSaved = data.sellerLocation?.longitude || 107.34000;
 
-  try {
-    await deleteDoc(doc(db, "sellers", id));
-    alert("Seller berhasil dihapus");
-  } catch (error) {
-    console.error(error);
-    alert("Gagal menghapus seller");
-  }
-}
-    // --- NAVIGATION TABS LOGIC ---
+          document.getElementById('profileModal').classList.add('active');
+          window.initAdminMapPicker(latSaved, lngSaved);
+        } else {
+          alert("Data seller tidak ditemukan!");
+        }
+      } catch (err) {
+        alert("Gagal memuat profil: " + err.message);
+      }
+    }
+
+    window.closeProfileModal = function() {
+      document.getElementById('profileModal').classList.remove('active');
+    }
+
+    // UPDATE DATA PROFILE OLEH ADMIN
+    window.simpanPerubahanProfile = async function() {
+      const id = document.getElementById('edit-seller-id').value;
+      if (!id) return;
+
+      const shopName = document.getElementById('edit-shop-name').value.trim();
+      const ownerName = document.getElementById('edit-owner-name').value.trim();
+      const email = document.getElementById('edit-email').value.trim();
+      const whatsapp = document.getElementById('edit-whatsapp').value.trim();
+      const sellerAddress = document.getElementById('edit-address').value.trim();
+      
+      const latitude = parseFloat(document.getElementById('edit-lat').value);
+      const longitude = parseFloat(document.getElementById('edit-lng').value);
+
+      if (!shopName) { alert("Nama Lapak wajib diisi!"); return; }
+
+      const btn = document.getElementById('btnUpdateProfile');
+      btn.innerText = "Memproses...";
+      btn.disabled = true;
+
+      try {
+        await updateDoc(doc(db, "sellers", id), {
+          shopName,
+          ownerName,
+          email,
+          whatsapp,
+          sellerAddress,
+          sellerLocation: {
+            latitude: latitude,
+            longitude: longitude
+          }
+        });
+        alert("Data profile dan titik koordinat seller berhasil diperbaiki oleh Admin!");
+        closeProfileModal();
+      } catch (err) {
+        alert("Gagal memperbarui data: " + err.message);
+      } finally {
+        btn.innerText = "Simpan Perubahan";
+        btn.disabled = false;
+      }
+    }
+
+    // HAPUS SELLER LANGSUNG DARI HALAMAN PROFILE MODAL
+    window.hapusDariProfile = function() {
+      const id = document.getElementById('edit-seller-id').value;
+      const nama = document.getElementById('edit-shop-name').value;
+      if (!id) return;
+      closeProfileModal();
+      window.hapusSeller(id, nama);
+    }
+
+    // SNAPSHOT ORDERS
+    onSnapshot(collection(db, "orders"), (snapshot) => {
+        const orderList = document.getElementById('order-list');
+        const liveOmset = document.getElementById('live-omset');
+        const liveCount = document.getElementById('live-count');
+        
+        orderList.innerHTML = "";
+        let totalOmset = 0;
+        let totalTransaksi = 0;
+
+        snapshot.forEach((doc) => {
+            const order = doc.data();
+            const bill = Number(order.totalBill) || 0;
+            totalOmset += bill;
+            totalTransaksi++;
+
+            orderList.innerHTML += `
+            <div class="data-card">
+              <div class="card-info">
+                <h4>${order.itemsName || 'Paket Makanan'}</h4>
+                <p>ID: ${doc.id.substring(0,8).toUpperCase()} | Tanggal: ${order.orderDate || 'N/A'}</p>
+              </div>
+              <div class="card-right">
+                <div class="card-price">Rp ${bill.toLocaleString('id-ID')}</div>
+                <div class="badge badge-status">${order.status || 'Pending'}</div>
+              </div>
+            </div>
+          `;
+        });
+
+        if (totalTransaksi === 0) {
+            orderList.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:12px;">Belum ada pesanan masuk.</div>`;
+        }
+
+        liveOmset.innerText = "Rp " + totalOmset.toLocaleString('id-ID');
+        liveCount.innerText = totalTransaksi;
+    });
+
+    // HAPUS SELLER WINDOW FUNCTION GLOBAL
+    window.hapusSeller = async function(id, nama) {
+      const yakin = confirm(`Yakin ingin menghapus seller "${nama}" ?`);
+      if (!yakin) return;
+      try {
+        await deleteDoc(doc(db, "sellers", id));
+        alert("Seller berhasil dihapus");
+      } catch (error) {
+        console.error(error);
+        alert("Gagal menghapus seller");
+      }
+    }
+
+    // NAVIGATION TABS LOGIC
     window.switchMobileTab = function(buttonElement, pageId) {
       const pages = document.getElementsByClassName("mobile-page");
-      for (let i = 0; i < pages.length; i++) {
-        pages[i].classList.remove("active");
-      }
+      for (let i = 0; i < pages.length; i++) { pages[i].classList.remove("active"); }
       const navItems = document.getElementsByClassName("nav-item");
-      for (let i = 0; i < navItems.length; i++) {
-        navItems[i].classList.remove("active");
-      }
+      for (let i = 0; i < navItems.length; i++) { navItems[i].classList.remove("active"); }
       document.getElementById(pageId).classList.add("active");
       buttonElement.classList.add("active");
     }
