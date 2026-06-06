@@ -705,6 +705,26 @@ body {
         <div class="stat-value" id="valPesananCount">0</div>
         <div class="stat-trend"><span class="trend-up">↑ Realtime</span></div>
       </div>
+      <div class="stat-card">
+  <div class="stat-icon-box"
+       style="background:#fff3e0;color:#ef6c00;">
+    🏆
+  </div>
+
+  <div class="stat-title">
+    Produk Terlaris
+  </div>
+
+  <div class="stat-value"
+       id="bestProductName">
+    -
+  </div>
+
+  <div class="stat-trend"
+       id="bestProductQty">
+    0 terjual
+  </div>
+</div>
     </div>
 
     <div style="padding:0 20px 15px;">
@@ -731,12 +751,9 @@ body {
     <div class="full-width-grid">
       <div class="grid-box">
         <div class="section-header" style="margin-bottom:12px;">
-          <span class="section-title" style="font-size:14px;">Produk Terlaris</span>
+          
         </div>
-        <div id="topProductsContainer" style="width:100%;">
-          <p style="font-size:11px; color:#94a3b8;">Memuat data...</p>
-        </div>
-      </div>
+             </div>
     </div>
   </div>
 
@@ -2089,6 +2106,7 @@ checkSellerAuth((user) => {
   loadSellerProfile();
   loadSellerOrders(currentSellerId);
   loadReport();
+  loadBestProduct();
   const q = query(collection(db, "menus"), where("sellerId", "==", currentSellerId));
   onSnapshot(q, (snapshot) => {
     const menuList = document.getElementById("menuList");
@@ -2136,6 +2154,70 @@ card.innerHTML = `
     });
     });
   });
+function loadBestProduct() {
+
+  if (!currentSellerId) return;
+
+  const q = query(
+    collection(db, "orders"),
+    where("sellerId", "==", currentSellerId)
+  );
+
+  onSnapshot(q, (snapshot) => {
+
+    const sales = {};
+
+    snapshot.forEach((docSnap) => {
+
+      const order = docSnap.data();
+
+      if (order.status !== "COMPLETED") return;
+
+      (order.items || []).forEach(item => {
+
+        const nama =
+          item.menuTitle ||
+          item.name ||
+          "Produk";
+
+        const qty =
+          Number(item.qty || 0);
+
+        sales[nama] =
+          (sales[nama] || 0) + qty;
+
+      });
+
+    });
+
+    let bestName = "-";
+    let bestQty = 0;
+
+    Object.entries(sales).forEach(
+      ([nama, qty]) => {
+
+        if (qty > bestQty) {
+
+          bestQty = qty;
+          bestName = nama;
+
+        }
+
+      }
+    );
+
+    document.getElementById(
+      "bestProductName"
+    ).innerText = bestName;
+
+    document.getElementById(
+      "bestProductQty"
+    ).innerText =
+      bestQty + " terjual";
+
+  });
+
+}
 </script>
 
 <div id="sellerOrderPopup" class="popup-order">

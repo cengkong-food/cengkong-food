@@ -319,6 +319,54 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
- 
+ <script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  signOut
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA0HWy6SkIvVpIsl_5bSD_eNcq3vYsJzxw",
+  authDomain: "food-delivery-97a5f.firebaseapp.com",
+  projectId: "food-delivery-97a5f",
+  storageBucket: "food-delivery-97a5f.firebasestorage.app",
+  messagingSenderId: "1071083538977",
+  appId: "1:1071083538977:web:51e617513f6fb639cf3160"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.logout = async function(){
+
+  const yakin = confirm("Yakin ingin keluar?");
+  if(!yakin) return;
+
+  try{
+
+    await signOut(auth);
+
+    localStorage.removeItem("cengkongUser");
+
+    alert("Berhasil keluar");
+
+    window.location.href = "index.html";
+
+  }catch(err){
+
+    console.error(err);
+
+    alert("Logout gagal");
+
+  }
+
+};
+
+</script>
 </body>
 </html>
