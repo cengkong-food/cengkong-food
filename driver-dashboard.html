@@ -6,10 +6,15 @@
 <title>Cengkong Food - Driver App</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,1,0" />
 <style>
 :root {
-  --primary: #ff0037;
+  --primary: linear-gradient(
+  90deg,
+  #7A001A 0%,
+  #B30026 50%,
+  #FF0037 100%
+);
   --primary-light: #fff0f2;
   --bg-gray: #f8f9fa;
   --text-dark: #222222;
@@ -26,14 +31,15 @@ body { background: #ececec; display: flex; justify-content: center; align-items:
 .phone-wrapper {
   width: 100%;
   max-width: 430px;
-  height: 100vh;
-  max-height: 880px;
+  min-height: 100vh;
+  margin:0 auto;
   background: var(--bg-gray);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  box-shadow:0 0 30px rgba(0,0,0,0.15);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
+
 }
 
 @media (max-width: 480px) {
@@ -58,37 +64,55 @@ body { background: #ececec; display: flex; justify-content: center; align-items:
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* HEADER BERANDA */
+/* Styling Navbar Atas Baru */
 .home-header {
-  background: var(--primary);
-  color: white;
-  padding: 30px 20px 40px 20px;
-  border-bottom-left-radius: 30px;
-  border-bottom-right-radius: 30px;
-  position: relative;
-  margin: -20px -20px 20px -20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: white; /* Ubah ke putih sesuai gambar */
+  color: var(--text-dark);
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  margin: 0;
 }
-.top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.brand-logo { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-.profile-area { display: flex; align-items: center; gap: 10px; }
-.avatar-container { position: relative; }
-.avatar-img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
-.status-badge { width: 12px; height: 12px; background: var(--green); border: 2px solid white; border-radius: 50%; position: absolute; bottom: 0; right: 0; }
-.welcome-text p { font-size: 12px; opacity: 0.9; }
-.welcome-text h2 { font-size: 20px; font-weight: 700; }
+
+.top-bar-custom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.avatar-img {
+  width: 50px;       /* Sesuaikan ukuran */
+  height: 50px;      /* Harus sama dengan width untuk membuat lingkaran */
+  border-radius: 50%; /* Membuat elemen menjadi lingkaran */
+  object-fit: cover; /* Memastikan foto tidak gepeng */
+  border: 3px solid #10b981; /* Outline hijau (warna hijau yang kamu gunakan di status-badge) */
+}
+.welcome-text p { font-size: 11px; color: var(--text-muted); margin: 0; }
+.welcome-text h2 { font-size: 16px; color: var(--green); margin: 0; }
+
+/* Sesuaikan bagian ini di CSS kamu */
 
 /* TOGGLE ONLINE STATUS CARD */
 .status-card {
+  position: sticky;
+  top: 90px; /* Sesuaikan angka ini dengan tinggi navbar kamu */
+  z-index: 99;
   background: white;
+  margin: 0 20px 20px 20px; /* Margin bawah untuk memberi jarak ke konten */
   padding: 15px 20px;
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: -25px;
-  margin-bottom: 20px;
-  position: relative;
-  z-index: 5;
 }
 .status-left h4 { font-size: 14px; font-weight: 700; color: var(--green); }
 .status-left p { font-size: 11px; color: var(--text-muted); }
@@ -153,27 +177,98 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 /* FIX MUTLAK: DIKUNCI DI PALING BAWAH FRAME HP */
-.bottom-nav {
-  position: absolute; 
-  bottom: 0; 
-  left: 0; 
-  right: 0; 
-  height: 72px; 
-  background: white;
-  display: flex; 
-  justify-content: space-around; 
-  align-items: center;
-  border-top-left-radius: 24px; 
-  border-top-right-radius: 24px;
-  box-shadow: 0 -8px 25px rgba(0,0,0,0.1); 
-  z-index: 9999;
+.bottom-nav{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+
+  height:82px;
+
+  background:#fff;
+
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+
+  border-top:1px solid #f2f2f2;
+
+  box-shadow:0 -5px 30px rgba(0,0,0,.06);
+
+  z-index:9999;
+
+  overflow:hidden;
 }
-.nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer; width: 33.33%; height: 100%; justify-content: center; }
-.nav-item.active { color: var(--primary); }
-.nav-icon { font-size: 22px; margin-bottom: 2px; }
+
+.nav-indicator{
+  position:absolute;
+
+  width:68px;
+  height:52px;
+
+  background:rgba(255,0,55,.10);
+
+  border-radius:18px;
+
+  left:10px;
+  top:14px;
+
+  transition:all .35s cubic-bezier(.34,1.56,.64,1);
+
+  z-index:0;
+}
+
+.nav-item{
+  position:relative;
+  z-index:2;
+
+  flex:1;
+
+  height:100%;
+
+  border:none;
+  background:none;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+
+  gap:2px;
+
+  cursor:pointer;
+
+  color:#9ca3af;
+
+  transition:.25s;
+}
+
+.nav-icon{
+  font-size:26px !important;
+  transition:.25s;
+}
+
+.nav-label{
+  font-size:11px;
+  font-weight:600;
+}
+
+.nav-item.active{
+  color:var(--primary);
+   transform:translateY(-3px) scale(1.2);
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 600,
+  'GRAD' 0,
+  'opsz' 24;
+}
+
+.nav-item.active .nav-icon{
+  transform:translateY(-2px);
+}
 
 .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 12px; }
-.logo-driver-nav { width: 28px; height: 28px; object-fit: contain; background: white; border-radius: 50%; padding: 2px; }
+.logo-driver-nav { width: 52px; height: 52px; object-fit: contain; background: white; border-radius: 50%; padding: 2px; }
 
 /* POPUP CUSTOM UNTUK ORDERAN BARU */
 .order-popup-overlay {
@@ -219,28 +314,25 @@ input:checked + .slider:before { transform: translateX(20px); }
   <div id="page-beranda" class="app-page active">
 
     <!-- HEADER BERANDA (HANYA DI SINI) -->
-    <div class="home-header">
-      <div class="top-bar">
-        <div class="brand-logo">
-          <img src="logo.png" alt="Logo" class="logo-driver-nav">
-          <span>Dashboard Driver</span>
-        </div>
-
-        <div class="profile-area">
-          <div class="avatar-container">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60"
-                 class="avatar-img"
-                 alt="Driver Profile">
-            <div class="status-badge"></div>
-          </div>
-        </div>
+   <!-- HEADER BERANDA BARU -->
+<div class="home-header">
+  <div class="top-bar-custom">
+    <div class="profile-left">
+      <div class="avatar-container">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60" 
+             class="avatar-img" alt="Driver">
+        <div class="status-badge"></div>
       </div>
-
       <div class="welcome-text">
-        <p>Semangat hari ini!</p>
-        <h2 id="driverNameDisplay">Halo, Kurir</h2>
+        <p>Semangat hari ini</p>
+        <h2 id="driverNameDisplay">Halo, Jajang</h2>
       </div>
     </div>
+    <div class="notification-icon">
+          <span class="material-symbols-rounded">notifications</span>
+    </div>
+  </div>
+
 
     <!-- STATUS ONLINE -->
     <div class="status-card">
@@ -296,18 +388,32 @@ input:checked + .slider:before { transform: translateX(20px); }
 
   </div>
 <div class="bottom-nav">
-      <button class="nav-item active" onclick="switchMainPage('beranda')">
-        <span class="nav-icon">🏠</span>Beranda
-      </button>
-      <button class="nav-item" onclick="switchMainPage('order')">
-        <span class="nav-icon">📦</span>Order
-      </button>
-      <button class="nav-item" onclick="switchMainPage('earnings')">
-        <span class="nav-icon">📊</span>Earnings
-      </button>
-      <button class="nav-item" onclick="switchMainPage('profile')">
-        <span class="nav-icon">👤</span>Profil</button>
-    </div>
+
+  <div class="nav-indicator" id="navIndicator"></div>
+
+  <button class="nav-item active" onclick="switchMainPage('beranda')">
+    <span class="material-symbols-rounded nav-icon">home</span>
+    <span class="nav-label">Beranda</span>
+  </button>
+
+ <button class="nav-item" onclick="switchMainPage('order')">
+  <span class="material-symbols-rounded nav-icon">
+    two_wheeler
+  </span>
+  <span class="nav-label">Order</span>
+</button>
+
+  <button class="nav-item" onclick="switchMainPage('earnings')">
+    <span class="material-symbols-rounded nav-icon">account_balance_wallet</span>
+    <span class="nav-label">Dompet</span>
+  </button>
+
+  <button class="nav-item" onclick="switchMainPage('profile')">
+    <span class="material-symbols-rounded nav-icon">person</span>
+    <span class="nav-label">Profil</span>
+  </button>
+
+</div>
 
   <!-- ===================== -->
   <!-- PAGE: ORDER -->
@@ -548,6 +654,7 @@ window.switchMainPage = function(pageId) {
 
   if (navIdx !== -1) {
     document.querySelectorAll('.nav-item')[navIdx].classList.add('active');
+    moveIndicator(navIdx);
   }
 
   handlePageChange(pageId);
@@ -1139,7 +1246,32 @@ window.addEventListener("beforeunload", () => {
   if (liveOrdersUnsub) liveOrdersUnsub();
   if (earningsUnsub) earningsUnsub();
 });
+const navIndicator =
+document.getElementById("navIndicator");
 
+function moveIndicator(index){
+
+  const navItems =
+  document.querySelectorAll(".nav-item");
+
+  const activeItem = navItems[index];
+
+  if(!activeItem) return;
+
+  const itemRect =
+  activeItem.getBoundingClientRect();
+
+  const parentRect =
+  activeItem.parentElement.getBoundingClientRect();
+
+  navIndicator.style.left =
+  (itemRect.left - parentRect.left +
+   (itemRect.width / 2) - 34) + "px";
+}
+
+window.addEventListener("load", () => {
+  moveIndicator(0);
+});
 </script>
 </body>
 </html>
