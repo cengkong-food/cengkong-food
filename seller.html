@@ -45,7 +45,8 @@ body {
 }
 /* 4. HEADER UTAMA */
 .main-header{
-  background:#ff003d;
+  background: #16a34a;
+  color: white;
   color:white;
   padding:20px;
   padding-top:35px;
@@ -106,18 +107,18 @@ body {
 
 /* 5. SELLER WELCOME SECTION */
 .welcome-section {
-  padding: 15px 20px;
+  padding: 18px 20px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
 .welcome-text h2 {
-  font-size: 20px;
-  font-weight: 700;
+ font-size: 18px;
+font-weight: 700;
 }
 .welcome-text p {
   font-size: 12px;
-  color: #64748b;
+  color: #94a3b8;
   margin-top: 2px;
 }
 
@@ -153,9 +154,10 @@ body {
 
 /* 6. HORIZONTAL STATS CARDS */
 .stats-scroll {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  padding: 5px 20px 15px;
+  padding: 15px 20px;
   overflow-x: auto;
   scroll-behavior: smooth;
 }
@@ -165,10 +167,10 @@ body {
 .stat-card {
   min-width: 115px;
   flex: 1;
-  background: #fff;
-  border-radius: 14px;
-  padding: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+  background: white;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
   display: flex;
   flex-direction: column;
 }
@@ -278,44 +280,54 @@ body {
   bottom: 0;
   width: 100%;
   max-width: 430px;
-  height: 74px;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(8px);
-  border-top: 1px solid #e2e8f0;
+  height: 70px;
+  background: white;
+  border-top: 1px solid #eee;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  z-index: 990;
-  padding-bottom: 10px;
+  z-index: 999;
+  padding: 0 10px;
 }
+
+/* item biasa */
 .nav-item {
+  flex: 1;
+  background: none;
+  border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #94a3b8;
-  text-decoration: none;
   font-size: 11px;
-  font-weight: 500;
+  color: #94a3b8;
   cursor: pointer;
-  background: none;
-  border: none;
-  font-family: inherit;
-  position: relative;
-  transition: all 0.3s ease; /* Transisi animasi yang halus */
-  padding: 6px 0;
-  flex: 1;
 }
-.nav-item.active {
-  color: #ff3b30;
-  font-weight: 600;
-}
-/* Style penampung ikon SVG modern */
+
 .nav-item i {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 3px;
+}
+
+.nav-item.active {
+  color: #16a34a;
+}
+
+/* ===== FAB BUTTON (+) ===== */
+.fab-add {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #16a34a;
+  color: white;
+  font-size: 30px;
+  border: none;
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin-bottom: 4px;
-  transition: transform 0.2s ease;
+  align-items: center;
+  margin-top: -25px; /* naik ke atas */
+  box-shadow: 0 8px 20px rgba(22,163,74,0.4);
+  cursor: pointer;
 }
 /* Efek mikro-interaksi saat menu diklik/aktif */
 .nav-item.active i {
@@ -356,11 +368,11 @@ body {
 
 .order-card-list {
   background: white;
-  margin: 12px 20px;
+  margin: 10px 16px;
   border-radius: 14px;
-  padding: 16px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  padding: 14px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 .order-card-header {
   display: flex;
@@ -373,10 +385,10 @@ body {
 .order-status-badge {
   background: #fff3e0;
   color: #e65100;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 6px;
+ border-radius: 999px;
+  padding: 4px 10px;
 }
 .variant-badge {
   display: inline-block;
@@ -406,13 +418,12 @@ body {
   cursor: pointer;
 }
 .menu-card-custom{
-  background:#fff;
-  border-radius:14px;
-  padding:12px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-bottom:10px;
+  background: white;
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 
 .menu-card-custom img{
@@ -968,30 +979,35 @@ body {
 
 </div>
 
-  <nav class="bottom-nav">
-    <button class="nav-item active" id="navBerandaBtn">
-      <i><canvas data-lucide="home" width="22" height="22" stroke-width="2.2"></canvas></i>
-      <span>Beranda</span>
-    </button>
-    <button class="nav-item" id="navPesananBtn">
-      <i><canvas data-lucide="clipboard-list" width="22" height="22" stroke-width="2.2"></canvas></i>
-      <span class="nav-badge" id="bottomNavOrderBadge">0</span>
-      <span>Pesanan</span>
-    </button>
-    <button class="nav-item" id="navMenuBtn">
-      <i><canvas data-lucide="utensils" width="22" height="22" stroke-width="2.2"></canvas></i>
-      <span>Menu</span>
-    </button>
-    <button class="nav-item" id="navLaporanBtn">
-      <i><canvas data-lucide="bar-chart-3" width="22" height="22" stroke-width="2.2"></canvas></i>
-      <span>Laporan</span>
-    </button>
-    <button class="nav-item" id="navProfileBtn">
-      <i><canvas data-lucide="user" width="22" height="22" stroke-width="2.2"></canvas></i>
-      <span>Profile</span>
-    </button>
-  </nav>
-</div>
+ <nav class="bottom-nav">
+
+  <button class="nav-item" id="navBerandaBtn">
+    <i data-lucide="home"></i>
+    <span>Beranda</span>
+  </button>
+
+  <button class="nav-item" id="navPesananBtn">
+    <i data-lucide="clipboard-list"></i>
+    <span>Pesanan</span>
+    <span class="nav-badge" id="bottomNavOrderBadge">0</span>
+  </button>
+
+  <!-- FAB TENGAH -->
+  <button class="fab-add" id="fabAddMenuBtn">
+    +
+  </button>
+
+  <button class="nav-item" id="navMenuBtn">
+    <i data-lucide="utensils"></i>
+    <span>Menu</span>
+  </button>
+
+  <button class="nav-item" id="navProfileBtn">
+    <i data-lucide="user"></i>
+    <span>Akun</span>
+  </button>
+
+</nav>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
@@ -1499,43 +1515,59 @@ trackingMapSeller.fitBounds(
 
 }
 
-if (navButtons.beranda) navButtons.beranda.onclick = () => switchView('beranda', sections.beranda);
-if (navButtons.pesanan) navButtons.pesanan.onclick = () => switchView('pesanan', sections.pesanan);
-if (navButtons.menu) navButtons.menu.onclick = () => switchView('menu', sections.menus);
-if (navButtons.laporan) navButtons.laporan.onclick = () => switchView('laporan', sections.laporan);
-if (navButtons.profile) navButtons.profile.onclick = () => switchView('profile', sections.profile);
-
-
 // 4. Inisialisasi Auth
 document.addEventListener("DOMContentLoaded", () => {
-  const resumeBtn =
-  document.getElementById(
-    "resumeTrackingBtn"
-  );
 
-if(resumeBtn){
+  // NAVBAR
+  if (navButtons.beranda)
+    navButtons.beranda.onclick = () => switchView('beranda', sections.beranda);
 
-  resumeBtn.onclick = ()=>{
+  if (navButtons.pesanan)
+    navButtons.pesanan.onclick = () => switchView('pesanan', sections.pesanan);
 
-    if(!activeTrackingOrderId){
-      return;
-    }
+  if (navButtons.menu)
+    navButtons.menu.onclick = () => switchView('menus', sections.menus);
 
-    switchView(
-      'tracking',
-      sections.tracking
-    );
+  if (navButtons.laporan)
+    navButtons.laporan.onclick = () => switchView('laporan', sections.laporan);
 
-    loadTrackingOrder(
-      activeTrackingOrderId
-    );
+  if (navButtons.profile)
+    navButtons.profile.onclick = () => switchView('profile', sections.profile);
 
-  };
+  // FAB (+)
+  const fab = document.getElementById("fabAddMenuBtn");
 
-}
+  if (fab) {
+    fab.onclick = () => {
+      editingMenuId = null;
+      selectedFile = null;
 
+      document.getElementById("menuName").value = "";
+      document.getElementById("menuPrice").value = "";
+      document.getElementById("variantInputsContainer").innerHTML = "";
+
+      const preview = document.getElementById("imagePreview");
+      preview.src = "";
+      preview.style.display = "none";
+
+      switchView("menu", sections.tambahMenu);
+    };
+  }
+
+  // RESUME BUTTON (INI HARUS DI DALAM DOM READY JUGA)
+  const resumeBtn = document.getElementById("resumeTrackingBtn");
+
+  if (resumeBtn) {
+    resumeBtn.onclick = () => {
+      if (!activeTrackingOrderId) return;
+
+      switchView('tracking', sections.tracking);
+      loadTrackingOrder(activeTrackingOrderId);
+    };
+  }
+
+});
   
-
 // TEMPEL FUNGSI BARU DI SINI
 
 let sellerFirstLoad = true;
@@ -1592,11 +1624,9 @@ if (
 
 }
 
-    
-
   });
 
-}
+
 
 sellerFirstLoad = false;
 
@@ -1632,11 +1662,10 @@ sellerFirstLoad = false;
       card.innerHTML = `
   <h3>${order.customerName || "Pelanggan"}</h3>
 
-  <p>
-    Pesanan:
-    ${order.itemsName || "-"}
-  </p>
+  <p>Pesanan: ${order.itemsName || "-"}</p>
 <p>
+
+
   Status:
   <b>
     ${
@@ -1676,16 +1705,15 @@ sellerFirstLoad = false;
     : ""
   }
 
-
 `;
 
       container.appendChild(card);
 
     });
 
-  });
+  };
 
-}
+
 
 window.acceptOrder = async function(orderId){
 
@@ -2101,59 +2129,136 @@ document
   .classList.remove("active");
 
 });
+
 checkSellerAuth((user) => {
+
   currentSellerId = user.uid;
+
   loadSellerProfile();
   loadSellerOrders(currentSellerId);
   loadReport();
   loadBestProduct();
-  const q = query(collection(db, "menus"), where("sellerId", "==", currentSellerId));
-  onSnapshot(q, (snapshot) => {
-    const menuList = document.getElementById("menuList");
-    menuList.innerHTML = "";
-    snapshot.forEach((docSnap) => {
-      const menu = docSnap.data();
-      const menuDataEncoded = encodeURIComponent(JSON.stringify({
-        id: docSnap.id, title: menu.title, price: menu.price, image: menu.image, variants: menu.variants || []
-      }));
-      const card = document.createElement("div");
-      card.className = "menu-card-custom";
-      // Di dalam loadSellerMenus -> snapshot.forEach
 
-card.innerHTML = `
-  <img src="${menu.image || 'logo.png'}">
+  const q = query(
+    collection(db, "menus"),
+    where("sellerId", "==", currentSellerId)
+  );
 
-  <div class="menu-info">
+ onSnapshot(q, (snapshot) => {
 
-    <h3>${menu.title}</h3>
+  if (!sellerFirstLoad) {
 
-    <div class="price">
-      Rp ${Number(menu.price || 0).toLocaleString('id-ID')}
-    </div>
+    snapshot.docChanges().forEach((change) => {
+      console.log(change.doc.data());
 
-    <div class="menu-btn-action">
+      if (
+        change.type === "added" &&
+        change.doc.data().status === "PENDING"
+      ) {
+        console.log("POPUP SELLER TERPICU");
 
-      <button
-        class="ebtn"
-        onclick="handleEditClick('${menuDataEncoded}')">
-        Edit
-      </button>
+        const order = change.doc.data();
 
-      <button
-        class="dbtn"
-        onclick="deleteMenu('${docSnap.id}')">
-        Hapus
-      </button>
+        currentPopupOrderId = change.doc.id;
+        window.currentPopupOrderId = change.doc.id;
 
-    </div>
+        document.getElementById("sellerPopCustomer").innerText =
+          order.customerName || "Pelanggan";
 
-  </div>
-`;
-      menuList.appendChild(card);
+        document.getElementById("sellerPopItems").innerText =
+          order.itemsName || "-";
+
+        document.getElementById("sellerOrderPopup").style.display =
+          "flex";
+      }
+
+      if (
+        change.type === "modified" &&
+        (
+          change.doc.data().status === "PICKED_UP" ||
+          change.doc.data().status === "ON_THE_WAY"
+        )
+      ) {
+        activeTrackingOrderId = change.doc.id;
+
+        document.getElementById(
+          "resumeTrackingBtn"
+        ).style.display = "block";
+      }
+
     });
-    });
-    });
+
+  } // 🔥 INI HARUS ADA PENUTUP IF
+
+  sellerFirstLoad = false;
+
+  console.log("JUMLAH ORDER =", snapshot.size);
+
+  const container = document.getElementById("orderListContainer");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (snapshot.empty) {
+    container.innerHTML = `
+      <p style="font-size:12px;color:#64748b;text-align:center;padding:20px;">
+        Belum ada pesanan masuk saat ini.
+      </p>
+    `;
+    return;
+  }
+
+  snapshot.forEach((docSnap) => {
+
+    const order = docSnap.data();
+
+    const card = document.createElement("div");
+
+    card.style.cssText =
+      "background:#fff;padding:12px;margin-bottom:10px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);";
+
+    card.innerHTML = `
+      <h3>${order.customerName || "Pelanggan"}</h3>
+
+      <p>Pesanan: ${order.itemsName || "-"}</p>
+
+      <p>
+        Status:
+        <b>
+          ${
+            order.status === "PENDING"
+              ? "🆕 Pesanan Baru"
+            : order.status === "READY_FOR_PICKUP"
+              ? "🍳 Menunggu Driver"
+            : order.status === "PICKED_UP"
+              ? "🚗 Driver menuju lapak"
+            : order.status === "ASSIGNED"
+              ? "🚗 Driver menerima pesanan"
+            : order.status === "ON_THE_WAY"
+              ? "🛵 Pesanan sedang diantar"
+            : order.status === "COMPLETED"
+              ? "✅ Pesanan selesai"
+              : order.status
+          }
+        </b>
+      </p>
+
+      ${
+        order.status === "PENDING"
+        ? `
+          <button onclick="acceptOrder('${docSnap.id}')"
+            style="margin-top:10px;background:#22c55e;color:white;border:none;padding:8px 12px;border-radius:8px;">
+            Terima Pesanan
+          </button>
+        `
+        : ""
+      }
+    `;
+
+    container.appendChild(card);
   });
+
+});
 function loadBestProduct() {
 
   if (!currentSellerId) return;
@@ -2218,6 +2323,7 @@ function loadBestProduct() {
   });
 
 }
+
 </script>
 
 <div id="sellerOrderPopup" class="popup-order">
@@ -2241,6 +2347,7 @@ function loadBestProduct() {
 
   </div>
 </div>
+
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </body>
 </html>
